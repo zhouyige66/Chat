@@ -19,7 +19,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/1/30 16:23
  * @Version: v1.0
  */

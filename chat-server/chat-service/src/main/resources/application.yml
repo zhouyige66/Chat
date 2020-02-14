@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/chat_demo
+    username: root
+    password: kk209257
+
+server:
+  tomcat:
+    uri-encoding: utf-8
+
+base:
+  packages:
+    name: cn.kk20.chat

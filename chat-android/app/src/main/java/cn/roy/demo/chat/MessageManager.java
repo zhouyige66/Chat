@@ -16,7 +16,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * @Description: 消息管理器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/1/14 15:51
  * @Version: v1.0
  */

@@ -14,7 +14,7 @@ import retrofit2.http.QueryMap;
 
 /**
  * @Description: 所有接口
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/2/11 18:34
  * @Version: v1.0
  */

@@ -1,8 +1,8 @@
 package cn.kk20.chat.service.impl;
 
+import cn.kk20.chat.dao.mapper.UserModelMapper;
+import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.UserService;
-import cn.kk20.chat.mapper.UserModelMapper;
-import cn.kk20.chat.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019-01-29 16:54
  * @Version: v1.0
  */

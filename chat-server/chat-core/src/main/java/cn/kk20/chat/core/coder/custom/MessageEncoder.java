@@ -11,7 +11,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * @Description: 自定义消息编码器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/1/21 10:21
  * @Version: v1.0
  */

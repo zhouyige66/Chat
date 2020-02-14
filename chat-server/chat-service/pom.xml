@@ -13,10 +13,59 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.kk20</groupId>
-            <artifactId>chat-mapper</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.19</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.56</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--mybatis generator代码自动生成插件-->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.7</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.19</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>cn.roy.springcloud</groupId>
+                        <artifactId>base</artifactId>
+                        <version>0.0.1</version>
+                        <scope>system</scope>
+                        <systemPath>${basedir}/lib/base-0.0.1.jar</systemPath>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <configurationFile>./src/main/resources/generatorConfig.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
 
 </project>

@@ -1,8 +1,8 @@
 package cn.kk20.chat.service.impl;
 
+import cn.kk20.chat.dao.mapper.MessageModelMapper;
+import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
-import cn.kk20.chat.mapper.MessageModelMapper;
-import cn.kk20.chat.model.MessageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019-01-29 17:35
  * @Version: v1.0
  */

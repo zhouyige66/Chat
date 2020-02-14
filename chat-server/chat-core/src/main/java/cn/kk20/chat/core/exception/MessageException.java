@@ -2,7 +2,7 @@ package cn.kk20.chat.core.exception;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019-01-28 14:19
  * @Version: v1.0
  */

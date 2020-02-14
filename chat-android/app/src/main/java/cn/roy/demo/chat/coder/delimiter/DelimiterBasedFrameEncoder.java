@@ -11,7 +11,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * @Description: 以指定分隔符结尾的编码器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/1/21 15:08
  * @Version: v1.0
  */

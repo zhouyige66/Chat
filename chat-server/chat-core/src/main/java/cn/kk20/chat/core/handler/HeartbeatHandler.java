@@ -15,7 +15,7 @@ import java.util.UUID;
 
 /**
  * @Description: 心跳连接处理器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */

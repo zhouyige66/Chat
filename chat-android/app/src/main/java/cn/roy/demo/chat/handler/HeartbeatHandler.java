@@ -16,7 +16,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 /**
  * @Description: 心跳包处理器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019/1/17 15:13
  * @Version: v1.0
  */
