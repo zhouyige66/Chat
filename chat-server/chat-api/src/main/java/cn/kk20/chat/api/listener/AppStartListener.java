@@ -28,7 +28,6 @@ public class AppStartListener implements ApplicationListener<ApplicationContextE
         } else {
             LogUtil.log("ApplicationContextEvent==" + event.getClass().getSimpleName());
         }
-
     }
 
 }

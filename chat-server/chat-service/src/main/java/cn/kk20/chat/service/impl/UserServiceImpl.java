@@ -2,6 +2,7 @@ package cn.kk20.chat.service.impl;
 
 import cn.kk20.chat.dao.mapper.UserModelMapper;
 import cn.kk20.chat.dao.model.UserModel;
+import cn.kk20.chat.dao.model.UserModelQuery;
 import cn.kk20.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,11 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserModel find(String name, String password) {
+        UserModelQuery query = new UserModelQuery();
         UserModel userModel = userModelMapper.selectByPassword(name, password);
         if (userModel == null) {
             userModel = userModelMapper.selectByName(name);
         }
-
         return userModel;
     }
 

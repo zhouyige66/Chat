@@ -1,10 +1,11 @@
 package cn.kk20.chat.api.controller;
 
+import cn.kk20.chat.api.base.ResultData;
+import cn.kk20.chat.api.base.dto.SimpleDto;
 import cn.kk20.chat.core.ClientManager;
 import cn.kk20.chat.core.message.ChatMessage;
 import cn.kk20.chat.core.util.IdGeneratorUtil;
-import cn.kk20.chat.model.MessageModel;
-import cn.kk20.chat.model.RestModel;
+import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping("/send")
-    public RestModel login(@RequestBody ChatMessage message) {
+    public ResultData login(@RequestBody ChatMessage message) {
         // 转发
         ClientManager.getInstance().sendMessage(message.getToUserId(), message);
 
@@ -38,7 +39,7 @@ public class MessageController {
         messageModel.setContent(JSON.toJSONString(message));
         messageService.save(messageModel);
 
-        return RestModel.success(messageModel.getId());
+        return ResultData.success(new SimpleDto().setValue(messageModel.getId()));
     }
 
 }

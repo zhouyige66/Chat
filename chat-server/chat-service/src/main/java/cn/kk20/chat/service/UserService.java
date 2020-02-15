@@ -1,6 +1,7 @@
 package cn.kk20.chat.service;
 
-import cn.kk20.chat.model.UserModel;
+
+import cn.kk20.chat.dao.model.UserModel;
 
 import java.util.List;
 
