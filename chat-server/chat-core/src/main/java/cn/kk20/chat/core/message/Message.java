@@ -1,11 +1,19 @@
 package cn.kk20.chat.core.message;
 
-public class ChatMessage<T> {
+import cn.kk20.chat.core.message.body.MessageBody;
+
+/**
+ * @Description: 消息
+ * @Author: Roy
+ * @Date: 2020/2/15 12:00 下午
+ * @Version: v1.0
+ */
+public class Message {
     private String fromUserId;
     private String toUserId;
     private String id;
     private int type;
-    private T body;
+    private MessageBody body;
 
     public String getFromUserId() {
         return fromUserId;
@@ -39,11 +47,11 @@ public class ChatMessage<T> {
         this.type = type;
     }
 
-    public T getBody() {
+    public MessageBody getBody() {
         return body;
     }
 
-    public void setBody(T body) {
+    public void setBody(MessageBody body) {
         this.body = body;
     }
 

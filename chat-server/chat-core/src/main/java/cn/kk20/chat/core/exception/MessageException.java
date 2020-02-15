@@ -1,7 +1,7 @@
 package cn.kk20.chat.core.exception;
 
 /**
- * @Description:
+ * @Description: 消息异常
  * @Author: Roy
  * @Date: 2019-01-28 14:19
  * @Version: v1.0

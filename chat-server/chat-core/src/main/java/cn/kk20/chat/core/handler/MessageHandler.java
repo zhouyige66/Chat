@@ -1,7 +1,7 @@
 package cn.kk20.chat.core.handler;
 
 import cn.kk20.chat.core.ClientManager;
-import cn.kk20.chat.core.message.ChatMessage;
+import cn.kk20.chat.core.message.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -11,11 +11,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * @Date: 2019/1/21 15:55
  * @Version: v1.0
  */
-public class MessageHandler extends SimpleChannelInboundHandler<ChatMessage> {
+public class MessageHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage) throws Exception {
-        ClientManager.getInstance().handleMessage(channelHandlerContext, chatMessage,false);
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
+        ClientManager.getInstance().handleMessage(channelHandlerContext, message,false);
     }
 
 }

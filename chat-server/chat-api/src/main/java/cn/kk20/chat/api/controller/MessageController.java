@@ -3,7 +3,7 @@ package cn.kk20.chat.api.controller;
 import cn.kk20.chat.api.base.ResultData;
 import cn.kk20.chat.api.base.dto.SimpleDto;
 import cn.kk20.chat.core.ClientManager;
-import cn.kk20.chat.core.message.ChatMessage;
+import cn.kk20.chat.core.message.Message;
 import cn.kk20.chat.core.util.IdGeneratorUtil;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
@@ -27,7 +27,7 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping("/send")
-    public ResultData login(@RequestBody ChatMessage message) {
+    public ResultData login(@RequestBody Message message) {
         // 转发
         ClientManager.getInstance().sendMessage(message.getToUserId(), message);
 

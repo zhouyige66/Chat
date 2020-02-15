@@ -1,4 +1,4 @@
-package cn.kk20.chat.core;
+package cn.kk20.chat.core.coder;
 
 import io.netty.util.CharsetUtil;
 

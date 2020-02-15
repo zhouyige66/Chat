@@ -1,9 +1,15 @@
 package cn.kk20.chat.core.message.body;
 
-public class LoginBody {
+import cn.kk20.chat.core.message.MessageBodyType;
+
+public class LoginBody extends AbstractMessageBody {
     private String userId;
     private String userName;
     private boolean login;
+
+    public LoginBody() {
+        super(MessageBodyType.TEXT);
+    }
 
     public String getUserId() {
         return userId;
@@ -28,4 +34,5 @@ public class LoginBody {
     public void setLogin(boolean login) {
         this.login = login;
     }
+
 }

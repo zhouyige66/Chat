@@ -2,6 +2,7 @@ package cn.kk20.chat.service.impl;
 
 import cn.kk20.chat.dao.mapper.MessageModelMapper;
 import cn.kk20.chat.dao.model.MessageModel;
+import cn.kk20.chat.dao.model.MessageModelQuery;
 import cn.kk20.chat.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageModel> selectAll() {
-        return messageModelMapper.selectAll();
+        MessageModelQuery query = new MessageModelQuery();
+        MessageModelQuery.Criteria criteria = query.createCriteria();
+        criteria.andIdIsNotNull();
+        List<MessageModel> messageModels = messageModelMapper.selectByCondition(query);
+        return messageModels;
     }
 }

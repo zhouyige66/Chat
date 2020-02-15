@@ -120,7 +120,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
 //            let fromUserId:String = json["fromUserId"] as! String
 //            let toUserId:String = json["toUserId"] as! String
 //            let body:Dictionary<String,Any> = json["body"] as! Dictionary<String, Any>
-            MessageManager.shared.store(chatMessage: json)
+            MessageManager.shared.store(message: json)
             break
         case ChatType.GROUP.rawValue:
             break

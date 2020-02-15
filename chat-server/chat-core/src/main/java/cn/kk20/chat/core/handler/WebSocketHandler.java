@@ -1,7 +1,7 @@
 package cn.kk20.chat.core.handler;
 
 import cn.kk20.chat.core.ClientManager;
-import cn.kk20.chat.core.message.ChatMessage;
+import cn.kk20.chat.core.message.Message;
 import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
@@ -30,14 +30,14 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
                 LogUtil.log("捕获异常");
             }
         } else {
-            ChatMessage chatMessage;
-            if (msg instanceof ChatMessage) {
+            Message message;
+            if (msg instanceof Message) {
                 LogUtil.log("上级传递而来");
-                chatMessage = (ChatMessage) msg;
+                message = (Message) msg;
             } else {
-                chatMessage = JSON.parseObject(msg.toString(), ChatMessage.class);
+                message = JSON.parseObject(msg.toString(), Message.class);
             }
-            ClientManager.getInstance().handleMessage(ctx, chatMessage,true);
+            ClientManager.getInstance().handleMessage(ctx, message,true);
         }
     }
 

@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: mapper
+
+logging:
+  file:
+    max-history: 10
+    max-size: 10MB
+  path: log/log.log

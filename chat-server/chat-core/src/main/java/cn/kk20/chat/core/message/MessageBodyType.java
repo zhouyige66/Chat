@@ -1,9 +1,12 @@
-package cn.kk20.chat.core.message.body;
+package cn.kk20.chat.core.message;
 
 /**
- * 消息格式
+ * @Description: 消息主体格式
+ * @Author: Roy
+ * @Date: 2020/2/15 11:58 上午
+ * @Version: v1.0
  */
-public enum MsgType {
+public enum MessageBodyType {
     TEXT(1, "text"),
     IMG(2, "img"),
     VIDEO(3, "video"),
@@ -13,7 +16,7 @@ public enum MsgType {
     private int code;
     private String des;
 
-    MsgType(int code, String des) {
+    MessageBodyType(int code, String des) {
         this.code = code;
         this.des = des;
     }

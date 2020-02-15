@@ -1,12 +1,13 @@
 package cn.kk20.chat.core;
 
-import cn.kk20.chat.core.message.ChatMessage;
-import cn.kk20.chat.core.message.ChatType;
+import cn.kk20.chat.core.message.Message;
+import cn.kk20.chat.core.message.MessageType;
 import cn.kk20.chat.core.message.body.LoginBody;
+import cn.kk20.chat.core.message.body.TextBody;
 import cn.kk20.chat.core.util.IdGeneratorUtil;
 import cn.kk20.chat.core.util.LogUtil;
-import cn.kk20.chat.model.MessageModel;
-import cn.kk20.chat.model.UserModel;
+import cn.kk20.chat.dao.model.MessageModel;
+import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.MessageService;
 import cn.kk20.chat.service.impl.MessageServiceImpl;
 import com.alibaba.fastjson.JSON;
@@ -34,7 +35,7 @@ public class ClientManager {
     private ClientManager() {
         userList = new ConcurrentHashMap<>(16);
         clientList = new ConcurrentHashMap<>(16);
-        webClientList = new HashSet<>();
+        webClientList = new HashSet<>(16);
     }
 
     public static ClientManager getInstance() {
@@ -52,34 +53,34 @@ public class ClientManager {
      * 消息处理
      *
      * @param ctx
-     * @param chatMessage
+     * @param message
      */
-    public void handleMessage(ChannelHandlerContext ctx, ChatMessage chatMessage, boolean isWeb) {
-        // id统一变更为系统生成
-        chatMessage.setId(IdGeneratorUtil.generateId());
+    public void handleMessage(ChannelHandlerContext ctx, Message message, boolean isWebMessage) {
+        // 消息id统一变更为系统生成
+        message.setId(IdGeneratorUtil.generateId());
 
-        String fromUserId = chatMessage.getFromUserId();
-        String toUserId = chatMessage.getToUserId();
-        switch (chatMessage.getType()) {
+        String fromUserId = message.getFromUserId();
+        String toUserId = message.getToUserId();
+        switch (message.getType()) {
             case 0:// 暂定为登录登出
-                LoginBody loginBody = JSON.parseObject(chatMessage.getBody().toString(), LoginBody.class);
+                LoginBody loginBody = JSON.parseObject(message.getBody().toString(), LoginBody.class);
                 UserModel userModel = new UserModel();
                 userModel.setId(loginBody.getUserId());
                 userModel.setName(loginBody.getUserName());
                 if (loginBody.isLogin()) {
                     // 添加到容器
-                    addClient(userModel, ctx.channel(), isWeb);
+                    addClient(userModel, ctx.channel(), isWebMessage);
                     // 回复当前登录用户，在线名单
-                    ChatMessage replyMessage = new ChatMessage();
+                    Message replyMessage = new Message();
                     replyMessage.setFromUserId("server");
                     replyMessage.setToUserId(fromUserId);
                     replyMessage.setId(IdGeneratorUtil.generateId());
-                    replyMessage.setType(ChatType.LOGIN_REPLY.getCode());
+                    replyMessage.setType(MessageType.LOGIN_REPLY.getCode());
                     JSONArray jsonArray = new JSONArray();
                     for (String key : clientList.keySet()) {
                         jsonArray.add(userList.get(key));
                     }
-                    replyMessage.setBody(jsonArray);
+                    replyMessage.setBody(new TextBody(jsonArray.toJSONString()));
                     sendMessage(fromUserId, replyMessage);
                     // 通知其他用户，有人登录
                     notifyOtherClient(fromUserId, true);
@@ -87,18 +88,18 @@ public class ClientManager {
                     // 通知其他人，有人下线了
                     notifyOtherClient(fromUserId, false);
                     // 从容器中移除
-                    removeClient(loginBody.getUserId(), isWeb);
+                    removeClient(loginBody.getUserId(), isWebMessage);
                 }
                 break;
             case 1:// 点对点消息
                 // 发送消息给指定人
-                sendMessage(toUserId, chatMessage);
+                sendMessage(toUserId, message);
                 // 存储到数据库
                 MessageModel messageModel = new MessageModel();
-                messageModel.setId(chatMessage.getId());
-                messageModel.setFromUserId(chatMessage.getFromUserId());
-                messageModel.setToUserId(chatMessage.getToUserId());
-                messageModel.setContent(JSON.toJSONString(chatMessage));
+                messageModel.setId(message.getId());
+                messageModel.setFromUserId(message.getFromUserId());
+                messageModel.setToUserId(message.getToUserId());
+                messageModel.setContent(JSON.toJSONString(message));
                 if (messageService == null) {
                     ApplicationContext context = ChatServer.getInstance().getContext();
                     messageService = context.getAutowireCapableBeanFactory().createBean(MessageServiceImpl.class);
@@ -106,7 +107,7 @@ public class ClientManager {
                 int result = messageService.save(messageModel);
                 LogUtil.log("存储消息：" + result);
                 break;
-            case 2:// 群消息
+            case 2:// TODO 群消息
 
                 break;
             default:
@@ -145,7 +146,7 @@ public class ClientManager {
      * @param toUserId
      * @param msg
      */
-    public void sendMessage(String toUserId, ChatMessage msg) {
+    public void sendMessage(String toUserId, Message msg) {
         Channel channel = clientList.get(toUserId);
         if (channel == null || !channel.isActive()) {
             LogUtil.log("指定的消息接收者未登录或已关闭连接");
@@ -178,18 +179,18 @@ public class ClientManager {
                 continue;
             }
             // 构建登录（登出）消息
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setFromUserId("server");
-            chatMessage.setToUserId(toUserId);
-            chatMessage.setId(IdGeneratorUtil.generateId());
-            chatMessage.setType(ChatType.LOGIN.getCode());
+            Message message = new Message();
+            message.setFromUserId("server");
+            message.setToUserId(toUserId);
+            message.setId(IdGeneratorUtil.generateId());
+            message.setType(MessageType.LOGIN.getCode());
             LoginBody loginBody = new LoginBody();
             loginBody.setUserId(userModel.getId());
             loginBody.setUserName(userModel.getName());
             loginBody.setLogin(isLogin);
-            chatMessage.setBody(loginBody);
+            message.setBody(loginBody);
             // 发送消息
-            sendMessage(toUserId, chatMessage);
+            sendMessage(toUserId, message);
         }
     }
 

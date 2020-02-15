@@ -1,6 +1,6 @@
 package cn.kk20.chat.api.controller;
 
-import cn.kk20.chat.model.UserModel;
+import cn.kk20.chat.dao.model.UserModel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;

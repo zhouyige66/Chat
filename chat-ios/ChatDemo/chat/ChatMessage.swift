@@ -75,7 +75,7 @@ class LoginBody:NSObject,CGYJSON,Codable {
 }
 
 class AbsBody:NSObject,CGYJSON,Codable {
-    var msgType:Int!
+    var messageBodyType:Int!
 }
 
 class TextBody: AbsBody{
@@ -87,7 +87,7 @@ class TextBody: AbsBody{
     
     public override init(){
         super.init()
-        self.msgType = MsgType.TEXT.code
+        self.messageBodyType = MsgType.TEXT.code
     }
     
     required init(from decoder: Decoder) throws {

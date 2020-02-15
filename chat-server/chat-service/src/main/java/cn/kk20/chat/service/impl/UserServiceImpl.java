@@ -52,16 +52,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel find(String name, String password) {
         UserModelQuery query = new UserModelQuery();
-        UserModel userModel = userModelMapper.selectByPassword(name, password);
-        if (userModel == null) {
-            userModel = userModelMapper.selectByName(name);
+        UserModelQuery.Criteria criteria = query.createCriteria();
+        criteria.andNameEqualTo(name).andPasswordEqualTo(password);
+        List<UserModel> userModels = userModelMapper.selectByCondition(query);
+        if (userModels == null) {
+            return null;
         }
-        return userModel;
+
+        return userModels.get(0);
     }
 
     @Override
     public List<UserModel> selectAll() {
-        return userModelMapper.selectAll();
+        UserModelQuery query = new UserModelQuery();
+        UserModelQuery.Criteria criteria = query.createCriteria();
+        criteria.andIdIsNotNull();
+        return userModelMapper.selectByCondition(query);
     }
 
 }

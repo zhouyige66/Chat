@@ -185,19 +185,19 @@
 					},
 					//发送消息
 					sendMsg: function send() {
-						var chatMessage = {}
-						chatMessage.fromUserId = loginUserId
-						chatMessage.toUserId = this.chatUserId
-						chatMessage.id = "uuid" + new Date().getMilliseconds()
-						chatMessage.type = 1
+						var message = {}
+						message.fromUserId = loginUserId
+						message.toUserId = this.chatUserId
+						message.id = "uuid" + new Date().getMilliseconds()
+						message.type = 1
 						var textBody = {}
-						textBody.msgType = 1
+						textBody.messageBodyType = 1
 						textBody.text = document.getElementById('text').value
-						chatMessage.body = textBody
-						websocket.send(JSON.stringify(chatMessage))
+						message.body = textBody
+						websocket.send(JSON.stringify(message))
 
-						console.log("发送消息：" + JSON.stringify(chatMessage))
-						this.handleMsg(this.chatUserId, JSON.parse(JSON.stringify(chatMessage)))
+						console.log("发送消息：" + JSON.stringify(message))
+						this.handleMsg(this.chatUserId, JSON.parse(JSON.stringify(message)))
 
 						document.getElementById('text').value = ""
 					},

@@ -21,7 +21,7 @@ public class AppStartListener implements ApplicationListener<ApplicationContextE
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
             LogUtil.log("程序启动完成，启动ChatServer");
-            ChatServer.getInstance().launch(event.getApplicationContext());
+            ChatServer.getInstance().launch(event.getApplicationContext(),10001,10002);
         } else if (event instanceof ContextClosedEvent) {
             LogUtil.log("程序关闭，停止ChatServer");
             ChatServer.getInstance().stop();

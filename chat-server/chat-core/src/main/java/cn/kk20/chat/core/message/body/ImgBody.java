@@ -1,12 +1,14 @@
 package cn.kk20.chat.core.message.body;
 
-public class ImgBody extends AbsBody {
+import cn.kk20.chat.core.message.MessageBodyType;
+
+public class ImgBody extends AbstractMessageBody {
     private String url;
+    private String thumbnailUrl;
+    private Long fileSize;
 
-    public ImgBody(String url) {
-        super(MsgType.IMG);
-
-        this.url = url;
+    public ImgBody() {
+        super(MessageBodyType.IMG);
     }
 
     public String getUrl() {
@@ -17,4 +19,19 @@ public class ImgBody extends AbsBody {
         this.url = url;
     }
 
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
 }

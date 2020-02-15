@@ -17,7 +17,7 @@ final class MessageManager:NSObject {
     private override init() {
     }
  
-    public func store(chatMessage message:Dictionary<String,Any>){
+    public func store(message message:Dictionary<String,Any>){
         let fromUserId:String = message["fromUserId"] as! String
         let toUserId:String = message["toUserId"] as! String
         

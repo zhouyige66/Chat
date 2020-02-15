@@ -13,8 +13,8 @@ import org.springframework.context.ApplicationContext;
 public final class ChatServer {
     private static ChatServer instance;
     private ApplicationContext context;
-    private EventLoopGroup parentGroup1, parentGroup2;
-    private EventLoopGroup childGroup1, childGroup2;
+    private EventLoopGroup commonServerParentGroup, webServerParentGroup;
+    private EventLoopGroup commonServerChildGroup, webServerChildGroup;
 
     private ChatServer() {
     }
@@ -25,13 +25,12 @@ public final class ChatServer {
                 if (instance == null) {
                     instance = new ChatServer();
                 }
-
             }
         }
         return instance;
     }
 
-    public void launch(ApplicationContext context) {
+    public void launch(ApplicationContext context, int commonServerPort, int webServerPort) {
         this.context = context;
 
         // 启动服务器（接收Android、IOS端信息）
@@ -39,21 +38,20 @@ public final class ChatServer {
             @Override
             public void run() {
                 ServerBootstrap serverBootstrap = new ServerBootstrap();
-                parentGroup1 = new NioEventLoopGroup(1);
-                childGroup1 = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
-                int port = 9999;
+                commonServerParentGroup = new NioEventLoopGroup(1);
+                commonServerChildGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
                 try {
-                    serverBootstrap.group(parentGroup1, childGroup1)
+                    serverBootstrap.group(commonServerParentGroup, commonServerChildGroup)
                             .channel(NioServerSocketChannel.class)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(new ServerChannelInitializer());
-                    Channel channel = serverBootstrap.bind(port).sync().channel();
+                    Channel channel = serverBootstrap.bind(commonServerPort).sync().channel();
                     channel.closeFuture().sync();
                 } catch (Exception e) {
                     throw new MessageException(e);
                 } finally {
-                    parentGroup1.shutdownGracefully();
-                    childGroup1.shutdownGracefully();
+                    commonServerParentGroup.shutdownGracefully();
+                    commonServerChildGroup.shutdownGracefully();
                 }
             }
         }).start();
@@ -63,38 +61,37 @@ public final class ChatServer {
             @Override
             public void run() {
                 ServerBootstrap serverBootstrap = new ServerBootstrap();
-                parentGroup2 = new NioEventLoopGroup(1);
-                childGroup2 = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
-                int port2 = 9997;
+                webServerParentGroup = new NioEventLoopGroup(1);
+                webServerChildGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
                 try {
-                    serverBootstrap.group(parentGroup2, childGroup2)
+                    serverBootstrap.group(webServerParentGroup, webServerChildGroup)
                             .channel(NioServerSocketChannel.class)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(new WebServerChannelInitializer());
-                    Channel channel = serverBootstrap.bind(port2).sync().channel();
+                    Channel channel = serverBootstrap.bind(webServerPort).sync().channel();
                     channel.closeFuture().sync();
                 } catch (Exception e) {
                     throw new MessageException(e);
                 } finally {
-                    parentGroup2.shutdownGracefully();
-                    childGroup2.shutdownGracefully();
+                    webServerParentGroup.shutdownGracefully();
+                    webServerChildGroup.shutdownGracefully();
                 }
             }
         }).start();
     }
 
     public void stop() {
-        if (parentGroup1 != null && !parentGroup1.isShutdown()) {
-            parentGroup1.shutdownGracefully();
+        if (commonServerParentGroup != null && !commonServerParentGroup.isShutdown()) {
+            commonServerParentGroup.shutdownGracefully();
         }
-        if (childGroup1 != null && !childGroup1.isShutdown()) {
-            childGroup1.shutdownGracefully();
+        if (commonServerChildGroup != null && !commonServerChildGroup.isShutdown()) {
+            commonServerChildGroup.shutdownGracefully();
         }
-        if (parentGroup2 != null && !parentGroup2.isShutdown()) {
-            parentGroup2.shutdownGracefully();
+        if (webServerParentGroup != null && !webServerParentGroup.isShutdown()) {
+            webServerParentGroup.shutdownGracefully();
         }
-        if (childGroup2 != null && !childGroup2.isShutdown()) {
-            childGroup2.shutdownGracefully();
+        if (webServerChildGroup != null && !webServerChildGroup.isShutdown()) {
+            webServerChildGroup.shutdownGracefully();
         }
     }
 

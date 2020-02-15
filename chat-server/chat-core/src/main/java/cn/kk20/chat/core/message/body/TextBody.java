@@ -1,10 +1,12 @@
 package cn.kk20.chat.core.message.body;
 
-public class TextBody extends AbsBody {
+import cn.kk20.chat.core.message.MessageBodyType;
+
+public class TextBody extends AbstractMessageBody {
     private String text;
 
     public TextBody(String text) {
-        super(MsgType.TEXT);
+        super(MessageBodyType.TEXT);
 
         this.text = text;
     }

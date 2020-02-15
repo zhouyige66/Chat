@@ -5,10 +5,12 @@ spring:
     username: root
     password: kk209257
 
+mybatis:
+  # 指定映射文件
+  mapper-locations: classpath:mapper/*.xml
+  # 指定bean所在的包
+  type-aliases-package: cn.kk20.chat.dao
+
 server:
   tomcat:
     uri-encoding: utf-8
-
-base:
-  packages:
-    name: cn.kk20.chat

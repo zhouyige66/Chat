@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/user")
-@CrossOrigin
+@CrossOrigin // 跨越支持
 public class UserController {
     @Autowired
     UserService userService;

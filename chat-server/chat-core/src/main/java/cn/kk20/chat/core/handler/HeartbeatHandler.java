@@ -1,7 +1,7 @@
 package cn.kk20.chat.core.handler;
 
-import cn.kk20.chat.core.message.ChatMessage;
-import cn.kk20.chat.core.message.ChatType;
+import cn.kk20.chat.core.message.Message;
+import cn.kk20.chat.core.message.MessageType;
 import cn.kk20.chat.core.util.IdGeneratorUtil;
 import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
@@ -11,7 +11,6 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 import java.text.SimpleDateFormat;
-import java.util.UUID;
 
 /**
  * @Description: 心跳连接处理器
@@ -25,7 +24,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
     private SimpleDateFormat simpleDateFormat;
 
     public HeartbeatHandler() {
-        simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
     @Override
@@ -33,30 +32,30 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
         // 收到任何消息，均把心跳失败数置零
         heartFailCount = 0;
 
-        if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage;
-            if (obj instanceof ChatMessage) {
-                chatMessage = (ChatMessage) obj;
+        if (obj instanceof Message || obj instanceof String) {
+            Message message;
+            if (obj instanceof Message) {
+                message = (Message) obj;
             } else {
                 try {
-                    chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
+                    message = JSON.parseObject((String) obj, Message.class);
                 } catch (Exception e) {
                     LogUtil.log("数据转换出错");
                     return;
                 }
             }
 
-            if (chatMessage.getType() == ChatType.HEARTBEAT.getCode()) {
-                ChatMessage heartbeatMessage = new ChatMessage();
+            if (message.getType() == MessageType.HEARTBEAT.getCode()) {
+                Message heartbeatMessage = new Message();
                 heartbeatMessage.setFromUserId("server");
                 heartbeatMessage.setToUserId(ctx.channel().toString());
                 heartbeatMessage.setId(IdGeneratorUtil.generateId());
-                heartbeatMessage.setType(ChatType.HEARTBEAT.getCode());
+                heartbeatMessage.setType(MessageType.HEARTBEAT.getCode());
                 ctx.writeAndFlush(heartbeatMessage);
             } else {
                 String time = simpleDateFormat.format(System.currentTimeMillis());
-                LogUtil.log(String.format("%s收到***%s***消息：%s", time, chatMessage.getFromUserId(), chatMessage.toString()));
-                ctx.fireChannelRead(chatMessage);
+                LogUtil.log(String.format("%s收到***%s***消息：%s", time, message.getFromUserId(), message.toString()));
+                ctx.fireChannelRead(message);
             }
         } else {
             ctx.fireChannelRead(obj);
