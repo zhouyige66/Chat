@@ -1,7 +1,7 @@
 package cn.kk20.chat.core.coder.custom;
 
 import cn.kk20.chat.core.coder.ConstantValue;
-import cn.kk20.chat.core.message.Message;
+import cn.kk20.chat.core.bean.ChatMessage;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -62,8 +62,8 @@ public class MessageDecoder extends ByteToMessageDecoder {
 
             // 数据格式转换（可直接转换成Model）
             String body = new String(data, ConstantValue.CHARSET);
-            Message message = JSON.parseObject(body, Message.class);
-            list.add(message);
+            ChatMessage chatMessage = JSON.parseObject(body, ChatMessage.class);
+            list.add(chatMessage);
         }
     }
 }

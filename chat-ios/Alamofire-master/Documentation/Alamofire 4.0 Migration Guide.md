@@ -760,7 +760,7 @@ Alamofire.request(urlString)
         guard let data = data else { return .failure(customError) }
 
         // 1) Validate the response to make sure everything looks good
-        // 2) If validation fails, you can now parse the error message out of the
+        // 2) If validation fails, you can now parse the error chatMessage out of the
         //    data if necessary and add that to your custom error if you wish.
 
         return .success
@@ -804,7 +804,7 @@ Alamofire.download(urlString)
     }
 ```
 
-By exposing the underlying server data directly to the inline closures, error messages embedded in those responses can be parsed out inside the `Validation` closure to create a custom error including the server error message. If the payload is the same schema as used in a response serializer closure, the response serializer could be called to parse out the error message rather than duplicating the logic. For an example of how to do this, please refer to the README.
+By exposing the underlying server data directly to the inline closures, error messages embedded in those responses can be parsed out inside the `Validation` closure to create a custom error including the server error chatMessage. If the payload is the same schema as used in a response serializer closure, the response serializer could be called to parse out the error chatMessage rather than duplicating the logic. For an example of how to do this, please refer to the README.
 
 > See [PR-1461](https://github.com/Alamofire/Alamofire/pull/1461) for more info.
 

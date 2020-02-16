@@ -1,7 +1,7 @@
 package cn.kk20.chat.core.handler;
 
-import cn.kk20.chat.core.message.Message;
-import cn.kk20.chat.core.message.MessageType;
+import cn.kk20.chat.core.bean.ChatMessage;
+import cn.kk20.chat.core.bean.ChatMessageType;
 import cn.kk20.chat.core.util.IdGeneratorUtil;
 import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
@@ -32,30 +32,30 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
         // 收到任何消息，均把心跳失败数置零
         heartFailCount = 0;
 
-        if (obj instanceof Message || obj instanceof String) {
-            Message message;
-            if (obj instanceof Message) {
-                message = (Message) obj;
+        if (obj instanceof ChatMessage || obj instanceof String) {
+            ChatMessage chatMessage;
+            if (obj instanceof ChatMessage) {
+                chatMessage = (ChatMessage) obj;
             } else {
                 try {
-                    message = JSON.parseObject((String) obj, Message.class);
+                    chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
                 } catch (Exception e) {
                     LogUtil.log("数据转换出错");
                     return;
                 }
             }
 
-            if (message.getType() == MessageType.HEARTBEAT.getCode()) {
-                Message heartbeatMessage = new Message();
+            if (chatMessage.getType() == ChatMessageType.HEARTBEAT.getCode()) {
+                ChatMessage heartbeatMessage = new ChatMessage();
                 heartbeatMessage.setFromUserId("server");
                 heartbeatMessage.setToUserId(ctx.channel().toString());
                 heartbeatMessage.setId(IdGeneratorUtil.generateId());
-                heartbeatMessage.setType(MessageType.HEARTBEAT.getCode());
+                heartbeatMessage.setType(ChatMessageType.HEARTBEAT.getCode());
                 ctx.writeAndFlush(heartbeatMessage);
             } else {
                 String time = simpleDateFormat.format(System.currentTimeMillis());
-                LogUtil.log(String.format("%s收到***%s***消息：%s", time, message.getFromUserId(), message.toString()));
-                ctx.fireChannelRead(message);
+                LogUtil.log(String.format("%s收到***%s***消息：%s", time, chatMessage.getFromUserId(), chatMessage.toString()));
+                ctx.fireChannelRead(chatMessage);
             }
         } else {
             ctx.fireChannelRead(obj);

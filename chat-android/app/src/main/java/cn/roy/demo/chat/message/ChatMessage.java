@@ -1,36 +1,19 @@
 package cn.roy.demo.chat.message;
 
-import android.support.annotation.IntDef;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import cn.roy.demo.chat.message.body.MessageBody;
 
 /**
- * @Description:
+ * @Description: 消息
  * @Author: Roy
- * @Date: 2019/1/11 10:54
+ * @Date: 2020/2/15 12:00 下午
  * @Version: v1.0
  */
-public class ChatMessage<T> {
-
-    @Target(value = {ElementType.FIELD, ElementType.PARAMETER})
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {ChatType.HEARTBEAT,ChatType.LOGIN, ChatType.SINGLE, ChatType.GROUP, ChatType.LOGIN_REPLY})
-    public @interface ChatType {
-        int HEARTBEAT = -1;
-        int LOGIN = 0;
-        int SINGLE = 1;
-        int GROUP = 2;
-        int LOGIN_REPLY = 3;
-    }
-
+public class ChatMessage {
     private String fromUserId;
     private String toUserId;
     private String id;
     private int type;
-    private T body;
+    private MessageBody body;
 
     public String getFromUserId() {
         return fromUserId;
@@ -60,15 +43,15 @@ public class ChatMessage<T> {
         return type;
     }
 
-    public void setType(@ChatType int type) {
+    public void setType(int type) {
         this.type = type;
     }
 
-    public T getBody() {
+    public MessageBody getBody() {
         return body;
     }
 
-    public void setBody(T body) {
+    public void setBody(MessageBody body) {
         this.body = body;
     }
 

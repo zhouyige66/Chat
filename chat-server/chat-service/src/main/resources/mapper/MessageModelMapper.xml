@@ -106,7 +106,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -127,10 +127,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into message (from_user_id, to_user_id, send_time, 
-      flag, content)
-    values (#{fromUserId,jdbcType=VARCHAR}, #{toUserId,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, 
-      #{flag,jdbcType=TINYINT}, #{content,jdbcType=LONGVARCHAR})
+    insert into message (from_user_id, to_user_id, send_time,
+    flag, content)
+    values (#{fromUserId,jdbcType=VARCHAR}, #{toUserId,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP},
+    #{flag,jdbcType=TINYINT}, #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.MessageModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
@@ -207,11 +207,11 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update message
     set id = #{record.id,jdbcType=VARCHAR},
-      from_user_id = #{record.fromUserId,jdbcType=VARCHAR},
-      to_user_id = #{record.toUserId,jdbcType=VARCHAR},
-      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
-      flag = #{record.flag,jdbcType=TINYINT},
-      content = #{record.content,jdbcType=LONGVARCHAR}
+    from_user_id = #{record.fromUserId,jdbcType=VARCHAR},
+    to_user_id = #{record.toUserId,jdbcType=VARCHAR},
+    send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+    flag = #{record.flag,jdbcType=TINYINT},
+    content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Condition_Where_Clause" />
     </if>
@@ -219,10 +219,10 @@
   <update id="updateByCondition" parameterType="map">
     update message
     set id = #{record.id,jdbcType=VARCHAR},
-      from_user_id = #{record.fromUserId,jdbcType=VARCHAR},
-      to_user_id = #{record.toUserId,jdbcType=VARCHAR},
-      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
-      flag = #{record.flag,jdbcType=TINYINT}
+    from_user_id = #{record.fromUserId,jdbcType=VARCHAR},
+    to_user_id = #{record.toUserId,jdbcType=VARCHAR},
+    send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+    flag = #{record.flag,jdbcType=TINYINT}
     <if test="_parameter != null">
       <include refid="Update_By_Condition_Where_Clause" />
     </if>

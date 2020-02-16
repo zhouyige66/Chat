@@ -1,6 +1,6 @@
-package cn.kk20.chat.core.message.body;
+package cn.kk20.chat.core.bean.body;
 
-import cn.kk20.chat.core.message.MessageBodyType;
+import cn.kk20.chat.core.bean.MessageBodyType;
 
 public class ImgBody extends AbstractMessageBody {
     private String url;

@@ -3,7 +3,7 @@ package cn.kk20.chat.api.controller;
 import cn.kk20.chat.api.base.ResultData;
 import cn.kk20.chat.api.base.dto.SimpleDto;
 import cn.kk20.chat.core.ClientManager;
-import cn.kk20.chat.core.message.Message;
+import cn.kk20.chat.core.bean.ChatMessage;
 import cn.kk20.chat.core.util.IdGeneratorUtil;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
@@ -27,16 +27,16 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping("/send")
-    public ResultData login(@RequestBody Message message) {
+    public ResultData login(@RequestBody ChatMessage chatMessage) {
         // 转发
-        ClientManager.getInstance().sendMessage(message.getToUserId(), message);
+        ClientManager.getInstance().sendMessage(chatMessage.getToUserId(), chatMessage);
 
         // 存储到数据库
         MessageModel messageModel = new MessageModel();
         messageModel.setId(IdGeneratorUtil.generateId());
-        messageModel.setFromUserId(message.getFromUserId());
-        messageModel.setToUserId(message.getToUserId());
-        messageModel.setContent(JSON.toJSONString(message));
+        messageModel.setFromUserId(chatMessage.getFromUserId());
+        messageModel.setToUserId(chatMessage.getToUserId());
+        messageModel.setContent(JSON.toJSONString(chatMessage));
         messageService.save(messageModel);
 
         return ResultData.success(new SimpleDto().setValue(messageModel.getId()));

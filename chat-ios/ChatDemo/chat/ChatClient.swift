@@ -120,7 +120,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
 //            let fromUserId:String = json["fromUserId"] as! String
 //            let toUserId:String = json["toUserId"] as! String
 //            let body:Dictionary<String,Any> = json["body"] as! Dictionary<String, Any>
-            MessageManager.shared.store(message: json)
+            MessageManager.shared.store(chatMessage: json)
             break
         case ChatType.GROUP.rawValue:
             break
@@ -181,14 +181,14 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
     }
     
     // 发送消息
-    public func send<T>(_ message:ChatMessage<T>){
+    public func send<T>(_ chatMessage:ChatMessage<T>){
         if(clientSocket.isConnected){
             var data:Data = Data()
             // 方式一：原字符串
-//            let msgStr = message.toJSONString()!
+//            let msgStr = chatMessage.toJSONString()!
 //            data = msgStr.data(using: String.Encoding.utf8)!
             // 方式二：添加分隔符
-//            var msgStr = message.toJSONString()!
+//            var msgStr = chatMessage.toJSONString()!
 //            msgStr.append(DELIMITER)
 //            data = msgStr.data(using: String.Encoding.utf8)!
             // 方式三：添加头部标志和长度
@@ -196,7 +196,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
             let headBytes:[UInt8] = CommonUtil.int2Bytes(originValue: HEAD_DATA)
             data.append(contentsOf: headBytes)
             // 2.写入长度
-            let msgStr = message.toJSONString()!
+            let msgStr = chatMessage.toJSONString()!
             let chatData:Data = msgStr.data(using: String.Encoding.utf8)!
             let length = UInt32(chatData.count)
             let lengthBytes:[UInt8] = CommonUtil.int2Bytes(originValue: length)

@@ -1,9 +1,15 @@
-package cn.roy.demo.chat.message;
+package cn.kk20.chat.core.bean.body;
 
-public class LoginBody {
+import cn.kk20.chat.core.bean.MessageBodyType;
+
+public class LoginBody extends AbstractMessageBody {
     private String userId;
     private String userName;
     private boolean login;
+
+    public LoginBody() {
+        super(MessageBodyType.TEXT);
+    }
 
     public String getUserId() {
         return userId;
@@ -29,12 +35,4 @@ public class LoginBody {
         this.login = login;
     }
 
-    @Override
-    public String toString() {
-        return "LoginBody{" +
-                "userId='" + userId + '\'' +
-                ", userName='" + userName + '\'' +
-                ", login=" + login +
-                '}';
-    }
 }

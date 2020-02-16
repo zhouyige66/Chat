@@ -3,7 +3,7 @@ package cn.roy.demo.chat.coder.custom;
 import com.alibaba.fastjson.JSON;
 
 import cn.roy.demo.chat.message.ChatMessage;
-import cn.roy.demo.chat.ConstantValue;
+import cn.roy.demo.chat.coder.ConstantValue;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

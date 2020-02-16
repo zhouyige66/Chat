@@ -1,4 +1,4 @@
-package cn.roy.demo;
+package cn.roy.demo.activity;
 
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.concurrent.Callable;
 
+import cn.roy.demo.R;
 import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.chat.ChatClient;
@@ -23,7 +24,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 

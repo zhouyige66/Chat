@@ -3,7 +3,7 @@ package cn.roy.demo.chat.coder.delimiter;
 import com.alibaba.fastjson.JSON;
 
 import cn.roy.demo.chat.message.ChatMessage;
-import cn.roy.demo.chat.ConstantValue;
+import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.chat.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

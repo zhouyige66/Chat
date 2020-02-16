@@ -1,10 +1,6 @@
 package cn.roy.demo;
 
 import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.os.Build;
 
 import cn.roy.demo.chat.MessageManager;
 import cn.roy.demo.chat.message.ChatMessage;
@@ -12,7 +8,6 @@ import cn.roy.demo.chat.util.LogUtil;
 import cn.roy.demo.util.SPUtil;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 /**
  * @Description:

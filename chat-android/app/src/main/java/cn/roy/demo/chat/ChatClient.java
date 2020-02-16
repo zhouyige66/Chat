@@ -7,7 +7,8 @@ import cn.roy.demo.chat.coder.custom.MessageEncoder;
 import cn.roy.demo.chat.handler.HeartbeatHandler;
 import cn.roy.demo.chat.handler.MessageHandler;
 import cn.roy.demo.chat.message.ChatMessage;
-import cn.roy.demo.chat.message.LoginBody;
+import cn.roy.demo.chat.message.ChatMessageTypeEnum;
+import cn.roy.demo.chat.message.body.LoginBody;
 import cn.roy.demo.util.CacheManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -65,11 +66,11 @@ public class ChatClient {
 
     private void login(boolean login){
         // 发送断线消息
-        ChatMessage<LoginBody> message = new ChatMessage();
+        ChatMessage message = new ChatMessage();
         message.setFromUserId(CacheManager.getInstance().getCurrentUserId());
         message.setToUserId("server");
         message.setId(UUID.randomUUID().toString());
-        message.setType(ChatMessage.ChatType.LOGIN);
+        message.setType(ChatMessageTypeEnum.LOGIN.getCode());
         LoginBody loginBody = new LoginBody();
         loginBody.setUserId(CacheManager.getInstance().getCurrentUserId());
         loginBody.setUserName(CacheManager.getInstance().getCurrentUserName());

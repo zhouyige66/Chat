@@ -14,20 +14,20 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     @IBOutlet weak var tf_input: UITextField!
     @IBAction func sendMessage(_ sender: Any) {
         if let msg = tf_input.text{
-            var message:ChatMessage<TextBody> = ChatMessage<TextBody>()
-            message.fromUserId = CacheManager.shared.getUserId()
-            message.toUserId = chatUser!.id
-            message.id = UUID.init().uuidString
-            message.type = ChatType.SINGLE.rawValue
+            var chatMessage:ChatMessage<TextBody> = ChatMessage<TextBody>()
+            chatMessage.fromUserId = CacheManager.shared.getUserId()
+            chatMessage.toUserId = chatUser!.id
+            chatMessage.id = UUID.init().uuidString
+            chatMessage.type = ChatType.SINGLE.rawValue
             let textBody = TextBody()
             textBody.text = msg
-            message.body = textBody
-            chatClient.send(message)
+            chatMessage.body = textBody
+            chatClient.send(chatMessage)
             
             // 存储
-            let jsonData:Data = (message.toJSONString()?.data(using: String.Encoding.utf8))!
+            let jsonData:Data = (chatMessage.toJSONString()?.data(using: String.Encoding.utf8))!
             let json:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: jsonData, options: []) as! Dictionary<String, Any>
-            MessageManager.shared.store(message: json)
+            MessageManager.shared.store(chatMessage: json)
             
             tf_input.text = ""
         }else{

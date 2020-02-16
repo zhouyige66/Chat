@@ -1,9 +1,9 @@
-package cn.kk20.chat.core.message.body;
+package cn.kk20.chat.core.bean.body;
 
-import cn.kk20.chat.core.message.MessageBodyType;
+import cn.kk20.chat.core.bean.MessageBodyType;
 
 /**
- * @Description: 消息内容
+ * @Description: 消息主体
  * @Author: Roy
  * @Date: 2020/2/15 11:43 上午
  * @Version: v1.0

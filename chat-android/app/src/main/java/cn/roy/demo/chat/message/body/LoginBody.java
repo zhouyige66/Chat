@@ -1,6 +1,7 @@
-package cn.kk20.chat.core.message.body;
+package cn.roy.demo.chat.message.body;
 
-import cn.kk20.chat.core.message.MessageBodyType;
+
+import cn.roy.demo.chat.message.MessageBodyTypeEnum;
 
 public class LoginBody extends AbstractMessageBody {
     private String userId;
@@ -8,7 +9,7 @@ public class LoginBody extends AbstractMessageBody {
     private boolean login;
 
     public LoginBody() {
-        super(MessageBodyType.TEXT);
+        super(MessageBodyTypeEnum.TEXT);
     }
 
     public String getUserId() {

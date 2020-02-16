@@ -11,7 +11,7 @@ import Alamofire
 
 protocol HttpRequestCallback {
     func onSuccess(data:JSON)
-    func onFail(code:Int,message:String)
+    func onFail(code:Int,chatMessage:String)
 }
 
 class BaseModel{
@@ -54,14 +54,14 @@ class BaseModel{
             guard result.response != nil else {
                 let error = result.error?.localizedDescription ?? ""
                 print("错误原因：\(error)")
-                self.delegate?.onFail(code: -1, message: "出错：\(error)")
+                self.delegate?.onFail(code: -1, chatMessage: "出错：\(error)")
                 return
             }
             
             if let data = result.data, let utf8Text = String(data: data, encoding: .utf8) {
                 print("\(logText)-->返回结果： \(utf8Text)")
                 if utf8Text.count==0{
-                    self.delegate?.onFail(code: -1, message: "返回数据为空")
+                    self.delegate?.onFail(code: -1, chatMessage: "返回数据为空")
                     return
                 }
                 
@@ -73,11 +73,11 @@ class BaseModel{
                     if let errorMsg = json["msg"].string{
                         error = errorMsg
                     }
-                    self.delegate?.onFail(code: json["code"].int!, message: error)
+                    self.delegate?.onFail(code: json["code"].int!, chatMessage: error)
                 }
             }else{
                 print("\(logText)-->出错： \(String(describing: result.error?.localizedDescription))")
-                self.delegate?.onFail(code: -1, message: "\(logText)出错")
+                self.delegate?.onFail(code: -1, chatMessage: "\(logText)出错")
             }
         }
     }
@@ -94,9 +94,9 @@ class BaseModel{
 
 class Model:BaseModel,HttpRequestCallback{
     var success:((_ data:JSON)->Void)?
-    var fail:((_ code:Int,_ message:String)->Void)?
+    var fail:((_ code:Int,_ chatMessage:String)->Void)?
     
-    init(success successCallback:@escaping (_ data:JSON)->Void,fail failCallback:@escaping (_ code:Int,_ message:String)->Void) {
+    init(success successCallback:@escaping (_ data:JSON)->Void,fail failCallback:@escaping (_ code:Int,_ chatMessage:String)->Void) {
         super.init()
         
         self.success = successCallback
@@ -109,8 +109,8 @@ class Model:BaseModel,HttpRequestCallback{
         self.success!(data)
     }
     
-    func onFail(code: Int, message: String) {
-        self.fail!(code,message)
+    func onFail(code: Int, chatMessage: String) {
+        self.fail!(code,chatMessage)
     }
 }
 

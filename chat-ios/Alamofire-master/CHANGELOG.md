@@ -576,7 +576,7 @@ Released on 2016-09-11. All issues associated with this milestone can be found u
   - Removed by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1467](https://github.com/Alamofire/Alamofire/issues/1467) reported by
   [thebluepotato](https://github.com/thebluepotato).
-- Duplicated change log message in the migration guide.
+- Duplicated change log chatMessage in the migration guide.
   - Removed by [Justin Jia](https://github.com/JustinJiaDev) in Pull Request
   [#1503](https://github.com/Alamofire/Alamofire/pull/1503).
 - Code coverage generation by default to improve test suite stability.

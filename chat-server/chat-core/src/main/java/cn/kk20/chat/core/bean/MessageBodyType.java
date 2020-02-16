@@ -1,4 +1,4 @@
-package cn.kk20.chat.core.message;
+package cn.kk20.chat.core.bean;
 
 /**
  * @Description: 消息主体格式
@@ -28,4 +28,5 @@ public enum MessageBodyType {
     public String getDes() {
         return des;
     }
+
 }

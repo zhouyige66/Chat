@@ -1,16 +1,21 @@
-package cn.roy.demo;
+package cn.roy.demo.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.roy.demo.R;
+import cn.roy.demo.activity.BaseActivity;
+import cn.roy.demo.activity.MainActivity;
 import cn.roy.demo.chat.util.LogUtil;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
@@ -26,28 +31,36 @@ import io.reactivex.disposables.Disposable;
  * @Date: 2019/1/30 15:47
  * @Version: v1.0
  */
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class RegisterActivity extends BaseActivity implements View.OnClickListener {
+    private Toolbar toolbar;
     private EditText et_user_name, et_user_password;
     private TextView tv_login, tv_register, tv_forget_password;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        et_user_name = findViewById(R.id.et_user_name);
-        et_user_password = findViewById(R.id.et_user_password);
-        tv_login = findViewById(R.id.tv_login);
-        tv_register = findViewById(R.id.tv_register);
-        tv_forget_password = findViewById(R.id.tv_forget_password);
-
-        tv_login.setOnClickListener(this);
-        tv_register.setOnClickListener(this);
-        tv_forget_password.setOnClickListener(this);
+        setContentView(R.layout.activity_register);
 
 
-        et_user_name.setText(SPUtil.getString(SPUtil.LOGIN_NAME, ""));
-        et_user_password.setText(SPUtil.getString(SPUtil.LOGIN_PASSWORD, ""));
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+//        et_user_name = findViewById(R.id.et_user_name);
+//        et_user_password = findViewById(R.id.et_user_password);
+//        tv_login = findViewById(R.id.tv_login);
+//        tv_register = findViewById(R.id.tv_register);
+//        tv_forget_password = findViewById(R.id.tv_forget_password);
+//
+//        tv_login.setOnClickListener(this);
+//        tv_register.setOnClickListener(this);
+//        tv_forget_password.setOnClickListener(this);
+//
+//        et_user_name.setText(SPUtil.getString(SPUtil.LOGIN_NAME, ""));
+//        et_user_password.setText(SPUtil.getString(SPUtil.LOGIN_PASSWORD, ""));
     }
 
     @Override

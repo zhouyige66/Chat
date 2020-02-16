@@ -17,9 +17,9 @@ final class MessageManager:NSObject {
     private override init() {
     }
  
-    public func store(message message:Dictionary<String,Any>){
-        let fromUserId:String = message["fromUserId"] as! String
-        let toUserId:String = message["toUserId"] as! String
+    public func store(chatMessage chatMessage:Dictionary<String,Any>){
+        let fromUserId:String = chatMessage["fromUserId"] as! String
+        let toUserId:String = chatMessage["toUserId"] as! String
         
         var key:String
         if(fromUserId == CacheManager.shared.getUserId()){// 发送人是自己
@@ -33,7 +33,7 @@ final class MessageManager:NSObject {
         }else{
             messageList = Array<Any>()
         }
-        messageList.append(message)
+        messageList.append(chatMessage)
         messageDic[key] = messageList
     }
     

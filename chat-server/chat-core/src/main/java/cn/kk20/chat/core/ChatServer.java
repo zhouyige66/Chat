@@ -30,7 +30,8 @@ public final class ChatServer {
         return instance;
     }
 
-    public void launch(ApplicationContext context, int commonServerPort, int webServerPort) {
+    public void launch(ApplicationContext context, int commonServerPort, ServerChannelInitializer.CoderEnum coderType,
+                       int webServerPort) {
         this.context = context;
 
         // 启动服务器（接收Android、IOS端信息）
@@ -44,7 +45,7 @@ public final class ChatServer {
                     serverBootstrap.group(commonServerParentGroup, commonServerChildGroup)
                             .channel(NioServerSocketChannel.class)
                             .handler(new LoggingHandler(LogLevel.INFO))
-                            .childHandler(new ServerChannelInitializer());
+                            .childHandler(new ServerChannelInitializer(coderType));
                     Channel channel = serverBootstrap.bind(commonServerPort).sync().channel();
                     channel.closeFuture().sync();
                 } catch (Exception e) {

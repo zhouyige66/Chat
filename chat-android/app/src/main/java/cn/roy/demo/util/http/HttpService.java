@@ -1,6 +1,7 @@
 package cn.roy.demo.util.http;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSONObject;
 

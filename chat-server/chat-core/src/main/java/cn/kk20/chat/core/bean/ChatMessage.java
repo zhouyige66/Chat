@@ -1,6 +1,6 @@
-package cn.kk20.chat.core.message;
+package cn.kk20.chat.core.bean;
 
-import cn.kk20.chat.core.message.body.MessageBody;
+import cn.kk20.chat.core.bean.body.MessageBody;
 
 /**
  * @Description: 消息
@@ -8,7 +8,7 @@ import cn.kk20.chat.core.message.body.MessageBody;
  * @Date: 2020/2/15 12:00 下午
  * @Version: v1.0
  */
-public class Message {
+public class ChatMessage {
     private String fromUserId;
     private String toUserId;
     private String id;

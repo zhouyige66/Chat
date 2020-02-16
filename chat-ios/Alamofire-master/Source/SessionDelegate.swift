@@ -190,9 +190,9 @@ open class SessionDelegate: NSObject {
     // MARK: NSObject Overrides
 
     /// Returns a `Bool` indicating whether the `SessionDelegate` implements or inherits a method that can respond
-    /// to a specified message.
+    /// to a specified chatMessage.
     ///
-    /// - parameter selector: A selector that identifies a message.
+    /// - parameter selector: A selector that identifies a chatMessage.
     ///
     /// - returns: `true` if the receiver implements or inherits a method that can respond to selector, otherwise `false`.
     open override func responds(to selector: Selector) -> Bool {

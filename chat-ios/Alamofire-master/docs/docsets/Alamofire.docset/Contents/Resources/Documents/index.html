@@ -1179,7 +1179,7 @@
 </code></pre>
 <h4 id='subclassing' class='heading'>Subclassing</h4>
 
-<p>Another way to override the default implementation of the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> is to subclass it. Subclassing allows you completely customize the behavior of the API or to create a proxy for the API and still use the default implementation. Creating a proxy allows you to log events, emit notifications, provide pre and post hook implementations, etc. Here&rsquo;s a quick example of subclassing the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> and logging a message when a redirect occurs.</p>
+<p>Another way to override the default implementation of the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> is to subclass it. Subclassing allows you completely customize the behavior of the API or to create a proxy for the API and still use the default implementation. Creating a proxy allows you to log events, emit notifications, provide pre and post hook implementations, etc. Here&rsquo;s a quick example of subclassing the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> and logging a chatMessage when a redirect occurs.</p>
 <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">LoggingSessionDelegate</span><span class="p">:</span> <span class="kt">SessionDelegate</span> <span class="p">{</span>
     <span class="k">override</span> <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span>
         <span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span>
