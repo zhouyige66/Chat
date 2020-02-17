@@ -1,8 +1,7 @@
 package cn.kk20.chat.core.handler;
 
-import cn.kk20.chat.core.MessageProcessor;
 import cn.kk20.chat.core.bean.ChatMessage;
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.common.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -21,7 +20,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         String msg = textWebSocketFrame.text();
         LogUtil.log("收到消息：" + msg);
         ChatMessage chatMessage = JSON.parseObject(msg, ChatMessage.class);
-        MessageProcessor.getInstance().processMessage(ctx, chatMessage, true);
+        HandlerManager.getInstance().handleMessage(ctx, chatMessage, true);
     }
 
 }

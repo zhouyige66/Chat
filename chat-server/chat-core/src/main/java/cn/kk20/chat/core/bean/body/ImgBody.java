@@ -2,6 +2,12 @@ package cn.kk20.chat.core.bean.body;
 
 import cn.kk20.chat.core.bean.MessageBodyType;
 
+/**
+ * @Description: 图片消息体
+ * @Author: Roy Z
+ * @Date: 2020/2/17 15:57
+ * @Version: v1.0
+ */
 public class ImgBody extends AbstractMessageBody {
     private String url;
     private String thumbnailUrl;

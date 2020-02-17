@@ -3,7 +3,7 @@ package cn.kk20.chat.core.coder.custom;
 import cn.kk20.chat.core.coder.ConstantValue;
 import cn.kk20.chat.core.bean.ChatMessage;
 import cn.kk20.chat.core.bean.ChatMessageType;
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.common.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

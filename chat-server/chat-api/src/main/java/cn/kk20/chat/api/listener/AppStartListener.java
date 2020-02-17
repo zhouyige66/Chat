@@ -1,7 +1,7 @@
 package cn.kk20.chat.api.listener;
 
 import cn.kk20.chat.core.ChatServer;
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.common.LogUtil;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;

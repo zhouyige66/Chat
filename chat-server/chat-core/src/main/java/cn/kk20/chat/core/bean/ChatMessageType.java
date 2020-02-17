@@ -7,12 +7,11 @@ package cn.kk20.chat.core.bean;
  * @Version: v1.0
  */
 public enum ChatMessageType {
-    LOGIN(0, "登录信息"),
-    LOGIN_REPLY(1, "登录回复消息"),
-    HEARTBEAT(2, "心跳信息"),
-    SINGLE(3, "点对点信息"),
-    GROUP(4, "群消息"),
-    NOTIFY(5, "通知消息");
+    LOGIN(0, "登录"),
+    HEARTBEAT(1, "心跳"),
+    SINGLE(2, "点对点"),
+    GROUP(3, "群聊"),
+    NOTIFY(4, "通知");
 
     private final int code;
     private final String des;

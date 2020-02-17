@@ -2,6 +2,12 @@ package cn.kk20.chat.core.bean.body;
 
 import cn.kk20.chat.core.bean.MessageBodyType;
 
+/**
+ * @Description: 登录消息体
+ * @Author: Roy Z
+ * @Date: 2020/2/17 15:57
+ * @Version: v1.0
+ */
 public class LoginBody extends AbstractMessageBody {
     private String userId;
     private String userName;

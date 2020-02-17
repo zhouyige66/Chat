@@ -2,8 +2,8 @@ package cn.kk20.chat.core.handler;
 
 import cn.kk20.chat.core.bean.ChatMessage;
 import cn.kk20.chat.core.bean.ChatMessageType;
-import cn.kk20.chat.core.util.IdGeneratorUtil;
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.common.IdGenerator;
+import cn.kk20.chat.core.common.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -13,7 +13,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import java.text.SimpleDateFormat;
 
 /**
- * @Description: 心跳连接处理器
+ * @Description: 心跳处理器
  * @Author: Roy
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
@@ -49,7 +49,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
                 ChatMessage heartbeatMessage = new ChatMessage();
                 heartbeatMessage.setFromUserId("server");
                 heartbeatMessage.setToUserId(ctx.channel().toString());
-                heartbeatMessage.setId(IdGeneratorUtil.generateId());
+                heartbeatMessage.setId(IdGenerator.generateId());
                 heartbeatMessage.setType(ChatMessageType.HEARTBEAT.getCode());
                 ctx.writeAndFlush(heartbeatMessage);
             } else {

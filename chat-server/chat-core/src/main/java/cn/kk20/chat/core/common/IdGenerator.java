@@ -1,20 +1,20 @@
-package cn.kk20.chat.core.util;
+package cn.kk20.chat.core.common;
 
 import java.util.Random;
 import java.util.UUID;
 
 /**
- * @Description:
+ * @Description: id生成器
  * @Author: Roy
  * @Date: 2019-02-14 10:28
  * @Version: v1.0
  */
-public class IdGeneratorUtil {
+public class IdGenerator {
     final static Random random = new Random(1000000);
 
     private static Long currentIp = null;
 
-    private IdGeneratorUtil() {
+    private IdGenerator() {
 
     }
 

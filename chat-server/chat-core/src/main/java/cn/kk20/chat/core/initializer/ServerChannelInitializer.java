@@ -1,4 +1,4 @@
-package cn.kk20.chat.core;
+package cn.kk20.chat.core.initializer;
 
 import cn.kk20.chat.core.coder.ConstantValue;
 import cn.kk20.chat.core.coder.custom.MessageDecoder;
@@ -19,7 +19,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 
 /**
- * @Description:
+ * @Description: 初始化通用Server
  * @Author: Roy
  * @Date: 2019-01-28 16:24
  * @Version: v1.0

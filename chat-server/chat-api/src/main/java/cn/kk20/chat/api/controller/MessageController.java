@@ -4,7 +4,7 @@ import cn.kk20.chat.api.base.ResultData;
 import cn.kk20.chat.api.base.dto.SimpleDto;
 import cn.kk20.chat.core.ClientManager;
 import cn.kk20.chat.core.bean.ChatMessage;
-import cn.kk20.chat.core.util.IdGeneratorUtil;
+import cn.kk20.chat.core.common.IdGenerator;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
 import com.alibaba.fastjson.JSON;
@@ -33,7 +33,7 @@ public class MessageController {
 
         // 存储到数据库
         MessageModel messageModel = new MessageModel();
-        messageModel.setId(IdGeneratorUtil.generateId());
+        messageModel.setId(IdGenerator.generateId());
         messageModel.setFromUserId(chatMessage.getFromUserId());
         messageModel.setToUserId(chatMessage.getToUserId());
         messageModel.setContent(JSON.toJSONString(chatMessage));

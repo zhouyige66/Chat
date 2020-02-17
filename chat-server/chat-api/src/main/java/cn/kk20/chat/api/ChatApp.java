@@ -1,6 +1,6 @@
 package cn.kk20.chat.api;
 
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.common.LogUtil;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

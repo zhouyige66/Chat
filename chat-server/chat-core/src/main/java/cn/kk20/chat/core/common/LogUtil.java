@@ -1,10 +1,10 @@
-package cn.kk20.chat.core.util;
+package cn.kk20.chat.core.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @Description:
+ * @Description: 日志工具类
  * @Author: Roy
  * @Date: 2019/1/21 16:32
  * @Version: v1.0

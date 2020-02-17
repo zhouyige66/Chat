@@ -1,4 +1,4 @@
-package cn.kk20.chat.core;
+package cn.kk20.chat.core.initializer;
 
 import cn.kk20.chat.core.handler.TextWebSocketFrameHandler;
 import cn.kk20.chat.core.handler.WebSocketHandler;
@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
 /**
- * @Description:
+ * @Description: 初始化Web Server
  * @Author: Roy
  * @Date: 2019-01-28 16:24
  * @Version: v1.0

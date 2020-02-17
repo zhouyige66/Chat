@@ -1,6 +1,8 @@
 package cn.kk20.chat.core;
 
 import cn.kk20.chat.core.exception.MessageException;
+import cn.kk20.chat.core.initializer.ServerChannelInitializer;
+import cn.kk20.chat.core.initializer.WebServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -10,6 +12,12 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.springframework.context.ApplicationContext;
 
+/**
+ * @Description: 聊天Server
+ * @Author: Roy Z
+ * @Date: 2020/2/17 16:00
+ * @Version: v1.0
+ */
 public final class ChatServer {
     private static ChatServer instance;
     private ApplicationContext context;
