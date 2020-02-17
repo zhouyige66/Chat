@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * @Description:
+ * @Description: 自定义注解
  * @Author: Roy Z
  * @Date: 2020/2/17 16:35
  * @Version: v1.0
