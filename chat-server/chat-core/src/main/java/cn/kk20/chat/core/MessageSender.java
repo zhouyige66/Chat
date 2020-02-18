@@ -41,19 +41,6 @@ public class MessageSender {
     }
 
     public void sendMessage(String targetId, ChatMessage chatMessage) {
-        // 存储到数据库
-        MessageModel messageModel = new MessageModel();
-        messageModel.setId(chatMessage.getId());
-        messageModel.setFromUserId(chatMessage.getFromUserId());
-        messageModel.setToUserId(chatMessage.getToUserId());
-        messageModel.setContent(JSON.toJSONString(chatMessage));
-        if (messageService == null) {
-            ApplicationContext context = ChatServer.getInstance().getContext();
-            messageService = context.getAutowireCapableBeanFactory().createBean(MessageServiceImpl.class);
-        }
-        int result = messageService.save(messageModel);
-        LogUtil.log("存储消息：" + result);
-
         // 实时发给目标客户
         ClientWrapper clientWrapper = ClientManager.getInstance().getClient(targetId);
         if (null == clientWrapper) {

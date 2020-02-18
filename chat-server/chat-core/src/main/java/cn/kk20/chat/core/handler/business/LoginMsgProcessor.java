@@ -15,13 +15,11 @@ import cn.kk20.chat.core.common.RedisUtil;
 import cn.kk20.chat.dao.model.UserModel;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -59,7 +57,7 @@ public class LoginMsgProcessor implements MessageProcessor {
         HashMap<String, String> hostMap = new HashMap<>(userIdSet.size());
         for (String userId : userIdSet) {
             // 查询在线好友
-            String userHost = redisUtil.getStringValue(userId);
+            String userHost = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
             if (!StringUtils.isEmpty(userHost)) {
                 hostMap.put(userId, userHost);
             }
@@ -84,28 +82,9 @@ public class LoginMsgProcessor implements MessageProcessor {
         }
 
         // 通知联系人，用户登录或登出了
-        String hostAddress = getHostAddress();
-        for (Map.Entry<String, String> entity : hostMap.entrySet()) {
-            String userId = entity.getKey();
-            String host = entity.getValue();
-            if (host.equals(hostAddress)) {
-                // 在本机上连接用户
-                messageSender.sendMessage(userId,chatMessage);
-            }else {
-                // 由中心server转发
-
-            }
-        }
-    }
-
-    private String getHostAddress() {
-        String hostAddress = null;
-        try {
-            hostAddress = Inet4Address.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return hostAddress;
+        ChatMessage notifyMsg = new ChatMessage();
+        BeanUtils.copyProperties(chatMessage,notifyMsg);
+        notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
     }
 
 }
