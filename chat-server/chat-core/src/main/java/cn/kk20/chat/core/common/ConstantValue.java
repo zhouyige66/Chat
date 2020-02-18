@@ -1,4 +1,4 @@
-package cn.kk20.chat.core.coder;
+package cn.kk20.chat.core.common;
 
 import io.netty.util.CharsetUtil;
 
@@ -18,5 +18,12 @@ final public class ConstantValue {
     public static final Charset CHARSET = CharsetUtil.UTF_8;
     // 分隔符
     public static final String DELIMITER = "*&v_secretary&*";
+
+    public static final String SERVER_ID = "server_id";
+
+    // redis存储前缀
+    public static final String HOST_OF_USER="host_of_user_";
+    public static final String MEMBER_OF_GROUP="member_of_group_";
+    public static final String FRIEND_OF_USER="friend_of_user_";
 
 }

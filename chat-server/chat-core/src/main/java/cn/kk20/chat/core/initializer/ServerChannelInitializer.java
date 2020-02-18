@@ -1,6 +1,7 @@
 package cn.kk20.chat.core.initializer;
 
-import cn.kk20.chat.core.coder.ConstantValue;
+import cn.kk20.chat.core.coder.CoderType;
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.coder.custom.MessageDecoder;
 import cn.kk20.chat.core.coder.custom.MessageEncoder;
 import cn.kk20.chat.core.coder.delimiter.DelimiterBasedFrameEncoder;
@@ -25,9 +26,9 @@ import io.netty.util.CharsetUtil;
  * @Version: v1.0
  */
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
-    private CoderEnum coderType;
+    private CoderType coderType;
 
-    public ServerChannelInitializer(CoderEnum coderType) {
+    public ServerChannelInitializer(CoderType coderType) {
         this.coderType = coderType;
     }
 
@@ -59,15 +60,6 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         channelPipeline.addLast(new IdleStateHandler(5, 0, 0),
                 new HeartbeatHandler(),
                 new MessageHandler());
-    }
-
-    /**
-     * 通信方式枚举
-     */
-    public enum CoderEnum {
-        STRING,
-        DELIMITER,
-        CUSTOM;
     }
 
 }

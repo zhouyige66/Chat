@@ -29,7 +29,7 @@ public class HandlerManager {
     private HandlerManager() {
         messageProcessorMap = new ConcurrentHashMap<>(10);
 
-        // 获取所有解析器
+        // 获取所有消息处理器
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(MsgProcessor.class);
         for (Object object : beansWithAnnotation.values()) {
             MsgProcessor msgProcessor = object.getClass().getAnnotation(MsgProcessor.class);

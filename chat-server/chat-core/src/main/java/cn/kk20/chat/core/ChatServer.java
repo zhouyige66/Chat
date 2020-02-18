@@ -1,5 +1,6 @@
 package cn.kk20.chat.core;
 
+import cn.kk20.chat.core.coder.CoderType;
 import cn.kk20.chat.core.exception.MessageException;
 import cn.kk20.chat.core.initializer.ServerChannelInitializer;
 import cn.kk20.chat.core.initializer.WebServerChannelInitializer;
@@ -12,6 +13,9 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.springframework.context.ApplicationContext;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+
 /**
  * @Description: 聊天Server
  * @Author: Roy Z
@@ -20,6 +24,7 @@ import org.springframework.context.ApplicationContext;
  */
 public final class ChatServer {
     private static ChatServer instance;
+    private CoderType coderType;
     private ApplicationContext context;
     private EventLoopGroup commonServerParentGroup, webServerParentGroup;
     private EventLoopGroup commonServerChildGroup, webServerChildGroup;
@@ -38,9 +43,10 @@ public final class ChatServer {
         return instance;
     }
 
-    public void launch(ApplicationContext context, int commonServerPort, ServerChannelInitializer.CoderEnum coderType,
+    public void launch(ApplicationContext context, int commonServerPort, CoderType coderType,
                        int webServerPort) {
         this.context = context;
+        this.coderType = coderType;
 
         // 启动服务器（接收Android、IOS端信息）
         new Thread(new Runnable() {
@@ -106,6 +112,10 @@ public final class ChatServer {
 
     public ApplicationContext getContext() {
         return context;
+    }
+
+    public CoderType getCoderType() {
+        return coderType;
     }
 
 }

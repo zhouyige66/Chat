@@ -5,7 +5,7 @@ import cn.kk20.chat.core.bean.ChatMessageType;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
- * @Description:
+ * @Description: 群消息处理器
  * @Author: Roy Z
  * @Date: 2020/2/17 16:34
  * @Version: v1.0

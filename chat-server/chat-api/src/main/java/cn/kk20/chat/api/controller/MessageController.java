@@ -28,9 +28,6 @@ public class MessageController {
 
     @PostMapping("/send")
     public ResultData login(@RequestBody ChatMessage chatMessage) {
-        // 转发
-        ClientManager.getInstance().sendMessage(chatMessage.getToUserId(), chatMessage);
-
         // 存储到数据库
         MessageModel messageModel = new MessageModel();
         messageModel.setId(IdGenerator.generateId());
