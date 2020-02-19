@@ -19,8 +19,9 @@ import java.text.SimpleDateFormat;
  * @Version: v1.0
  */
 public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
+    private final int heartFailMax = 5;
     // 发送心跳未收到回复的指令次数
-    private int heartFailCount = 0;
+    private volatile int heartFailCount = 0;
     private SimpleDateFormat simpleDateFormat;
 
     public HeartbeatHandler() {
@@ -68,7 +69,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
                 heartFailCount++;
-                if (heartFailCount > 3) {
+                if (heartFailCount > heartFailMax) {
                     String s = String.format("客户端读超时，关闭通道：%s", new SimpleDateFormat("HH:mm:ss")
                             .format(System.currentTimeMillis()));
                     LogUtil.log(s);

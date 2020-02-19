@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class LoginMsgProcessor implements MessageProcessor {
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, boolean isFromWeb) {
         MessageBody body = chatMessage.getBody();
         if (!(body instanceof LoginBody)) {
-            LogUtil.log("收到消息的消息体不能解析为登录消息体");
+            LogUtil.log("解析登录消息出错");
             return;
         }
 
@@ -52,39 +53,53 @@ public class LoginMsgProcessor implements MessageProcessor {
         userModel.setId(loginBody.getUserId());
         userModel.setName(loginBody.getUserName());
 
-        // 查询登录用户的联系人列表
-        Set<String> userIdSet = redisUtil.getSetValue(ConstantValue.FRIEND_OF_USER + fromUserId);
-        HashMap<String, String> hostMap = new HashMap<>(userIdSet.size());
-        for (String userId : userIdSet) {
-            // 查询在线好友
-            String userHost = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
-            if (!StringUtils.isEmpty(userHost)) {
-                hostMap.put(userId, userHost);
-            }
-        }
+        // 交由客户端管理器处理
         if (login) {
             ClientWrapper wrapper = new ClientWrapper();
             wrapper.setChannel(channelHandlerContext.channel());
             wrapper.setUserModel(userModel);
             wrapper.setIsWebUser(isFromWeb);
             ClientManager.getInstance().addClient(wrapper);
+        } else {
+            ClientManager.getInstance().removeClient(fromUserId);
+        }
 
-            // 回复当前登录用户，在线名单
+        // 查询好友列表
+        Set<String> userIdSet = redisUtil.getSetValue(ConstantValue.FRIEND_OF_USER + fromUserId);
+        if (CollectionUtils.isEmpty(userIdSet)) {
+            return;
+        }
+        HashMap<String, String> onlineFriendConnectHostMap = new HashMap<>(userIdSet.size());
+        // 查询在线好友
+        for (String id : userIdSet) {
+            String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + id);
+            if (!StringUtils.isEmpty(host)) {
+                onlineFriendConnectHostMap.put(id, host);
+            }
+        }
+        if (login) {
+            // 回复当前登录用户，好友在线名单
             ChatMessage replyMessage = new ChatMessage();
             replyMessage.setFromUserId(ConstantValue.SERVER_ID);
             replyMessage.setToUserId(fromUserId);
             replyMessage.setId(IdGenerator.generateId());
             replyMessage.setType(ChatMessageType.LOGIN_NOTIFY.getCode());
-            replyMessage.setBody(new TextBody(JSON.toJSONString(hostMap.keySet())));
+            replyMessage.setBody(new TextBody(JSON.toJSONString(onlineFriendConnectHostMap.keySet())));
             messageSender.sendMessage(channelHandlerContext.channel(), replyMessage);
-        } else {
-            ClientManager.getInstance().removeClient(fromUserId);
         }
 
-        // 通知联系人，用户登录或登出了
+        // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线好友没必要通知
         ChatMessage notifyMsg = new ChatMessage();
-        BeanUtils.copyProperties(chatMessage,notifyMsg);
+        BeanUtils.copyProperties(chatMessage, notifyMsg);
         notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
+        notifyMsg.setType(ChatMessageType.LOGIN_NOTIFY.getCode());
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", fromUserId);
+        map.put("login", login);
+        notifyMsg.setBody(new TextBody(JSON.toJSONString(map)));
+        for (String id : userIdSet) {
+            messageSender.sendMessage(id, notifyMsg);
+        }
     }
 
 }

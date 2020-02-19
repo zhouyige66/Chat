@@ -3,15 +3,15 @@ package cn.kk20.chat.core.bean;
 import cn.kk20.chat.core.bean.body.MessageBody;
 
 /**
- * @Description: 消息
+ * @Description: 聊天消息
  * @Author: Roy
  * @Date: 2020/2/15 12:00 下午
  * @Version: v1.0
  */
 public class ChatMessage {
+    private String id;
     private String fromUserId;
     private String toUserId;
-    private String id;
     private int type;
     private MessageBody body;
 

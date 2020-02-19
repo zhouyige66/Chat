@@ -3,14 +3,11 @@ package cn.kk20.chat.core;
 import cn.kk20.chat.core.bean.ChatMessage;
 import cn.kk20.chat.core.coder.CoderType;
 import cn.kk20.chat.core.common.LogUtil;
-import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
-import cn.kk20.chat.service.impl.MessageServiceImpl;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
