@@ -5,7 +5,6 @@ import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.coder.custom.MessageDecoder;
 import cn.kk20.chat.core.coder.custom.MessageEncoder;
 import cn.kk20.chat.core.coder.delimiter.DelimiterBasedFrameEncoder;
-import cn.kk20.chat.core.exception.MessageException;
 import cn.kk20.chat.core.handler.HeartbeatHandler;
 import cn.kk20.chat.core.handler.MessageHandler;
 import io.netty.buffer.ByteBuf;
@@ -54,7 +53,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
                         new MessageEncoder());
                 break;
             default:
-                throw new MessageException("该方式暂无实现");
+                throw new Exception("该方式暂无实现");
         }
         // 添加心跳处理，消息处理器
         channelPipeline.addLast(new IdleStateHandler(5, 0, 0),

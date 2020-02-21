@@ -1,13 +1,12 @@
 package cn.kk20.chat.core.handler;
 
-import cn.kk20.chat.core.ChatServer;
-import cn.kk20.chat.core.ClientManager;
-import cn.kk20.chat.core.bean.ChatMessage;
-import cn.kk20.chat.core.bean.ChatMessageType;
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.common.IdGenerator;
 import cn.kk20.chat.core.common.LogUtil;
 import cn.kk20.chat.core.handler.business.MessageProcessor;
 import cn.kk20.chat.core.handler.business.MsgProcessor;
+import cn.kk20.chat.core.main.client.ChatClient;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
 import cn.kk20.chat.service.impl.MessageServiceImpl;
@@ -15,6 +14,8 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,8 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date: 2020/2/16 6:00 下午
  * @Version: v1.0
  */
+@Component
 public class HandlerManager {
-    private static HandlerManager instance;
     private ConcurrentHashMap<Integer, MessageProcessor> messageProcessorMap;
 
     @Autowired
@@ -35,7 +36,8 @@ public class HandlerManager {
     @Autowired
     MessageService messageService;
 
-    private HandlerManager() {
+    @Bean
+    public HandlerManager init() {
         messageProcessorMap = new ConcurrentHashMap<>(10);
 
         // 获取所有消息处理器
@@ -47,17 +49,8 @@ public class HandlerManager {
                 messageProcessorMap.put(chatMessageType.getCode(), (MessageProcessor) object);
             }
         }
-    }
 
-    public static HandlerManager getInstance() {
-        if (instance == null) {
-            synchronized (ClientManager.class) {
-                if (instance == null) {
-                    instance = new HandlerManager();
-                }
-            }
-        }
-        return instance;
+        return this;
     }
 
     public void handleMessage(ChannelHandlerContext ctx, ChatMessage chatMessage, boolean isFromWeb) {
@@ -73,7 +66,7 @@ public class HandlerManager {
             LogUtil.log("未注入messageService");
             if (applicationContext == null) {
                 LogUtil.log("未注入applicationContext");
-                applicationContext = ChatServer.getInstance().getContext();
+                applicationContext = ChatClient.getInstance().getContext();
             }
             messageService = applicationContext.getAutowireCapableBeanFactory().createBean(MessageServiceImpl.class);
         }

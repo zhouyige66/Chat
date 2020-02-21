@@ -1,8 +1,8 @@
 package cn.kk20.chat.core.handler.business;
 
-import cn.kk20.chat.core.MessageSender;
-import cn.kk20.chat.core.bean.ChatMessage;
-import cn.kk20.chat.core.bean.ChatMessageType;
+import cn.kk20.chat.core.main.MessageSender;
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.common.RedisUtil;
 import io.netty.channel.ChannelHandlerContext;

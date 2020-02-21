@@ -2,3 +2,15 @@ spring:
   redis:
     host: localhost
     port: 6379
+  profiles:
+    include: service
+
+chat:
+  registerAsServer: false
+  client:
+    host: localhost
+    port: 10001
+    port2: 10002
+  server:
+    host: localhost
+    port: 10000

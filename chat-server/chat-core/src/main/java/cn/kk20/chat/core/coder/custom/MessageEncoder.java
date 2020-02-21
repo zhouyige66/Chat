@@ -1,8 +1,8 @@
 package cn.kk20.chat.core.coder.custom;
 
 import cn.kk20.chat.core.common.ConstantValue;
-import cn.kk20.chat.core.bean.ChatMessage;
-import cn.kk20.chat.core.bean.ChatMessageType;
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.common.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;

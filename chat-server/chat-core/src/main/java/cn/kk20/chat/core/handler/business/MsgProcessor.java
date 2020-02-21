@@ -1,6 +1,6 @@
 package cn.kk20.chat.core.handler.business;
 
-import cn.kk20.chat.core.bean.ChatMessageType;
+import cn.kk20.chat.base.message.ChatMessageType;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;

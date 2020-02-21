@@ -17,9 +17,10 @@
 
     <!--声明子模块-->
     <modules>
-        <module>chat-api</module>
-        <module>chat-core</module>
+        <module>chat-base</module>
         <module>chat-service</module>
+        <module>chat-core</module>
+        <module>chat-web-api</module>
     </modules>
 
     <properties>

@@ -1,13 +1,13 @@
 package cn.kk20.chat.core.handler.business;
 
-import cn.kk20.chat.core.ClientManager;
-import cn.kk20.chat.core.ClientWrapper;
-import cn.kk20.chat.core.MessageSender;
-import cn.kk20.chat.core.bean.ChatMessage;
-import cn.kk20.chat.core.bean.ChatMessageType;
-import cn.kk20.chat.core.bean.body.LoginBody;
-import cn.kk20.chat.core.bean.body.MessageBody;
-import cn.kk20.chat.core.bean.body.TextBody;
+import cn.kk20.chat.core.main.client.UserChannelManager;
+import cn.kk20.chat.core.main.client.UserWrapper;
+import cn.kk20.chat.core.main.MessageSender;
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.body.LoginBody;
+import cn.kk20.chat.base.message.body.MessageBody;
+import cn.kk20.chat.base.message.body.TextBody;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.common.IdGenerator;
 import cn.kk20.chat.core.common.LogUtil;
@@ -55,13 +55,13 @@ public class LoginMsgProcessor implements MessageProcessor {
 
         // 交由客户端管理器处理
         if (login) {
-            ClientWrapper wrapper = new ClientWrapper();
+            UserWrapper wrapper = new UserWrapper();
             wrapper.setChannel(channelHandlerContext.channel());
             wrapper.setUserModel(userModel);
             wrapper.setIsWebUser(isFromWeb);
-            ClientManager.getInstance().addClient(wrapper);
+            UserChannelManager.getInstance().addClient(wrapper);
         } else {
-            ClientManager.getInstance().removeClient(fromUserId);
+            UserChannelManager.getInstance().removeClient(fromUserId);
         }
 
         // 查询好友列表
