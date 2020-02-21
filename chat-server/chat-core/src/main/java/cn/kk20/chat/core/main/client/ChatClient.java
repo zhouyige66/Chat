@@ -30,24 +30,24 @@ import java.util.concurrent.TimeUnit;
 public final class ChatClient {
     // 配置属性
     private String host;
-    private int port;
+    private int port,commonServerPort,webServerPort;
     private long reconnectTime;
     private CoderType coderType;
-    // 其他属性
-    private ScheduledExecutorService commonServerExecutor = null;
-    private ScheduledExecutorService webServerExecutor = null;
-    private ScheduledExecutorService connectToServerExecutor = null;
 
-    private EventLoopGroup commonServerParentGroup, webServerParentGroup;
-    private EventLoopGroup commonServerChildGroup, webServerChildGroup;
+    // 聊天服务器使用
+    private ScheduledExecutorService commonServerExecutor = null, webServerExecutor = null;
+    private EventLoopGroup commonServerParentGroup, webServerParentGroup, commonServerChildGroup, webServerChildGroup;
+    // 中心服务器使用
+    private ScheduledExecutorService centerServerExecutor = null;
     private NioEventLoopGroup nioEventLoopGroup = null;
     private Channel serverChannel = null;
+    private boolean connectSuccess = false;
 
     public void launch() {
-        ScheduledExecutorService commonExecutorService = Executors.newSingleThreadScheduledExecutor();
-        ScheduledExecutorService webExecutorService = Executors.newSingleThreadScheduledExecutor();
-        ScheduledExecutorService webExecutorService = Executors.newSingleThreadScheduledExecutor();
-        commonExecutorService.scheduleWithFixedDelay(() -> {
+        commonServerExecutor = Executors.newSingleThreadScheduledExecutor();
+        webServerExecutor = Executors.newSingleThreadScheduledExecutor();
+        centerServerExecutor = Executors.newSingleThreadScheduledExecutor();
+        commonServerExecutor.scheduleWithFixedDelay(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             commonServerParentGroup = new NioEventLoopGroup(1);
             commonServerChildGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
@@ -65,7 +65,7 @@ public final class ChatClient {
                 commonServerChildGroup.shutdownGracefully();
             }
         }, 0, 5, TimeUnit.SECONDS);
-        webExecutorService.scheduleWithFixedDelay(() -> {
+        webServerExecutor.scheduleWithFixedDelay(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             webServerParentGroup = new NioEventLoopGroup(1);
             webServerChildGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
@@ -83,11 +83,10 @@ public final class ChatClient {
                 webServerChildGroup.shutdownGracefully();
             }
         }, 0, 5, TimeUnit.SECONDS);
-        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleWithFixedDelay(() -> {
-            NioEventLoopGroup group = new NioEventLoopGroup();
+        centerServerExecutor.scheduleWithFixedDelay(() -> {
+            nioEventLoopGroup = new NioEventLoopGroup();
             Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(group)
+            bootstrap.group(nioEventLoopGroup)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
@@ -106,7 +105,7 @@ public final class ChatClient {
                 e.printStackTrace();
             } finally {
                 connectSuccess = false;
-                group.shutdownGracefully();
+                nioEventLoopGroup.shutdownGracefully();
             }
         }, 0, reconnectTime, TimeUnit.MILLISECONDS);
     }
@@ -124,10 +123,6 @@ public final class ChatClient {
         if (webServerChildGroup != null && !webServerChildGroup.isShutdown()) {
             webServerChildGroup.shutdownGracefully();
         }
-    }
-
-    public void start() {
-
     }
 
 }

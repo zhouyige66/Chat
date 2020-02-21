@@ -1,7 +1,6 @@
 package cn.kk20.chat.core;
 
-import cn.kk20.chat.core.common.ChatClientConfigBean;
-import cn.kk20.chat.core.common.ChatServerConfigBean;
+import cn.kk20.chat.core.common.ChatConfigBean;
 import cn.kk20.chat.core.common.LogUtil;
 import cn.kk20.chat.core.main.Launcher;
 import org.mybatis.spring.annotation.MapperScan;
@@ -22,7 +21,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * @Version: v1.0
  */
 @SpringBootApplication
-@EnableConfigurationProperties({ChatServerConfigBean.class, ChatClientConfigBean.class})
+@EnableConfigurationProperties({ChatConfigBean.class})
 @ComponentScan("cn.kk20.chat")
 @MapperScan(basePackages = "cn.kk20.chat")
 public class ServerApplication implements ApplicationListener<ApplicationContextEvent> {

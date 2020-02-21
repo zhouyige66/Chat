@@ -1,7 +1,10 @@
 package cn.kk20.chat.core.main;
 
-import cn.kk20.chat.core.handler.HandlerManager;
+import cn.kk20.chat.core.common.ChatConfigBean;
+import cn.kk20.chat.core.main.client.ChatClient;
+import cn.kk20.chat.core.main.server.ChatServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,10 +17,21 @@ import org.springframework.stereotype.Component;
 public class Launcher {
 
     @Autowired
-    HandlerManager handlerManager;
+    ApplicationContext context;
+
+    @Autowired
+    ChatConfigBean chatConfigBean;
 
     public void launch(){
         System.out.println("系统启动了");
+
+        if(chatConfigBean.isRegisterAsServer()){
+            ChatServer chatServer= context.getBean(ChatServer.class);
+            chatServer.start();
+        }else {
+            ChatClient chatClient= context.getBean(ChatClient.class);
+            chatClient.launch();
+        }
     }
 
     public void stop(){

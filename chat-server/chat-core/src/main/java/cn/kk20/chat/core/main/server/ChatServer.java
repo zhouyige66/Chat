@@ -1,6 +1,6 @@
 package cn.kk20.chat.core.main.server;
 
-import cn.kk20.chat.core.coder.CoderType;
+import cn.kk20.chat.core.common.ChatConfigBean;
 import cn.kk20.chat.core.initializer.ServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -9,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executors;
@@ -23,11 +24,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public final class ChatServer {
-    // 配置属性
-    private String host;
-    private int port;
-    private long reconnectTime;
-    private CoderType coderType;
+
+    @Autowired
+    ChatConfigBean chatConfigBean;
 
     // 其他属性
     private ScheduledExecutorService executorService = null;
@@ -44,8 +43,8 @@ public final class ChatServer {
                 serverBootstrap.group(chatServerParentGroup, chatServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(coderType));
-                ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+                        .childHandler(new ServerChannelInitializer(chatConfigBean.getCoderType()));
+                ChannelFuture channelFuture = serverBootstrap.bind(chatConfigBean.getServer().getPort()).sync();
                 if (channelFuture.isSuccess()) {
                     launch = true;
                 }
@@ -56,8 +55,9 @@ public final class ChatServer {
             } finally {
                 chatServerParentGroup.shutdownGracefully();
                 chatServerChildGroup.shutdownGracefully();
+                launch = false;
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, chatConfigBean.getServer().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
     }
 
     public void stop() {

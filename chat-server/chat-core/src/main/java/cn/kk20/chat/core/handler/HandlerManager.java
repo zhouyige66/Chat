@@ -6,7 +6,6 @@ import cn.kk20.chat.core.common.IdGenerator;
 import cn.kk20.chat.core.common.LogUtil;
 import cn.kk20.chat.core.handler.business.MessageProcessor;
 import cn.kk20.chat.core.handler.business.MsgProcessor;
-import cn.kk20.chat.core.main.client.ChatClient;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
 import cn.kk20.chat.service.impl.MessageServiceImpl;
@@ -64,10 +63,6 @@ public class HandlerManager {
         messageModel.setContent(JSON.toJSONString(chatMessage));
         if (messageService == null) {
             LogUtil.log("未注入messageService");
-            if (applicationContext == null) {
-                LogUtil.log("未注入applicationContext");
-                applicationContext = ChatClient.getInstance().getContext();
-            }
             messageService = applicationContext.getAutowireCapableBeanFactory().createBean(MessageServiceImpl.class);
         }
         int result = messageService.save(messageModel);

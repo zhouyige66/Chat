@@ -3,12 +3,12 @@ package cn.kk20.chat.core.main;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.coder.CoderType;
 import cn.kk20.chat.core.common.LogUtil;
-import cn.kk20.chat.core.main.client.ChatClient;
 import cn.kk20.chat.core.main.client.UserChannelManager;
 import cn.kk20.chat.core.main.client.UserWrapper;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MessageSender {
+
+    @Value("${chat.codeType}")
+    CoderType coderType;
 
     public void sendMessage(String targetId, ChatMessage chatMessage) {
         // 实时发给目标客户
@@ -43,7 +46,7 @@ public class MessageSender {
             return;
         }
 
-        if (ChatClient.getInstance().getCoderType() == CoderType.STRING) {
+        if (coderType == CoderType.STRING) {
             // 方式一：发送字符串
             channel.writeAndFlush(JSON.toJSONString(chatMessage));
         } else {
