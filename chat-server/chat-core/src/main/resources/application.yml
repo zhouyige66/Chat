@@ -7,10 +7,18 @@ spring:
 
 chat:
   registerAsServer: false
+  coderType: STRING
   server:
     port: 10000
-#    autoRestartTimeInterval: 5
+    autoRestartTimeInterval: 5
   client:
-    host: localhost
-    port: 10001
-    port2: 10002
+    center:
+      host: localhost
+      port: 10000
+      autoRestartTimeInterval: 5
+    commonServer:
+      port: 10001
+      autoRestartTimeInterval: 5
+    webServer:
+      port: 10002
+      autoRestartTimeInterval: 5

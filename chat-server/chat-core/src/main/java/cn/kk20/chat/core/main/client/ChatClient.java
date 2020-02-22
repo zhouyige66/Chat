@@ -1,8 +1,9 @@
 package cn.kk20.chat.core.main.client;
 
-import cn.kk20.chat.core.coder.CoderType;
+import cn.kk20.chat.core.main.ChatConfigBean;
 import cn.kk20.chat.core.initializer.ServerChannelInitializer;
 import cn.kk20.chat.core.initializer.WebServerChannelInitializer;
+import cn.kk20.chat.core.main.Launcher;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -14,7 +15,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,14 +26,9 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2020/2/17 16:00
  * @Version: v1.0
  */
-@Component
-public final class ChatClient {
-    // 配置属性
-    private String host;
-    private int port,commonServerPort,webServerPort;
-    private long reconnectTime;
-    private CoderType coderType;
-
+public class ChatClient implements Launcher {
+    // 配置参数
+    private ChatConfigBean chatConfigBean;
     // 聊天服务器使用
     private ScheduledExecutorService commonServerExecutor = null, webServerExecutor = null;
     private EventLoopGroup commonServerParentGroup, webServerParentGroup, commonServerChildGroup, webServerChildGroup;
@@ -43,6 +38,11 @@ public final class ChatClient {
     private Channel serverChannel = null;
     private boolean connectSuccess = false;
 
+    public void setChatConfigBean(ChatConfigBean chatConfigBean) {
+        this.chatConfigBean = chatConfigBean;
+    }
+
+    @Override
     public void launch() {
         commonServerExecutor = Executors.newSingleThreadScheduledExecutor();
         webServerExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -55,8 +55,9 @@ public final class ChatClient {
                 serverBootstrap.group(commonServerParentGroup, commonServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(coderType));
-                Channel channel = serverBootstrap.bind(commonServerPort).sync().channel();
+                        .childHandler(new ServerChannelInitializer(chatConfigBean.getCoderType()));
+                Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getCommonServer().getPort())
+                        .sync().channel();
                 channel.closeFuture().sync();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -74,7 +75,8 @@ public final class ChatClient {
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
                         .childHandler(new WebServerChannelInitializer());
-                Channel channel = serverBootstrap.bind(webServerPort).sync().channel();
+                Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getWebServer().getPort())
+                        .sync().channel();
                 channel.closeFuture().sync();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -91,10 +93,11 @@ public final class ChatClient {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .handler(new ServerChannelInitializer(coderType));
+                    .handler(new ServerChannelInitializer(chatConfigBean.getCoderType()));
             // 发起异步连接操作
             try {
-                ChannelFuture future = bootstrap.connect(host, port).sync();
+                ChannelFuture future = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
+                        chatConfigBean.getClient().getCenter().getPort()).sync();
                 if (future.isSuccess()) {
                     connectSuccess = true;
                     serverChannel = future.channel();
@@ -107,9 +110,10 @@ public final class ChatClient {
                 connectSuccess = false;
                 nioEventLoopGroup.shutdownGracefully();
             }
-        }, 0, reconnectTime, TimeUnit.MILLISECONDS);
+        }, 0, chatConfigBean.getClient().getCenter().getAutoRestartTimeInterval(), TimeUnit.MILLISECONDS);
     }
 
+    @Override
     public void stop() {
         if (commonServerParentGroup != null && !commonServerParentGroup.isShutdown()) {
             commonServerParentGroup.shutdownGracefully();
@@ -123,6 +127,11 @@ public final class ChatClient {
         if (webServerChildGroup != null && !webServerChildGroup.isShutdown()) {
             webServerChildGroup.shutdownGracefully();
         }
+    }
+
+    @Override
+    public boolean isLaunch() {
+        return connectSuccess;
     }
 
 }

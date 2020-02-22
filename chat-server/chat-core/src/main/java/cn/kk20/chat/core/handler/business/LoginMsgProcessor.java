@@ -31,7 +31,6 @@ import java.util.Set;
  */
 @MsgProcessor(messageType = ChatMessageType.LOGIN)
 public class LoginMsgProcessor implements MessageProcessor {
-
     @Autowired
     RedisUtil redisUtil;
 

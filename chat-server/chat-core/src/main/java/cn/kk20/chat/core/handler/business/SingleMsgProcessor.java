@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @MsgProcessor(messageType = ChatMessageType.SINGLE)
 public class SingleMsgProcessor implements MessageProcessor {
-
     @Autowired
     MessageSender messageSender;
 

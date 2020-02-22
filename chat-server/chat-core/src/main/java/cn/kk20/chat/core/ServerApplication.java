@@ -1,6 +1,6 @@
 package cn.kk20.chat.core;
 
-import cn.kk20.chat.core.common.ChatConfigBean;
+import cn.kk20.chat.core.main.ChatConfigBean;
 import cn.kk20.chat.core.common.LogUtil;
 import cn.kk20.chat.core.main.Launcher;
 import org.mybatis.spring.annotation.MapperScan;
