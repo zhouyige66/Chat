@@ -2,34 +2,42 @@ package cn.kk20.chat.core.handler;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.core.coder.CoderType;
 import cn.kk20.chat.core.common.IdGenerator;
-import cn.kk20.chat.core.common.LogUtil;
+import cn.kk20.chat.core.main.ChatConfigBean;
 import com.alibaba.fastjson.JSON;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
+import java.net.SocketAddress;
 
 /**
- * @Description: 心跳处理器
+ * @Description: 读心跳处理器
  * @Author: Roy
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */
-public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
-    private final int heartFailMax = 5;
-    // 发送心跳未收到回复的指令次数
-    private volatile int heartFailCount = 0;
-    private SimpleDateFormat simpleDateFormat;
+public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object> {
+    private Logger logger = LoggerFactory.getLogger(HeartbeatForReadHandler.class);
 
-    public HeartbeatHandler() {
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private ChatConfigBean chatConfigBean;
+    private boolean isServer;
+    // 发送心跳未收到回复的指令次数
+    private final int heartFailMax = 5;
+    private volatile int heartFailCount = 0;
+
+    public HeartbeatForReadHandler(ChatConfigBean chatConfigBean, boolean isServer) {
+        super();
+        this.chatConfigBean = chatConfigBean;
+        this.isServer = isServer;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
+        logger.debug("收到消息");
         // 收到任何消息，均把心跳失败数置零
         heartFailCount = 0;
 
@@ -41,7 +49,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
                 try {
                     chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
                 } catch (Exception e) {
-                    LogUtil.log("数据转换出错");
+                    logger.error("数据转换出错");
                     return;
                 }
             }
@@ -52,10 +60,16 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
                 heartbeatMessage.setToUserId(ctx.channel().toString());
                 heartbeatMessage.setId(IdGenerator.generateId());
                 heartbeatMessage.setType(ChatMessageType.HEARTBEAT.getCode());
-                ctx.writeAndFlush(heartbeatMessage);
+                String msg = JSON.toJSONString(heartbeatMessage);
+                logger.debug("回复心跳消息：{}", msg);
+                ChannelFuture channelFuture;
+                if(chatConfigBean.getCoderType() == CoderType.STRING){
+                    channelFuture = ctx.writeAndFlush(msg);
+                }else {
+                    channelFuture = ctx.writeAndFlush(heartbeatMessage);
+                }
+                logger.debug("回复心跳消息：{}", channelFuture.isSuccess() ? "成功" : "失败");
             } else {
-                String time = simpleDateFormat.format(System.currentTimeMillis());
-                LogUtil.log(String.format("%s收到***%s***消息：%s", time, chatMessage.getFromUserId(), chatMessage.toString()));
                 ctx.fireChannelRead(chatMessage);
             }
         } else {
@@ -65,19 +79,35 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        boolean hasDeal = false;
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
                 heartFailCount++;
+                logger.debug("心跳消息读失败：{}次", heartFailCount);
+                hasDeal = true;
                 if (heartFailCount > heartFailMax) {
-                    String s = String.format("客户端读超时，关闭通道：%s", new SimpleDateFormat("HH:mm:ss")
-                            .format(System.currentTimeMillis()));
-                    LogUtil.log(s);
+                    heartbeatFail(ctx);
                     ctx.close();
                 }
-            } else {
-                super.userEventTriggered(ctx, evt);
             }
+        }
+
+        if (!hasDeal) {
+            super.userEventTriggered(ctx, evt);
+        }
+    }
+
+    private void heartbeatFail(ChannelHandlerContext ctx) {
+        logger.debug("客户端读超时，关闭通道");
+
+        // 中心server读超时，表示子服务server断开连接
+        if (isServer) {
+            Channel channel = ctx.channel();
+            String name = ctx.name();
+            ChannelPipeline pipeline = ctx.pipeline();
+            SocketAddress socketAddress = channel.localAddress();
+            SocketAddress socketAddress1 = channel.remoteAddress();
         }
     }
 

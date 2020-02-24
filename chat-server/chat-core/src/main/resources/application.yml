@@ -1,9 +1,16 @@
+server:
+  port: 9001
+
 spring:
   redis:
     host: localhost
     port: 6379
   profiles:
     include: service
+
+logging:
+  level:
+    root: debug
 
 chat:
   registerAsServer: false

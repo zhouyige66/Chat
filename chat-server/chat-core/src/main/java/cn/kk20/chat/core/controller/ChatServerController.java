@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version: v1.0
  */
 @RestController
-@ConditionalOnProperty(prefix = "chat",name = "server-center",matchIfMissing = false)
-@RequestMapping("center")
+@ConditionalOnProperty(name = "chat.registerAsServer",havingValue = "true")
+@RequestMapping("server")
 public class ChatServerController {
 
 

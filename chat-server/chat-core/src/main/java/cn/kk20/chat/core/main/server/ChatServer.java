@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ChatServer implements Launcher {
     private ChatConfigBean chatConfigBean;
-    private ScheduledExecutorService executorService = null;
-    private NioEventLoopGroup chatServerParentGroup = null, chatServerChildGroup = null;
+    private ScheduledExecutorService serverExecutor = null;
+    private NioEventLoopGroup serverParentGroup = null, serverChildGroup = null;
     private boolean launch = false;
 
     public void setChatConfigBean(ChatConfigBean chatConfigBean) {
@@ -33,27 +33,29 @@ public class ChatServer implements Launcher {
 
     @Override
     public void launch() {
-        executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleWithFixedDelay(() -> {
+        serverExecutor = Executors.newSingleThreadScheduledExecutor();
+        serverExecutor.scheduleWithFixedDelay(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            chatServerParentGroup = new NioEventLoopGroup(1);
-            chatServerChildGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
+            serverParentGroup = new NioEventLoopGroup(1);
+            serverChildGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
             try {
-                serverBootstrap.group(chatServerParentGroup, chatServerChildGroup)
+                serverBootstrap.group(serverParentGroup, serverChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(chatConfigBean.getCoderType()));
+                        .childHandler(new ServerChannelInitializer(chatConfigBean));
+                // Start the client.
                 ChannelFuture channelFuture = serverBootstrap.bind(chatConfigBean.getServer().getPort()).sync();
                 if (channelFuture.isSuccess()) {
                     launch = true;
                 }
                 Channel channel = channelFuture.channel();
+                // Wait until the connection is closed.
                 channel.closeFuture().sync();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                chatServerParentGroup.shutdownGracefully();
-                chatServerChildGroup.shutdownGracefully();
+                serverParentGroup.shutdownGracefully();
+                serverChildGroup.shutdownGracefully();
                 launch = false;
             }
         }, 0, chatConfigBean.getServer().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
@@ -61,14 +63,14 @@ public class ChatServer implements Launcher {
 
     @Override
     public void stop() {
-        if (chatServerParentGroup != null && !chatServerParentGroup.isShutdown()) {
-            chatServerParentGroup.shutdownGracefully();
+        if (serverParentGroup != null && !serverParentGroup.isShutdown()) {
+            serverParentGroup.shutdownGracefully();
         }
-        if (chatServerChildGroup != null && !chatServerChildGroup.isShutdown()) {
-            chatServerChildGroup.shutdownGracefully();
+        if (serverChildGroup != null && !serverChildGroup.isShutdown()) {
+            serverChildGroup.shutdownGracefully();
         }
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdown();
+        if (serverExecutor != null && !serverExecutor.isShutdown()) {
+            serverExecutor.shutdown();
         }
     }
 

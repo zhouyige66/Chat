@@ -15,6 +15,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,6 +29,8 @@ import java.util.concurrent.TimeUnit;
  * @Version: v1.0
  */
 public class ChatClient implements Launcher {
+    private final Logger logger = LoggerFactory.getLogger(ChatClient.class);
+
     // 配置参数
     private ChatConfigBean chatConfigBean;
     // 聊天服务器使用
@@ -47,6 +51,7 @@ public class ChatClient implements Launcher {
         commonServerExecutor = Executors.newSingleThreadScheduledExecutor();
         webServerExecutor = Executors.newSingleThreadScheduledExecutor();
         centerServerExecutor = Executors.newSingleThreadScheduledExecutor();
+        // 通用服务器
         commonServerExecutor.scheduleWithFixedDelay(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             commonServerParentGroup = new NioEventLoopGroup(1);
@@ -55,7 +60,7 @@ public class ChatClient implements Launcher {
                 serverBootstrap.group(commonServerParentGroup, commonServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(chatConfigBean.getCoderType()));
+                        .childHandler(new ServerChannelInitializer(chatConfigBean));
                 Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getCommonServer().getPort())
                         .sync().channel();
                 channel.closeFuture().sync();
@@ -66,6 +71,7 @@ public class ChatClient implements Launcher {
                 commonServerChildGroup.shutdownGracefully();
             }
         }, 0, 5, TimeUnit.SECONDS);
+        // web服务器
         webServerExecutor.scheduleWithFixedDelay(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             webServerParentGroup = new NioEventLoopGroup(1);
@@ -85,6 +91,7 @@ public class ChatClient implements Launcher {
                 webServerChildGroup.shutdownGracefully();
             }
         }, 0, 5, TimeUnit.SECONDS);
+        // 中心服务器
         centerServerExecutor.scheduleWithFixedDelay(() -> {
             nioEventLoopGroup = new NioEventLoopGroup();
             Bootstrap bootstrap = new Bootstrap();
@@ -93,7 +100,7 @@ public class ChatClient implements Launcher {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .handler(new ServerChannelInitializer(chatConfigBean.getCoderType()));
+                    .handler(new ServerChannelInitializer(chatConfigBean, true));
             // 发起异步连接操作
             try {
                 ChannelFuture future = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
@@ -101,6 +108,7 @@ public class ChatClient implements Launcher {
                 if (future.isSuccess()) {
                     connectSuccess = true;
                     serverChannel = future.channel();
+                    logger.debug("连接中心服务器的通道为：{}", serverChannel);
                     // 服务器同步连接断开时,这句代码才会往下执行
                     serverChannel.closeFuture().sync();
                 }
@@ -126,6 +134,19 @@ public class ChatClient implements Launcher {
         }
         if (webServerChildGroup != null && !webServerChildGroup.isShutdown()) {
             webServerChildGroup.shutdownGracefully();
+        }
+        if (nioEventLoopGroup != null && !nioEventLoopGroup.isShutdown()) {
+            nioEventLoopGroup.shutdownGracefully();
+        }
+
+        if (commonServerExecutor != null && !commonServerExecutor.isShutdown()) {
+            commonServerExecutor.shutdown();
+        }
+        if (webServerExecutor != null && !webServerExecutor.isShutdown()) {
+            webServerExecutor.shutdown();
+        }
+        if (centerServerExecutor != null && !centerServerExecutor.isShutdown()) {
+            centerServerExecutor.shutdown();
         }
     }
 
