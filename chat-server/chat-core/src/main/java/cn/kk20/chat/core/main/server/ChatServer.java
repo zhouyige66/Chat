@@ -1,8 +1,8 @@
 package cn.kk20.chat.core.main.server;
 
-import cn.kk20.chat.core.main.ChatConfigBean;
-import cn.kk20.chat.core.initializer.ServerChannelInitializer;
+import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.Launcher;
+import cn.kk20.chat.core.main.server.channelhandler.ServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -10,6 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,10 +23,15 @@ import java.util.concurrent.TimeUnit;
  * @Version: v1.0
  */
 public class ChatServer implements Launcher {
+    private ApplicationContext context;
     private ChatConfigBean chatConfigBean;
     private ScheduledExecutorService serverExecutor = null;
     private NioEventLoopGroup serverParentGroup = null, serverChildGroup = null;
     private boolean launch = false;
+
+    public void setContext(ApplicationContext context) {
+        this.context = context;
+    }
 
     public void setChatConfigBean(ChatConfigBean chatConfigBean) {
         this.chatConfigBean = chatConfigBean;
@@ -42,7 +48,7 @@ public class ChatServer implements Launcher {
                 serverBootstrap.group(serverParentGroup, serverChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(chatConfigBean));
+                        .childHandler(new ServerChannelInitializer(context));
                 // Start the client.
                 ChannelFuture channelFuture = serverBootstrap.bind(chatConfigBean.getServer().getPort()).sync();
                 if (channelFuture.isSuccess()) {

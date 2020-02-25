@@ -2,7 +2,7 @@ package cn.kk20.chat.core.coder.delimiter;
 
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.core.common.LogUtil;
+import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

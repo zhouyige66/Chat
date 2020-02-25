@@ -1,8 +1,9 @@
 package cn.kk20.chat.core.main.client;
 
-import cn.kk20.chat.core.main.ChatConfigBean;
-import cn.kk20.chat.core.initializer.ServerChannelInitializer;
-import cn.kk20.chat.core.initializer.WebServerChannelInitializer;
+import cn.kk20.chat.core.config.ChatConfigBean;
+import cn.kk20.chat.core.main.client.channelhandler.ClientChannelInitializer;
+import cn.kk20.chat.core.main.client.channelhandler.WebClientChannelInitializer;
+import cn.kk20.chat.core.main.server.channelhandler.ServerChannelInitializer;
 import cn.kk20.chat.core.main.Launcher;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -17,6 +18,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,6 +34,7 @@ public class ChatClient implements Launcher {
     private final Logger logger = LoggerFactory.getLogger(ChatClient.class);
 
     // 配置参数
+    private ApplicationContext context;
     private ChatConfigBean chatConfigBean;
     // 聊天服务器使用
     private ScheduledExecutorService commonServerExecutor = null, webServerExecutor = null;
@@ -41,6 +44,10 @@ public class ChatClient implements Launcher {
     private NioEventLoopGroup nioEventLoopGroup = null;
     private Channel serverChannel = null;
     private boolean connectSuccess = false;
+
+    public void setContext(ApplicationContext context) {
+        this.context = context;
+    }
 
     public void setChatConfigBean(ChatConfigBean chatConfigBean) {
         this.chatConfigBean = chatConfigBean;
@@ -60,7 +67,7 @@ public class ChatClient implements Launcher {
                 serverBootstrap.group(commonServerParentGroup, commonServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(chatConfigBean));
+                        .childHandler(new ServerChannelInitializer(context));
                 Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getCommonServer().getPort())
                         .sync().channel();
                 channel.closeFuture().sync();
@@ -70,7 +77,7 @@ public class ChatClient implements Launcher {
                 commonServerParentGroup.shutdownGracefully();
                 commonServerChildGroup.shutdownGracefully();
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, chatConfigBean.getClient().getCommonServer().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
         // web服务器
         webServerExecutor.scheduleWithFixedDelay(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -80,7 +87,7 @@ public class ChatClient implements Launcher {
                 serverBootstrap.group(webServerParentGroup, webServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new WebServerChannelInitializer());
+                        .childHandler(new WebClientChannelInitializer(context));
                 Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getWebServer().getPort())
                         .sync().channel();
                 channel.closeFuture().sync();
@@ -90,7 +97,7 @@ public class ChatClient implements Launcher {
                 webServerParentGroup.shutdownGracefully();
                 webServerChildGroup.shutdownGracefully();
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, chatConfigBean.getClient().getWebServer().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
         // 中心服务器
         centerServerExecutor.scheduleWithFixedDelay(() -> {
             nioEventLoopGroup = new NioEventLoopGroup();
@@ -100,7 +107,7 @@ public class ChatClient implements Launcher {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .handler(new ServerChannelInitializer(chatConfigBean, true));
+                    .handler(new ClientChannelInitializer(context));
             // 发起异步连接操作
             try {
                 ChannelFuture future = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
@@ -118,7 +125,7 @@ public class ChatClient implements Launcher {
                 connectSuccess = false;
                 nioEventLoopGroup.shutdownGracefully();
             }
-        }, 0, chatConfigBean.getClient().getCenter().getAutoRestartTimeInterval(), TimeUnit.MILLISECONDS);
+        }, 0, chatConfigBean.getClient().getCenter().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
     }
 
     @Override
