@@ -14,7 +14,7 @@ logging:
 
 chat:
   registerAsServer: false
-  coderType: STRING
+  coderType: DELIMITER
   server:
     port: 10000
     autoRestartTimeInterval: 5

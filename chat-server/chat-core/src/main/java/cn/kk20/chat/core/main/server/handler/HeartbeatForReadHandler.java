@@ -50,6 +50,7 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
                 }
             }
 
+            logger.debug("收到消息：{}", JSON.toJSONString(chatMessage));
             if (chatMessage.getType() == ChatMessageType.HEARTBEAT.getCode()) {
                 ChatMessage heartbeatReplyMessage = new ChatMessage();
                 heartbeatReplyMessage.setType(ChatMessageType.HEARTBEAT.getCode());

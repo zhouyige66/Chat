@@ -1,4 +1,4 @@
-package cn.kk20.chat.core.main.client.channelhandler;
+package cn.kk20.chat.core.main.client.initializer;
 
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.web.TextWebSocketFrameHandler;

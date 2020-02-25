@@ -3,7 +3,7 @@ package cn.kk20.chat.core.main.server;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.Launcher;
 import cn.kk20.chat.core.main.ServerComponent;
-import cn.kk20.chat.core.main.server.channelhandler.ServerChannelInitializer;
+import cn.kk20.chat.core.main.server.initializer.ServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

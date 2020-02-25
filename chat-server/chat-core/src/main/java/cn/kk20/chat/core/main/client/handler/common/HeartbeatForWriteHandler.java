@@ -46,9 +46,8 @@ public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object
                 }
             }
 
-            if (chatMessage.getType() == ChatMessageType.HEARTBEAT.getCode()) {
-                logger.debug("收到中心服务器回复的心跳消息");
-            } else {
+            logger.debug("收到消息：{}",JSON.toJSONString(chatMessage));
+            if (chatMessage.getType() != ChatMessageType.HEARTBEAT.getCode()) {
                 ctx.fireChannelRead(chatMessage);
             }
         } else {
