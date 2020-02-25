@@ -1,5 +1,6 @@
 package cn.kk20.chat.core.main.client.channelhandler;
 
+import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.web.TextWebSocketFrameHandler;
 import cn.kk20.chat.core.main.client.handler.web.WebSocketHandler;
 import io.netty.channel.ChannelInitializer;
@@ -7,7 +8,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Description: 初始化Web Server
@@ -15,19 +16,16 @@ import org.springframework.context.ApplicationContext;
  * @Date: 2019-01-28 16:24
  * @Version: v1.0
  */
+@ClientComponent
 public class WebClientChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private ApplicationContext context;
-
-    public WebClientChannelInitializer(ApplicationContext context) {
-        this.context = context;
-    }
+    @Autowired
+    WebSocketHandler webSocketHandler;
+    @Autowired
+    TextWebSocketFrameHandler textWebSocketFrameHandler;
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        WebSocketHandler webSocketHandler = context.getBean(WebSocketHandler.class);
-        TextWebSocketFrameHandler textWebSocketFrameHandler = context.getBean(TextWebSocketFrameHandler.class);
-
         ChannelPipeline channelPipeline = ch.pipeline();
         channelPipeline.addLast(
                 new HttpServerCodec(),

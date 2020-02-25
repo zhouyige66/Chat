@@ -25,20 +25,11 @@ public class ChatConfiguration {
 
     @Bean
     public Launcher launcher() {
-        Launcher launcher;
-        if(chatConfigBean.isRegisterAsServer()){
-            ChatServer chatServer = new ChatServer();
-            chatServer.setContext(context);
-            chatServer.setChatConfigBean(chatConfigBean);
-            launcher = chatServer;
-        }else {
-            ChatClient chatClient = new ChatClient();
-            chatClient.setContext(context);
-            chatClient.setChatConfigBean(chatConfigBean);
-            launcher = chatClient;
+        if (chatConfigBean.isRegisterAsServer()) {
+            return context.getBean(ChatServer.class);
+        } else {
+            return context.getBean(ChatClient.class);
         }
-
-        return launcher;
     }
 
 }

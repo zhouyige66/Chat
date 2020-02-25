@@ -1,8 +1,9 @@
 package cn.kk20.chat.core.main.client.handler.web;
 
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.HandlerManager;
+import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,7 +17,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @Description: Web登录处理器
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * @Date: 2020/2/17 15:58
  * @Version: v1.0
  */
-@Component
+@ClientComponent
 public class WebSocketHandler extends ChannelInboundHandlerAdapter {
 
     @Autowired

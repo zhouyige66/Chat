@@ -1,14 +1,14 @@
 package cn.kk20.chat.core.main.client.handler.web;
 
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.HandlerManager;
+import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @Description: Web消息处理器
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @Date:
  * @Version: v1.0
  */
-@Component
+@ClientComponent
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     @Autowired

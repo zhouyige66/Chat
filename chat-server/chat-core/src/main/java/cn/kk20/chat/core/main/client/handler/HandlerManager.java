@@ -2,6 +2,7 @@ package cn.kk20.chat.core.main.client.handler;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.business.MessageProcessor;
 import cn.kk20.chat.core.main.client.handler.business.MsgProcessor;
 import cn.kk20.chat.core.util.IdGenerateUtil;
@@ -13,7 +14,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date: 2020/2/16 6:00 下午
  * @Version: v1.0
  */
-@Component
+@ClientComponent
 public class HandlerManager {
     private ConcurrentHashMap<Integer, MessageProcessor> messageProcessorMap;
 

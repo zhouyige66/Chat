@@ -2,7 +2,8 @@ package cn.kk20.chat.core.main.client.handler.common;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.core.util.IdGenerateUtil;
+import cn.kk20.chat.core.main.ClientComponent;
+import cn.kk20.chat.core.main.client.MessageSender;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -10,7 +11,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Description: 写心跳处理器
@@ -18,17 +19,14 @@ import org.springframework.context.ApplicationContext;
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */
+@ClientComponent
 public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object> {
     private Logger logger = LoggerFactory.getLogger(HeartbeatForWriteHandler.class);
-
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
-    private ApplicationContext context;
 
-    public HeartbeatForWriteHandler(ApplicationContext context) {
-        super();
-        this.context = context;
-    }
+    @Autowired
+    MessageSender messageSender;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -82,10 +80,8 @@ public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object
 
     private void sendHeartbeatMessage(ChannelHandlerContext ctx) {
         ChatMessage heartbeatMessage = new ChatMessage();
-        heartbeatMessage.setId(IdGenerateUtil.generateId());
         heartbeatMessage.setType(ChatMessageType.HEARTBEAT.getCode());
-        heartbeatMessage.setFromUserId("");
-        heartbeatMessage.setToUserId("");
+        messageSender.sendMessage(ctx.channel(),heartbeatMessage);
     }
 
     private void heartbeatFail(ChannelHandlerContext ctx) {

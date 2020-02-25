@@ -2,7 +2,7 @@ package cn.kk20.chat.core.main.client.handler.business;
 
 import cn.kk20.chat.core.main.client.UserChannelManager;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
-import cn.kk20.chat.core.main.MessageSender;
+import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.base.message.body.LoginBody;

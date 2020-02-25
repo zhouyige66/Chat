@@ -1,18 +1,18 @@
-package cn.kk20.chat.core.main.client.handler.common;
+package cn.kk20.chat.core.main.server.handler;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.main.ClientComponent;
+import cn.kk20.chat.core.main.ServerComponent;
+import cn.kk20.chat.core.main.server.MessageSender;
 import cn.kk20.chat.core.util.IdGenerateUtil;
 import com.alibaba.fastjson.JSON;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.net.SocketAddress;
@@ -23,18 +23,14 @@ import java.net.SocketAddress;
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */
-@ClientComponent
+@ServerComponent
 public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object> {
     private Logger logger = LoggerFactory.getLogger(HeartbeatForReadHandler.class);
-
-    private ApplicationContext context;
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
-    public HeartbeatForReadHandler(ApplicationContext context) {
-        super();
-        this.context = context;
-    }
+    @Autowired
+    MessageSender messageSender;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -56,10 +52,8 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
 
             if (chatMessage.getType() == ChatMessageType.HEARTBEAT.getCode()) {
                 ChatMessage heartbeatReplyMessage = new ChatMessage();
-                heartbeatReplyMessage.setId(IdGenerateUtil.generateId());
                 heartbeatReplyMessage.setType(ChatMessageType.HEARTBEAT.getCode());
-                heartbeatReplyMessage.setFromUserId("server");
-                heartbeatReplyMessage.setToUserId(ctx.channel().toString());
+                messageSender.sendMessage(ctx.channel(), heartbeatReplyMessage);
             } else {// 向下层传递
                 ctx.fireChannelRead(chatMessage);
             }
@@ -91,11 +85,13 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
 
     private void heartbeatFail(ChannelHandlerContext ctx) {
         logger.debug("客户端读超时，关闭通道");
-        Channel channel = ctx.channel();
         String name = ctx.name();
-        ChannelPipeline pipeline = ctx.pipeline();
+        Channel channel = ctx.channel();
         SocketAddress localAddress = channel.localAddress();
         SocketAddress remoteAddress = channel.remoteAddress();
+        logger.debug("name:{}", name);
+        logger.debug("localAddress:{}", JSON.toJSONString(localAddress));
+        logger.debug("remoteAddress:{}", JSON.toJSONString(remoteAddress));
     }
 
 }

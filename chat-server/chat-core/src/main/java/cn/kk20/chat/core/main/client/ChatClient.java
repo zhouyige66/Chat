@@ -1,10 +1,11 @@
 package cn.kk20.chat.core.main.client;
 
 import cn.kk20.chat.core.config.ChatConfigBean;
+import cn.kk20.chat.core.main.ClientComponent;
+import cn.kk20.chat.core.main.Launcher;
+import cn.kk20.chat.core.main.client.channelhandler.CenterClientChannelInitializer;
 import cn.kk20.chat.core.main.client.channelhandler.ClientChannelInitializer;
 import cn.kk20.chat.core.main.client.channelhandler.WebClientChannelInitializer;
-import cn.kk20.chat.core.main.server.channelhandler.ServerChannelInitializer;
-import cn.kk20.chat.core.main.Launcher;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -18,7 +19,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,12 +31,20 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2020/2/17 16:00
  * @Version: v1.0
  */
+@ClientComponent
 public class ChatClient implements Launcher {
     private final Logger logger = LoggerFactory.getLogger(ChatClient.class);
 
     // 配置参数
-    private ApplicationContext context;
-    private ChatConfigBean chatConfigBean;
+    @Autowired
+    ChatConfigBean chatConfigBean;
+    @Autowired
+    ClientChannelInitializer clientChannelInitializer;
+    @Autowired
+    WebClientChannelInitializer webClientChannelInitializer;
+    @Autowired
+    CenterClientChannelInitializer centerClientChannelInitializer;
+
     // 聊天服务器使用
     private ScheduledExecutorService commonServerExecutor = null, webServerExecutor = null;
     private EventLoopGroup commonServerParentGroup, webServerParentGroup, commonServerChildGroup, webServerChildGroup;
@@ -44,14 +53,6 @@ public class ChatClient implements Launcher {
     private NioEventLoopGroup nioEventLoopGroup = null;
     private Channel serverChannel = null;
     private boolean connectSuccess = false;
-
-    public void setContext(ApplicationContext context) {
-        this.context = context;
-    }
-
-    public void setChatConfigBean(ChatConfigBean chatConfigBean) {
-        this.chatConfigBean = chatConfigBean;
-    }
 
     @Override
     public void launch() {
@@ -67,7 +68,7 @@ public class ChatClient implements Launcher {
                 serverBootstrap.group(commonServerParentGroup, commonServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new ServerChannelInitializer(context));
+                        .childHandler(clientChannelInitializer);
                 Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getCommonServer().getPort())
                         .sync().channel();
                 channel.closeFuture().sync();
@@ -87,7 +88,7 @@ public class ChatClient implements Launcher {
                 serverBootstrap.group(webServerParentGroup, webServerChildGroup)
                         .channel(NioServerSocketChannel.class)
                         .handler(new LoggingHandler(LogLevel.INFO))
-                        .childHandler(new WebClientChannelInitializer(context));
+                        .childHandler(webClientChannelInitializer);
                 Channel channel = serverBootstrap.bind(chatConfigBean.getClient().getWebServer().getPort())
                         .sync().channel();
                 channel.closeFuture().sync();
@@ -107,7 +108,7 @@ public class ChatClient implements Launcher {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .handler(new ClientChannelInitializer(context));
+                    .handler(centerClientChannelInitializer);
             // 发起异步连接操作
             try {
                 ChannelFuture future = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),

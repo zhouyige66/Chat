@@ -1,12 +1,12 @@
 package cn.kk20.chat.core.main.client;
 
+import cn.kk20.chat.core.common.ConstantValue;
+import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.CommonUtil;
-import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date: 2020/2/16 6:09 下午
  * @Version: v1.0
  */
-@Component
+@ClientComponent
 public class UserChannelManager {
     private ConcurrentHashMap<String, UserWrapper> clientList  = new ConcurrentHashMap<>(12);
 
