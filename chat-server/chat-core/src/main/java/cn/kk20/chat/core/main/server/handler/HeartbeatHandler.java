@@ -2,20 +2,23 @@ package cn.kk20.chat.core.main.server.handler;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.core.main.ClientComponent;
+import cn.kk20.chat.base.message.MessageBody;
+import cn.kk20.chat.base.message.data.TextData;
 import cn.kk20.chat.core.main.ServerComponent;
+import cn.kk20.chat.core.main.server.ClientChannelManager;
 import cn.kk20.chat.core.main.server.MessageSender;
-import cn.kk20.chat.core.util.IdGenerateUtil;
 import com.alibaba.fastjson.JSON;
-import io.netty.channel.*;
+import com.alibaba.fastjson.JSONObject;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
-import java.net.SocketAddress;
+import java.io.Serializable;
 
 /**
  * @Description: 读心跳处理器
@@ -24,11 +27,14 @@ import java.net.SocketAddress;
  * @Version: v1.0
  */
 @ServerComponent
-public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object> {
-    private Logger logger = LoggerFactory.getLogger(HeartbeatForReadHandler.class);
+@ChannelHandler.Sharable
+public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
+    private Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
+    @Autowired
+    ClientChannelManager clientChannelManager;
     @Autowired
     MessageSender messageSender;
 
@@ -51,10 +57,14 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
             }
 
             logger.debug("收到消息：{}", JSON.toJSONString(chatMessage));
-            if (chatMessage.getType() == ChatMessageType.HEARTBEAT.getCode()) {
-                ChatMessage heartbeatReplyMessage = new ChatMessage();
-                heartbeatReplyMessage.setType(ChatMessageType.HEARTBEAT.getCode());
-                messageSender.sendMessage(ctx.channel(), heartbeatReplyMessage);
+            if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
+                // 取出传递的参数
+                MessageBody body = chatMessage.getBody();
+                JSONObject data = (JSONObject) body.getData();
+                TextData textData = JSON.parseObject(data.toJSONString(),TextData.class);
+                String clientId = textData.getText();
+                clientChannelManager.addClient(clientId,ctx.channel());
+                messageSender.sendMessage(ctx.channel(), chatMessage);
             } else {// 向下层传递
                 ctx.fireChannelRead(chatMessage);
             }
@@ -84,15 +94,29 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
         }
     }
 
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("channelRegistered");
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("channelUnregistered");
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("channelActive");
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("channelInactive");
+        clientChannelManager.removeClient(ctx.channel());
+    }
+
     private void heartbeatFail(ChannelHandlerContext ctx) {
-        logger.debug("客户端读超时，关闭通道");
-        String name = ctx.name();
-        Channel channel = ctx.channel();
-        SocketAddress localAddress = channel.localAddress();
-        SocketAddress remoteAddress = channel.remoteAddress();
-        logger.debug("name:{}", name);
-        logger.debug("localAddress:{}", JSON.toJSONString(localAddress));
-        logger.debug("remoteAddress:{}", JSON.toJSONString(remoteAddress));
+        clientChannelManager.removeClient(ctx.channel());
     }
 
 }

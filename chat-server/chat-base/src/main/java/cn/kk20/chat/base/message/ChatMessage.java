@@ -1,6 +1,9 @@
 package cn.kk20.chat.base.message;
 
-import cn.kk20.chat.base.message.body.MessageBody;
+import cn.kk20.chat.base.message.data.BodyData;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.io.Serializable;
 
 /**
  * @Description: 聊天消息
@@ -8,11 +11,11 @@ import cn.kk20.chat.base.message.body.MessageBody;
  * @Date: 2020/2/15 12:00 下午
  * @Version: v1.0
  */
-public class ChatMessage {
+public class ChatMessage implements Serializable {
     private String id;
     private String fromUserId;
     private String toUserId;
-    private int type;
+    private ChatMessageType messageType;
     private MessageBody body;
 
     public String getFromUserId() {
@@ -39,12 +42,12 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public ChatMessageType getMessageType() {
+        return messageType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setMessageType(ChatMessageType messageType) {
+        this.messageType = messageType;
     }
 
     public MessageBody getBody() {
@@ -55,13 +58,26 @@ public class ChatMessage {
         this.body = body;
     }
 
+    /**
+     * 设置body数据
+     *
+     * @param bodyData
+     */
+    @JSONField(serialize = false,deserialize = false)
+    public void setBodyData(BodyData bodyData){
+        MessageBody body = new MessageBody();
+        body.setData(bodyData);
+        body.setBodyType(bodyData.getMessageBodyType());
+        this.body = body;
+    }
+
     @Override
     public String toString() {
         return "ChatMessage{" +
-                "fromUserId='" + fromUserId + '\'' +
+                "id='" + id + '\'' +
+                ", fromUserId='" + fromUserId + '\'' +
                 ", toUserId='" + toUserId + '\'' +
-                ", id='" + id + '\'' +
-                ", type=" + type +
+                ", messageType=" + messageType +
                 ", body=" + body +
                 '}';
     }

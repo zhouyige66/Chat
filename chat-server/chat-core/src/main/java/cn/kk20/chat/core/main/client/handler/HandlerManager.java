@@ -63,7 +63,7 @@ public class HandlerManager {
         int result = messageService.save(messageModel);
         LogUtil.log("存储消息：" + result);
         // 分配至业务处理器
-        int messageType = chatMessage.getType();
+        int messageType = chatMessage.getMessageType().getCode();
         MessageProcessor processor = messageProcessorMap.get(messageType);
         processor.processMessage(ctx, chatMessage, isFromWeb);
     }

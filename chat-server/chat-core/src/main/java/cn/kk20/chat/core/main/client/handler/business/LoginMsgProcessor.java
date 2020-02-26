@@ -1,14 +1,14 @@
 package cn.kk20.chat.core.main.client.handler.business;
 
-import cn.kk20.chat.core.main.client.UserChannelManager;
-import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
-import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.body.LoginBody;
-import cn.kk20.chat.base.message.body.MessageBody;
-import cn.kk20.chat.base.message.body.TextBody;
+import cn.kk20.chat.base.message.MessageBody;
+import cn.kk20.chat.base.message.data.LoginData;
+import cn.kk20.chat.base.message.data.TextData;
 import cn.kk20.chat.core.common.ConstantValue;
+import cn.kk20.chat.core.main.client.MessageSender;
+import cn.kk20.chat.core.main.client.UserChannelManager;
+import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.IdGenerateUtil;
 import cn.kk20.chat.core.util.LogUtil;
 import cn.kk20.chat.core.util.RedisUtil;
@@ -43,17 +43,17 @@ public class LoginMsgProcessor implements MessageProcessor {
     @Override
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, boolean isFromWeb) {
         MessageBody body = chatMessage.getBody();
-        if (!(body instanceof LoginBody)) {
+        if (!(body.getData() instanceof LoginData)) {
             LogUtil.log("解析登录消息出错");
             return;
         }
 
         String fromUserId = chatMessage.getFromUserId();
-        LoginBody loginBody = (LoginBody) body;
-        boolean login = loginBody.isLogin();
+        LoginData loginData = (LoginData) body.getData();
+        boolean login = loginData.isLogin();
         UserModel userModel = new UserModel();
-        userModel.setId(loginBody.getUserId());
-        userModel.setName(loginBody.getUserName());
+        userModel.setId(loginData.getUserId());
+        userModel.setName(loginData.getUserName());
 
         // 交由客户端管理器处理
         if (login) {
@@ -81,12 +81,14 @@ public class LoginMsgProcessor implements MessageProcessor {
         }
         if (login) {
             // 回复当前登录用户，好友在线名单
+            TextData textData = new TextData(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
+
             ChatMessage replyMessage = new ChatMessage();
             replyMessage.setFromUserId(ConstantValue.SERVER_ID);
             replyMessage.setToUserId(fromUserId);
             replyMessage.setId(IdGenerateUtil.generateId());
-            replyMessage.setType(ChatMessageType.LOGIN_NOTIFY.getCode());
-            replyMessage.setBody(new TextBody(JSON.toJSONString(onlineFriendConnectHostMap.keySet())));
+            replyMessage.setMessageType(ChatMessageType.LOGIN_NOTIFY);
+            replyMessage.setBodyData(textData);
             messageSender.sendMessage(channelHandlerContext.channel(), replyMessage);
         }
 
@@ -94,11 +96,12 @@ public class LoginMsgProcessor implements MessageProcessor {
         ChatMessage notifyMsg = new ChatMessage();
         BeanUtils.copyProperties(chatMessage, notifyMsg);
         notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
-        notifyMsg.setType(ChatMessageType.LOGIN_NOTIFY.getCode());
+        notifyMsg.setMessageType(ChatMessageType.LOGIN_NOTIFY);
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", fromUserId);
         map.put("login", login);
-        notifyMsg.setBody(new TextBody(JSON.toJSONString(map)));
+        TextData textData = new TextData(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
+        notifyMsg.setBodyData(textData);
         for (String id : userIdSet) {
             messageSender.sendMessage(id, notifyMsg);
         }

@@ -1,8 +1,8 @@
 package cn.kk20.chat.core.coder.custom;
 
-import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
@@ -20,9 +20,10 @@ public class MessageEncoder extends MessageToByteEncoder<ChatMessage> {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, ByteBuf byteBuf)
             throws Exception {
-        if(chatMessage.getType() != ChatMessageType.HEARTBEAT.getCode()){
-            LogUtil.log("发送消息：" + chatMessage.toString());
+        if(chatMessage.getMessageType() != ChatMessageType.HEARTBEAT){
+            LogUtil.log("发送消息：" + JSON.toJSONString(chatMessage));
         }
+
         String msgStr = JSON.toJSONString(chatMessage);
         byte[] data = msgStr.getBytes(ConstantValue.CHARSET);
         // 1.写入头部标志信息

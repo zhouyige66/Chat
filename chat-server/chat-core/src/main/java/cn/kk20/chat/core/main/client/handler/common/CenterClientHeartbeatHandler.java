@@ -2,39 +2,38 @@ package cn.kk20.chat.core.main.client.handler.common;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.data.TextData;
+import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
-import cn.kk20.chat.core.util.IdGenerateUtil;
+import cn.kk20.chat.core.main.client.MessageSender;
+import cn.kk20.chat.core.util.CommonUtil;
 import com.alibaba.fastjson.JSON;
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-
-import java.net.SocketAddress;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @Description: 读心跳处理器
+ * @Description: 写心跳处理器
  * @Author: Roy
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */
 @ClientComponent
-public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object> {
-    private Logger logger = LoggerFactory.getLogger(HeartbeatForReadHandler.class);
-
-    private ApplicationContext context;
+@ChannelHandler.Sharable
+public class CenterClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> {
+    private Logger logger = LoggerFactory.getLogger(CenterClientHeartbeatHandler.class);
     private final int heartFailMax = 5;
-    private volatile int heartFailCount = 0;
+    private int heartFailCount = 0;
 
-    public HeartbeatForReadHandler(ApplicationContext context) {
-        super();
-        this.context = context;
-    }
+    @Autowired
+    ChatConfigBean chatConfigBean;
+    @Autowired
+    MessageSender messageSender;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -42,7 +41,7 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
         heartFailCount = 0;
 
         if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage;
+            ChatMessage chatMessage = null;
             if (obj instanceof ChatMessage) {
                 chatMessage = (ChatMessage) obj;
             } else {
@@ -54,13 +53,8 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
                 }
             }
 
-            if (chatMessage.getType() == ChatMessageType.HEARTBEAT.getCode()) {
-                ChatMessage heartbeatReplyMessage = new ChatMessage();
-                heartbeatReplyMessage.setId(IdGenerateUtil.generateId());
-                heartbeatReplyMessage.setType(ChatMessageType.HEARTBEAT.getCode());
-                heartbeatReplyMessage.setFromUserId("server");
-                heartbeatReplyMessage.setToUserId(ctx.channel().toString());
-            } else {// 向下层传递
+            logger.debug("收到消息：{}", JSON.toJSONString(chatMessage));
+            if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
                 ctx.fireChannelRead(chatMessage);
             }
         } else {
@@ -73,13 +67,13 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
         boolean hasDeal = false;
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
-            if (event.state() == IdleState.READER_IDLE) {
-                heartFailCount++;
-                logger.debug("心跳消息读失败：{}次", heartFailCount);
+            if (event.state() == IdleState.WRITER_IDLE) {
                 hasDeal = true;
-                if (heartFailCount > heartFailMax) {
+                heartFailCount++;
+                if (heartFailCount >= heartFailMax) {
                     heartbeatFail(ctx);
-                    ctx.close();
+                } else {
+                    sendHeartbeatMessage(ctx);
                 }
             }
         }
@@ -89,13 +83,20 @@ public class HeartbeatForReadHandler extends SimpleChannelInboundHandler<Object>
         }
     }
 
+    private void sendHeartbeatMessage(ChannelHandlerContext ctx) {
+        int port = chatConfigBean.getClient().getCommonServer().getPort();
+        int port2 = chatConfigBean.getClient().getWebServer().getPort();
+        String clientId = CommonUtil.getHostIp() + ":" + port + "&" + port2;
+        TextData textData = new TextData(clientId);
+        ChatMessage heartbeatMessage = new ChatMessage();
+        heartbeatMessage.setMessageType(ChatMessageType.HEARTBEAT);
+        heartbeatMessage.setBodyData(textData);
+        messageSender.sendMessage(ctx.channel(), heartbeatMessage);
+    }
+
     private void heartbeatFail(ChannelHandlerContext ctx) {
-        logger.debug("客户端读超时，关闭通道");
-        Channel channel = ctx.channel();
-        String name = ctx.name();
-        ChannelPipeline pipeline = ctx.pipeline();
-        SocketAddress localAddress = channel.localAddress();
-        SocketAddress remoteAddress = channel.remoteAddress();
+        logger.debug("心跳失败，中心服务器无法连接");
+        ctx.close();
     }
 
 }

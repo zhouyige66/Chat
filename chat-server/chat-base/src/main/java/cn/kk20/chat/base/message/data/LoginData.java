@@ -1,4 +1,4 @@
-package cn.kk20.chat.base.message.body;
+package cn.kk20.chat.base.message.data;
 
 import cn.kk20.chat.base.message.MessageBodyType;
 
@@ -8,14 +8,10 @@ import cn.kk20.chat.base.message.MessageBodyType;
  * @Date: 2020/2/17 15:57
  * @Version: v1.0
  */
-public class LoginBody extends AbstractMessageBody {
+public class LoginData extends BodyData {
     private String userId;
     private String userName;
     private boolean login;
-
-    public LoginBody() {
-        super(MessageBodyType.TEXT);
-    }
 
     public String getUserId() {
         return userId;
@@ -41,4 +37,8 @@ public class LoginBody extends AbstractMessageBody {
         this.login = login;
     }
 
+    @Override
+    public MessageBodyType getMessageBodyType() {
+        return MessageBodyType.TEXT;
+    }
 }

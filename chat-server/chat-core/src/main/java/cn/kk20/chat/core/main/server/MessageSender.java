@@ -39,7 +39,7 @@ public class MessageSender {
             // 方式二或三：发送数据经过自定义编码器
             channelFuture = channel.writeAndFlush(chatMessage);
         }
-        logger.debug("发送消息，消息id：{},类型为：{}，发送{}", chatMessage.getId(), chatMessage.getType(),
+        logger.debug("发送消息，消息id：{},类型为：{}，发送{}", chatMessage.getId(), chatMessage.getMessageType(),
                 channelFuture.isSuccess() ? "成功" : "失败");
     }
 

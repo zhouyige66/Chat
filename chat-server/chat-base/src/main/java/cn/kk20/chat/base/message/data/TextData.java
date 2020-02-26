@@ -1,19 +1,17 @@
-package cn.kk20.chat.base.message.body;
+package cn.kk20.chat.base.message.data;
 
 import cn.kk20.chat.base.message.MessageBodyType;
 
 /**
- * @Description: 普通文本消息体
+ * @Description:
  * @Author: Roy Z
- * @Date: 2020/2/17 15:56
+ * @Date: 2020/2/25 21:30
  * @Version: v1.0
  */
-public class TextBody extends AbstractMessageBody {
+public class TextData extends BodyData {
     private String text;
 
-    public TextBody(String text) {
-        super(MessageBodyType.TEXT);
-
+    public TextData(String text) {
         this.text = text;
     }
 
@@ -23,6 +21,11 @@ public class TextBody extends AbstractMessageBody {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public MessageBodyType getMessageBodyType() {
+        return MessageBodyType.TEXT;
     }
 
 }

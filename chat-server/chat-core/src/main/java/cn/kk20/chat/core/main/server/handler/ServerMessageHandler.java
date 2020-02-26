@@ -3,6 +3,7 @@ package cn.kk20.chat.core.main.server.handler;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.main.ServerComponent;
 import com.alibaba.fastjson.JSON;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
  * @Version: v1.0
  */
 @ServerComponent
+@ChannelHandler.Sharable
 public class ServerMessageHandler extends SimpleChannelInboundHandler<ChatMessage> {
     private final Logger logger = LoggerFactory.getLogger(ServerMessageHandler.class);
 

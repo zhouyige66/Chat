@@ -17,12 +17,15 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -101,30 +104,37 @@ public class ChatClient implements Launcher {
         }, 0, chatConfigBean.getClient().getWebServer().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
         // 中心服务器
         centerServerExecutor.scheduleWithFixedDelay(() -> {
-            nioEventLoopGroup = new NioEventLoopGroup();
+            logger.debug("连接中心服务器：执行一次");
+            nioEventLoopGroup = new NioEventLoopGroup(1);
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(nioEventLoopGroup)
                     .channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.TCP_NODELAY, true)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .handler(centerClientChannelInitializer);
             // 发起异步连接操作
             try {
-                ChannelFuture future = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
-                        chatConfigBean.getClient().getCenter().getPort()).sync();
-                if (future.isSuccess()) {
-                    connectSuccess = true;
-                    serverChannel = future.channel();
-                    logger.debug("连接中心服务器的通道为：{}", serverChannel);
-                    // 服务器同步连接断开时,这句代码才会往下执行
-                    serverChannel.closeFuture().sync();
-                }
+                ChannelFuture channelFuture = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
+                        chatConfigBean.getClient().getCenter().getPort());
+                connectSuccess = true;
+                // 服务器同步连接断开时,这句代码才会往下执行
+                channelFuture.channel().closeFuture().sync();
+                logger.debug("连接中心服务器：正常关闭");
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                logger.debug("连接中心服务器：发生异常");
             } finally {
                 connectSuccess = false;
-                nioEventLoopGroup.shutdownGracefully();
+                boolean shutdown = nioEventLoopGroup.isShutdown();
+                boolean shuttingDown = nioEventLoopGroup.isShuttingDown();
+                boolean terminated = nioEventLoopGroup.isTerminated();
+                if (!shutdown) {
+                    nioEventLoopGroup.shutdownGracefully();
+                }
+                nioEventLoopGroup = null;
+                logger.debug("连接中心服务器：shutdown={}，shuttingDown={}，terminated={}",
+                        shutdown, shuttingDown, terminated);
             }
         }, 0, chatConfigBean.getClient().getCenter().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
     }

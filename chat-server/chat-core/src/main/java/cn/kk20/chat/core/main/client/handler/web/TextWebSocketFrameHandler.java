@@ -5,6 +5,7 @@ import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.HandlerManager;
 import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Version: v1.0
  */
 @ClientComponent
+@ChannelHandler.Sharable
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     @Autowired

@@ -3,7 +3,7 @@ package cn.kk20.chat.core.main.client.initializer;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.CommonInitializer;
 import cn.kk20.chat.core.main.client.handler.common.ClientMessageHandler;
-import cn.kk20.chat.core.main.client.handler.common.HeartbeatForReadHandler;
+import cn.kk20.chat.core.main.client.handler.common.ClientHeartbeatHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -22,7 +22,7 @@ public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Autowired
     CommonInitializer commonInitializer;
     @Autowired
-    HeartbeatForReadHandler heartbeatForReadHandler;
+    ClientHeartbeatHandler clientHeartbeatHandler;
     @Autowired
     ClientMessageHandler clientMessageHandler;
 
@@ -31,7 +31,7 @@ public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> 
         ChannelPipeline pipeline = socketChannel.pipeline();
         commonInitializer.initCommon(pipeline);
         pipeline.addLast(new IdleStateHandler(5, 0, 0));
-        pipeline.addLast(heartbeatForReadHandler);
+        pipeline.addLast(clientHeartbeatHandler);
         pipeline.addLast(clientMessageHandler);
     }
 }

@@ -3,30 +3,35 @@ package cn.kk20.chat.core.main.client.handler.common;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.main.ClientComponent;
-import cn.kk20.chat.core.main.client.MessageSender;
 import com.alibaba.fastjson.JSON;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import java.net.SocketAddress;
 
 /**
- * @Description: 写心跳处理器
+ * @Description: 读心跳处理器
  * @Author: Roy
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */
 @ClientComponent
-public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object> {
-    private Logger logger = LoggerFactory.getLogger(HeartbeatForWriteHandler.class);
+@ChannelHandler.Sharable
+public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> {
+    private Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
+
+    private ApplicationContext context;
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
-    @Autowired
-    MessageSender messageSender;
+    public ClientHeartbeatHandler(ApplicationContext context) {
+        super();
+        this.context = context;
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -34,7 +39,7 @@ public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object
         heartFailCount = 0;
 
         if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage = null;
+            ChatMessage chatMessage;
             if (obj instanceof ChatMessage) {
                 chatMessage = (ChatMessage) obj;
             } else {
@@ -46,8 +51,10 @@ public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object
                 }
             }
 
-            logger.debug("收到消息：{}",JSON.toJSONString(chatMessage));
-            if (chatMessage.getType() != ChatMessageType.HEARTBEAT.getCode()) {
+            if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
+                ChatMessage heartbeatReplyMessage = new ChatMessage();
+                heartbeatReplyMessage.setMessageType(ChatMessageType.HEARTBEAT);
+            } else {// 向下层传递
                 ctx.fireChannelRead(chatMessage);
             }
         } else {
@@ -60,14 +67,13 @@ public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object
         boolean hasDeal = false;
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
-            if (event.state() == IdleState.WRITER_IDLE) {
-                hasDeal = true;
+            if (event.state() == IdleState.READER_IDLE) {
                 heartFailCount++;
+                logger.debug("心跳消息读失败：{}次", heartFailCount);
+                hasDeal = true;
                 if (heartFailCount > heartFailMax) {
                     heartbeatFail(ctx);
                     ctx.close();
-                } else {
-                    sendHeartbeatMessage(ctx);
                 }
             }
         }
@@ -77,14 +83,13 @@ public class HeartbeatForWriteHandler extends SimpleChannelInboundHandler<Object
         }
     }
 
-    private void sendHeartbeatMessage(ChannelHandlerContext ctx) {
-        ChatMessage heartbeatMessage = new ChatMessage();
-        heartbeatMessage.setType(ChatMessageType.HEARTBEAT.getCode());
-        messageSender.sendMessage(ctx.channel(),heartbeatMessage);
-    }
-
     private void heartbeatFail(ChannelHandlerContext ctx) {
-        logger.debug("心跳失败，中心服务器无法连接");
+        logger.debug("客户端读超时，关闭通道");
+        Channel channel = ctx.channel();
+        String name = ctx.name();
+        ChannelPipeline pipeline = ctx.pipeline();
+        SocketAddress localAddress = channel.localAddress();
+        SocketAddress remoteAddress = channel.remoteAddress();
     }
 
 }

@@ -7,12 +7,12 @@ package cn.kk20.chat.base.message;
  * @Version: v1.0
  */
 public enum ChatMessageType {
-    HEARTBEAT(-1, "心跳"),
-    LOGIN_NOTIFY(0, "登录通知"),
-    LOGIN(1, "登录"),
-    SINGLE(2, "点对点"),
-    GROUP(3, "群聊"),
-    NOTIFY(4, "通知");
+    HEARTBEAT(0, "心跳"),
+    LOGIN_NOTIFY(1, "登录通知"),
+    LOGIN(2, "登录"),
+    SINGLE(3, "点对点"),
+    GROUP(4, "群聊"),
+    NOTIFY(5, "通知");
 
     private final int code;
     private final String des;
