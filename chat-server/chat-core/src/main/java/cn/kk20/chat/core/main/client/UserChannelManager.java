@@ -1,6 +1,7 @@
 package cn.kk20.chat.core.main.client;
 
 import cn.kk20.chat.core.common.ConstantValue;
+import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.CommonUtil;
@@ -18,8 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ClientComponent
 public class UserChannelManager {
-    private ConcurrentHashMap<String, UserWrapper> clientList  = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<String, UserWrapper> clientList = new ConcurrentHashMap<>(12);
+    private Channel centerChannel;
 
+    @Autowired
+    ChatConfigBean chatConfigBean;
     @Autowired
     RedisUtil redisUtil;
 
@@ -36,7 +40,10 @@ public class UserChannelManager {
         // 添加到通道容器
         clientList.put(userId, userWrapper);
         // 存储到redis
-        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, CommonUtil.getHostIp());
+        String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
+                chatConfigBean.getClient().getCommonServer().getPort(),
+                chatConfigBean.getClient().getWebServer().getPort());
+        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, host);
     }
 
     public void removeClient(String userId) {
@@ -46,6 +53,18 @@ public class UserChannelManager {
 
     public UserWrapper getClient(String userId) {
         return clientList.get(userId);
+    }
+
+    public Channel getCenterChannel() {
+        return centerChannel;
+    }
+
+    public void setCenterChannel(Channel centerChannel) {
+        this.centerChannel = centerChannel;
+    }
+
+    public void removeCenterChannel(){
+        this.centerChannel = null;
     }
 
 }

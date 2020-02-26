@@ -66,4 +66,5 @@ public class MessageDecoder extends ByteToMessageDecoder {
             list.add(chatMessage);
         }
     }
+
 }

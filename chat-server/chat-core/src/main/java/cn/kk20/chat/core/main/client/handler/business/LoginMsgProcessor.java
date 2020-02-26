@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -33,29 +34,29 @@ import java.util.Set;
 public class LoginMsgProcessor implements MessageProcessor {
     @Autowired
     RedisUtil redisUtil;
-
     @Autowired
     UserChannelManager userChannelManager;
-
     @Autowired
     MessageSender messageSender;
 
     @Override
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, boolean isFromWeb) {
         MessageBody body = chatMessage.getBody();
-        if (!(body.getData() instanceof LoginData)) {
+        Serializable data = body.getData();
+        LoginData loginData = null;
+        try {
+            loginData = JSON.parseObject(JSON.toJSONString(data), LoginData.class);
+        } catch (Exception e) {
             LogUtil.log("解析登录消息出错");
             return;
         }
 
         String fromUserId = chatMessage.getFromUserId();
-        LoginData loginData = (LoginData) body.getData();
-        boolean login = loginData.isLogin();
         UserModel userModel = new UserModel();
         userModel.setId(loginData.getUserId());
         userModel.setName(loginData.getUserName());
-
         // 交由客户端管理器处理
+        boolean login = loginData.isLogin();
         if (login) {
             UserWrapper wrapper = new UserWrapper();
             wrapper.setChannel(channelHandlerContext.channel());
@@ -82,7 +83,6 @@ public class LoginMsgProcessor implements MessageProcessor {
         if (login) {
             // 回复当前登录用户，好友在线名单
             TextData textData = new TextData(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
-
             ChatMessage replyMessage = new ChatMessage();
             replyMessage.setFromUserId(ConstantValue.SERVER_ID);
             replyMessage.setToUserId(fromUserId);
@@ -92,7 +92,7 @@ public class LoginMsgProcessor implements MessageProcessor {
             messageSender.sendMessage(channelHandlerContext.channel(), replyMessage);
         }
 
-        // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线好友没必要通知
+        // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线的好友没必要通知
         ChatMessage notifyMsg = new ChatMessage();
         BeanUtils.copyProperties(chatMessage, notifyMsg);
         notifyMsg.setFromUserId(ConstantValue.SERVER_ID);

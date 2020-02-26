@@ -17,6 +17,7 @@ public class ChatMessage implements Serializable {
     private String toUserId;
     private ChatMessageType messageType;
     private MessageBody body;
+    private String targetHost;
 
     public String getFromUserId() {
         return fromUserId;
@@ -58,6 +59,14 @@ public class ChatMessage implements Serializable {
         this.body = body;
     }
 
+    public String getTargetHost() {
+        return targetHost;
+    }
+
+    public void setTargetHost(String targetHost) {
+        this.targetHost = targetHost;
+    }
+
     /**
      * 设置body数据
      *
@@ -79,6 +88,7 @@ public class ChatMessage implements Serializable {
                 ", toUserId='" + toUserId + '\'' +
                 ", messageType=" + messageType +
                 ", body=" + body +
+                ", targetHost='" + targetHost + '\'' +
                 '}';
     }
 }

@@ -17,15 +17,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,6 +44,8 @@ public class ChatClient implements Launcher {
     WebClientChannelInitializer webClientChannelInitializer;
     @Autowired
     CenterClientChannelInitializer centerClientChannelInitializer;
+    @Autowired
+    UserChannelManager userChannelManager;
 
     // 聊天服务器使用
     private ScheduledExecutorService commonServerExecutor = null, webServerExecutor = null;
@@ -118,13 +117,18 @@ public class ChatClient implements Launcher {
                 ChannelFuture channelFuture = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
                         chatConfigBean.getClient().getCenter().getPort());
                 connectSuccess = true;
+                Channel channel = channelFuture.channel();
+                if(channelFuture.isSuccess()){
+                    userChannelManager.setCenterChannel(channel);
+                }
                 // 服务器同步连接断开时,这句代码才会往下执行
-                channelFuture.channel().closeFuture().sync();
+                channel.closeFuture().sync();
                 logger.debug("连接中心服务器：正常关闭");
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 logger.debug("连接中心服务器：发生异常");
             } finally {
+                userChannelManager.removeCenterChannel();
                 connectSuccess = false;
                 boolean shutdown = nioEventLoopGroup.isShutdown();
                 boolean shuttingDown = nioEventLoopGroup.isShuttingDown();

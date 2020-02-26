@@ -11,11 +11,11 @@ import java.net.UnknownHostException;
  */
 public class CommonUtil {
 
-    private CommonUtil(){
+    private CommonUtil() {
 
     }
 
-    public static String getHostIp(){
+    public static String getHostIp() {
         String hostAddress = null;
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
@@ -23,6 +23,10 @@ public class CommonUtil {
             e.printStackTrace();
         }
         return hostAddress;
+    }
+
+    public static String getTargetAddress(String host, int port, int webPort) {
+        return host + ":" + port + "&" + webPort;
     }
 
 }

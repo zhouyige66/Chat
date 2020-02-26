@@ -2,10 +2,12 @@ package cn.kk20.chat.core.main.client;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.coder.CoderType;
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.LogUtil;
+import cn.kk20.chat.core.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -25,8 +27,9 @@ public class MessageSender {
     private final Logger logger = LoggerFactory.getLogger(MessageSender.class);
 
     @Autowired
+    RedisUtil redisUtil;
+    @Autowired
     UserChannelManager userChannelManager;
-
     @Autowired
     ChatConfigBean chatConfigBean;
 
@@ -34,7 +37,28 @@ public class MessageSender {
         // 实时发给目标客户
         UserWrapper userWrapper = userChannelManager.getClient(targetId);
         if (null == userWrapper) {
-            LogUtil.log("指定的消息接收者未登录");
+            String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetId);
+            // 发送给中心主机，由中心主机转发
+            Channel centerChannel = userChannelManager.getCenterChannel();
+            chatMessage.setTargetHost(host);
+            sendMessage(centerChannel, chatMessage);
+            return;
+        }
+
+        Channel channel = userWrapper.getChannel();
+        if (userWrapper.isWebUser()) {
+            TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(chatMessage));
+            channel.writeAndFlush(textWebSocketFrame);
+            return;
+        }
+        sendMessage(channel, chatMessage);
+    }
+
+    public void sendMessage(String toUserId, String toClientId, ChatMessage chatMessage) {
+        // 实时发给目标客户
+        UserWrapper userWrapper = userChannelManager.getClient(toUserId);
+        if (null == userWrapper) {
+
             return;
         }
 
