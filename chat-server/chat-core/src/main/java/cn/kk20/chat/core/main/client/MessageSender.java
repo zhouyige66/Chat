@@ -15,6 +15,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 /**
  * @Description:
@@ -38,6 +39,10 @@ public class MessageSender {
         UserWrapper userWrapper = userChannelManager.getClient(targetId);
         if (null == userWrapper) {
             String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetId);
+            if(StringUtils.isEmpty(host)){
+                logger.debug("该消息接受者未登陆，无法发送");
+                return;
+            }
             // 发送给中心主机，由中心主机转发
             Channel centerChannel = userChannelManager.getCenterChannel();
             chatMessage.setTargetHost(host);
