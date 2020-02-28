@@ -25,4 +25,8 @@ public class ChatService extends Service {
         return null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

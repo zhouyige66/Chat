@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <LinearLayout
@@ -25,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_marginTop="50dp"
-            android:background="#FFF"
+            android:background="@drawable/shape_border"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -56,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_marginTop="12dp"
-            android:background="#FFF"
+            android:background="@drawable/shape_border"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -88,22 +87,24 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_marginTop="12dp"
-            android:background="#FFF"
+            android:background="@drawable/selector_btn_login"
             android:gravity="center"
+            android:textColor="#fff"
             android:text="登录"
             android:textSize="18sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="5dp">
 
             <TextView
                 android:id="@+id/tv_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="注册"
-                android:textColor="#FFF"
+                android:padding="4dp"
+                android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
             <TextView
@@ -112,7 +113,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="忘记密码"
-                android:textColor="#FFF"
+                android:padding="4dp"
+                android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
         </RelativeLayout>

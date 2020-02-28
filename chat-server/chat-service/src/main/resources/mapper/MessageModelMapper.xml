@@ -103,22 +103,19 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.kk20.chat.dao.model.MessageModel">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into message (from_user_id, to_user_id, content, 
-      send_time, status, from_user_delete, 
-      to_user_delete)
-    values (#{fromUserId,jdbcType=VARCHAR}, #{toUserId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
-      #{sendTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, #{fromUserDelete,jdbcType=BIT}, 
-      #{toUserDelete,jdbcType=BIT})
+    insert into message (id, from_user_id, to_user_id, 
+      content, send_time, status, 
+      from_user_delete, to_user_delete)
+    values (#{id,jdbcType=VARCHAR}, #{fromUserId,jdbcType=VARCHAR}, #{toUserId,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
+      #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.MessageModel">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
     insert into message
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
       <if test="fromUserId != null">
         from_user_id,
       </if>
@@ -142,6 +139,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
       <if test="fromUserId != null">
         #{fromUserId,jdbcType=VARCHAR},
       </if>

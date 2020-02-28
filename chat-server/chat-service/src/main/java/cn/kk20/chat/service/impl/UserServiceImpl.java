@@ -6,6 +6,7 @@ import cn.kk20.chat.dao.model.UserModelQuery;
 import cn.kk20.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
         UserModel searchResult = find(model.getName(), model.getPassword());
         if (searchResult == null) {
             model.setId(UUID.randomUUID().toString());
-            userModelMapper.insert(model);
+            userModelMapper.insertSelective(model);
             return model;
         } else {
             return null;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
         UserModelQuery.Criteria criteria = query.createCriteria();
         criteria.andNameEqualTo(name).andPasswordEqualTo(password);
         List<UserModel> userModels = userModelMapper.selectByCondition(query);
-        if (userModels == null) {
+        if (CollectionUtils.isEmpty(userModels)) {
             return null;
         }
 

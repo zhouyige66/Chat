@@ -1,9 +1,9 @@
 server:
-  port: 20001
+  port: 8081
 
 spring:
   profiles:
-    active: mapper
+    active: service
 
 logging:
   file:

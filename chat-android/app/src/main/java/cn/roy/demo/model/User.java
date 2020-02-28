@@ -1,7 +1,5 @@
 package cn.roy.demo.model;
 
-import java.util.Date;
-
 /**
  * @Description:
  * @Author: Roy
@@ -11,23 +9,13 @@ import java.util.Date;
 public class User {
     private String id;
 
-    private String password;
-
     private String name;
 
-    private String nickName;
+    private String password;
 
     private String phone;
 
     private String email;
-
-    private Date createTime;
-
-    private Date modifyTime;
-
-    private Boolean del;
-
-    private static final long serialVersionUID = 1L;
 
     public String getId() {
         return id;
@@ -40,19 +28,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public User withPassword(String password) {
-        this.setPassword(password);
-        return this;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
@@ -68,17 +43,17 @@ public class User {
         this.name = name;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getPassword() {
+        return password;
     }
 
-    public User withNickName(String nickName) {
-        this.setNickName(nickName);
+    public User withPassword(String password) {
+        this.setPassword(password);
         return this;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhone() {
@@ -107,42 +82,4 @@ public class User {
         this.email = email;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public User withCreateTime(Date createTime) {
-        this.setCreateTime(createTime);
-        return this;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public User withModifyTime(Date modifyTime) {
-        this.setModifyTime(modifyTime);
-        return this;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Boolean getDel() {
-        return del;
-    }
-
-    public User withDel(Boolean del) {
-        this.setDel(del);
-        return this;
-    }
-
-    public void setDel(Boolean del) {
-        this.del = del;
-    }
 }

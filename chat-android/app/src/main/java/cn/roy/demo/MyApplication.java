@@ -2,11 +2,7 @@ package cn.roy.demo;
 
 import android.app.Application;
 
-import cn.roy.demo.chat.MessageManager;
-import cn.roy.demo.chat.message.ChatMessage;
-import cn.roy.demo.chat.util.LogUtil;
 import cn.roy.demo.util.SPUtil;
-import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -23,28 +19,28 @@ public class MyApplication extends Application {
 
         SPUtil.inject(this);
 
-        MessageManager.getInstance().getMessageListObservable()
-                .subscribe(new Observer<ChatMessage>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ChatMessage chatMessage) {
-                        LogUtil.log("Application收到通知");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+//        MessageManager.getInstance().getMessageListObservable()
+//                .subscribe(new Observer<ChatMessage>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(ChatMessage chatMessage) {
+//                        LogUtil.log("Application收到通知");
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
     }
 
 

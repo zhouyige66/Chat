@@ -72,13 +72,13 @@
                     SqlServer :相当于selectKey的SQL为：SELECT SCOPE_IDENTITY()
                     SYBASE    :相当于selectKey的SQL为：SELECT @@IDENTITY
                     JDBC      :相当于在生成的insert元素上添加useGeneratedKeys="true"和keyProperty属性-->
-            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+<!--            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>-->
             <!--数据库中表名有时我们都会带个前缀，而实体又不想带前缀，这个配置可以把实体的前缀去掉-->
             <!--<domainObjectRenamingRule searchString="^Tbl" replaceString=""/>-->
         </table>
         <table tableName="user" domainObjectName="UserModel">
             <property name="mapperName" value="UserModelMapper"/>
-            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+<!--            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>-->
             <!--数据库中表名有时我们都会带个前缀，而实体又不想带前缀，这个配置可以把实体的前缀去掉-->
             <!--<domainObjectRenamingRule searchString="^Tbl" replaceString=""/>-->
         </table>

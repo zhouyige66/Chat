@@ -2,9 +2,10 @@ package cn.roy.demo.chat.coder.delimiter;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.roy.demo.chat.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.chat.coder.ConstantValue;
-import cn.roy.demo.chat.util.LogUtil;
+import cn.roy.demo.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -18,9 +19,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class DelimiterBasedFrameEncoder extends MessageToByteEncoder<ChatMessage> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage,
+                          ByteBuf byteBuf) throws Exception {
+        if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
+            LogUtil.d(this, "发送消息：" + JSON.toJSONString(chatMessage));
+        }
         // 写入内容
-        LogUtil.log("发送消息：" + chatMessage.toString());
         String data = JSON.toJSONString(chatMessage) + ConstantValue.DELIMITER;
         byteBuf.writeBytes(data.getBytes(ConstantValue.CHARSET));
     }

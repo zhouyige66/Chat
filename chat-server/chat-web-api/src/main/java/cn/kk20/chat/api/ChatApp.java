@@ -8,7 +8,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication(scanBasePackages = "cn.kk20.chat")
-@MapperScan(value = "cn.kk20.chat.mapper")
+@MapperScan(value = "cn.kk20.chat.dao.mapper")
 public class ChatApp extends SpringBootServletInitializer implements CommandLineRunner {
 
     public static void main(String[] args) {

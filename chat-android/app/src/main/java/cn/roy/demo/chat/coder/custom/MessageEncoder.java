@@ -2,9 +2,10 @@ package cn.roy.demo.chat.coder.custom;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.roy.demo.chat.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.chat.coder.ConstantValue;
-import cn.roy.demo.chat.util.LogUtil;
+import cn.roy.demo.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -20,9 +21,10 @@ public class MessageEncoder extends MessageToByteEncoder<ChatMessage> {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, ByteBuf byteBuf)
             throws Exception {
-        if(chatMessage.getType() != ChatMessage.ChatType.HEARTBEAT){
-            LogUtil.log("发送消息：" + chatMessage.toString());
+        if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
+            LogUtil.d(this, "发送消息：" + chatMessage.toString());
         }
+
         String msgStr = JSON.toJSONString(chatMessage);
         byte[] data = msgStr.getBytes(ConstantValue.CHARSET);
         // 1.写入头部标志信息

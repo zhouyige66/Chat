@@ -1,14 +1,13 @@
 package cn.roy.demo.chat.handler;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 
-import java.util.UUID;
-
+import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.chat.ChatClient;
-import cn.roy.demo.chat.message.ChatMessage;
-import cn.roy.demo.chat.util.LogUtil;
-import cn.roy.demo.model.User;
-import cn.roy.demo.util.CacheManager;
+import cn.roy.demo.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -36,14 +35,12 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
                 chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
             }
 
-            if (chatMessage.getType() == ChatMessage.ChatType.HEARTBEAT) {
-//                LogUtil.log("收到心跳消息");
-            } else {
-                LogUtil.log("收到消息：" + chatMessage.toString());
+            if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
+                LogUtil.d(this, "收到消息：" + chatMessage.toString());
                 ctx.fireChannelRead(chatMessage);
             }
         } else {
-            LogUtil.log("收到消息类型未知");
+            LogUtil.e(this, "收到消息类型未知");
             ctx.fireChannelRead(obj);
         }
     }
@@ -52,26 +49,23 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
-            if (event.state() == IdleState.READER_IDLE) {
+            if (event.state() == IdleState.WRITER_IDLE) {
                 heartFailCount++;
                 if (heartFailCount > 3) {
-                    LogUtil.log("客户端读超时，关闭通道：" + ctx.channel().remoteAddress().toString());
+                    LogUtil.i(this, "客户端读超时，关闭通道：" + ctx.channel().remoteAddress().toString());
                     ctx.close();
                     return;
                 }
 
-                User user = CacheManager.getInstance().getCurrentUser();
-                if (user != null) {
-                    ChatMessage<String> heartbeatMessage = new ChatMessage<>();
-                    heartbeatMessage.setFromUserId(user.getId());
-                    heartbeatMessage.setToUserId("server");
-                    heartbeatMessage.setId(UUID.randomUUID().toString());
-                    heartbeatMessage.setType(ChatMessage.ChatType.HEARTBEAT);
-                    ChatClient.getInstance().sendMessage(heartbeatMessage);
-                }
+                ChatMessage heartbeatMessage = new ChatMessage();
+                heartbeatMessage.setToUserId("server");
+                heartbeatMessage.setMessageType(ChatMessageType.HEARTBEAT);
+                ChatClient.getInstance().sendMessage(heartbeatMessage);
             } else {
                 super.userEventTriggered(ctx, evt);
             }
+        } else {
+            super.userEventTriggered(ctx, evt);
         }
     }
 

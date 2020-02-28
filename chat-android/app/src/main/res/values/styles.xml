@@ -11,6 +11,11 @@
         <item name="android:windowAnimationStyle">@style/StyleActivityAnim</item>
     </style>
 
+    <style name="ActivityFullScreen" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
     <style name="StyleActivityAnim">
         <item name="android:activityOpenEnterAnimation">@anim/anim_right_enter</item>
         <item name="android:activityOpenExitAnimation">@anim/anim_left_exit</item>
