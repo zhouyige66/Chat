@@ -32,6 +32,10 @@ public interface ApiService {
                                @HeaderMap Map<String, String> headers,
                                @QueryMap Map<String, String> queryMap);
 
+    @GET("{url}")
+    Observable<JSONObject> getWithoutHeader(@Path(value = "url", encoded = true) String url,
+                               @QueryMap Map<String, String> queryMap);
+
     @POST("{url}")
     Observable<JSONObject> post(@Path(value = "url", encoded = true) String url,
                                 @Body Object object);

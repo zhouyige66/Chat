@@ -2,6 +2,8 @@ package cn.roy.demo.chat;
 
 import com.alibaba.fastjson.JSON;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +41,7 @@ import io.netty.util.CharsetUtil;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * @Description:
@@ -56,8 +59,8 @@ public class ChatClient {
     private Channel channel;
     private boolean connectSuccess = false;
     // 被观察者
-    private Observable<Integer> observable;
-    private ObservableEmitter<Integer> observableEmitter;
+    private Observable<Boolean> observable;
+    private List<ObservableEmitter<Boolean>> observableEmitterList;
 
     public static ChatClient getInstance() {
         if (instance == null) {
@@ -71,10 +74,11 @@ public class ChatClient {
     }
 
     private ChatClient() {
-        observable = Observable.create(new ObservableOnSubscribe<Integer>() {
+        observableEmitterList = new ArrayList<>();
+        observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                observableEmitter = emitter;
+            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
+                observableEmitterList.add(emitter);
             }
         });
     }
@@ -93,12 +97,8 @@ public class ChatClient {
         sendMessage(message);
     }
 
-    public Observable<Integer> getObservable() {
+    public Observable<Boolean> getObservable() {
         return observable;
-    }
-
-    public boolean isConnectSuccess() {
-        return connectSuccess;
     }
 
     public void connectServer() {
@@ -189,6 +189,10 @@ public class ChatClient {
             eventLoopGroup.shutdownGracefully();
             eventLoopGroup = null;
         }
+    }
+
+    public boolean isConnectSuccess() {
+        return connectSuccess;
     }
 
     /**

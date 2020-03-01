@@ -61,4 +61,9 @@ public class UserController {
         return ResultData.success(new SimpleDto().setValue("登录成功"));
     }
 
+    @GetMapping("/getFriendList")
+    public ResultData getFriendList(@RequestParam String userId){
+        return ResultData.success();
+    }
+
 }

@@ -1,20 +1,27 @@
 package cn.roy.demo.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
+import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
-import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.chat.ChatClient;
 import cn.roy.demo.model.User;
+import cn.roy.demo.service.ChatService;
+import cn.roy.demo.util.LogUtil;
+import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
@@ -160,6 +167,11 @@ public class MainActivity extends BaseActivity {
 //        };
 //
 //        MessageManager.getInstance().getMessageListObservable().subscribe(observer);
+
+        // 启动聊天服务器
+        Intent intent = new Intent(this, ChatService.class);
+        intent.putExtra("launch",true);
+        startService(intent);
     }
 
     @Override
@@ -167,6 +179,34 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
 
         disposables.clear();
+    }
+
+    private void getFriendList() {
+        Map<String, String> params = new HashMap<>();
+        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_FRIEND_LIST,
+                params, new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(JSONObject jsonObject) {
+                        dismissProgressDialog();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissProgressDialog();
+                        toast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LogUtil.d(MainActivity.this, "结束");
+                    }
+                });
     }
 
     /**********功能：RxJava测试**********/

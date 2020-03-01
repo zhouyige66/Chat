@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
@@ -82,8 +83,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         user.setName(userName);
         user.setPassword(userPassword);
 
+        hideSoftKeyboard();
         showProgressDialog("正在登录...");
-        HttpUtil.getInstance().post("user/login", user,
+        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_LOGIN, user,
                 new Observer<JSONObject>() {
                     @Override
                     public void onSubscribe(Disposable d) {

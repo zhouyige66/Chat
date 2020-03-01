@@ -101,4 +101,7 @@ public class RetrofitUtil {
         return retrofit.create(ApiService.class);
     }
 
+    public Retrofit getRetrofit() {
+        return retrofit;
+    }
 }

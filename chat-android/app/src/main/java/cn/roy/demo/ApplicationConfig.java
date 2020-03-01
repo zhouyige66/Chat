@@ -14,6 +14,7 @@ public final class ApplicationConfig {
         public static final String API_BASE_URL = "http://192.168.43.133:8081";
         public static final String API_LOGIN = "/user/login";
         public static final String API_REGISTER = "/user/register";
+        public static final String API_GET_FRIEND_LIST = "/user/getFriendList";
     }
 
 }

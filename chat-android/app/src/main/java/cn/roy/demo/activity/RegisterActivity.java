@@ -14,13 +14,11 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.kk20.chat.base.http.ResultData;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.model.User;

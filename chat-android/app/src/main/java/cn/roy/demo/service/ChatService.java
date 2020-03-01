@@ -6,6 +6,8 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import cn.roy.demo.chat.ChatClient;
+
 /**
  * @Description
  * @Author kk20
@@ -13,6 +15,15 @@ import androidx.annotation.Nullable;
  * @Version V1.0.0
  */
 public class ChatService extends Service {
+
+    private ChatClient chatClient;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        chatClient = ChatClient.getInstance();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -29,4 +40,5 @@ public class ChatService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
+
 }

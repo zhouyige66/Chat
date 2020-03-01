@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -25,8 +24,9 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("提示");
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     protected void toast(String msg) {
