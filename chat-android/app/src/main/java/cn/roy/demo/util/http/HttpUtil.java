@@ -54,12 +54,13 @@ public class HttpUtil implements HttpService {
     }
 
     @Override
-    public void get(String url, @NonNull Map<String, String> headers, @NonNull Map<String, String> queryMap, Observer<JSONObject> observer) {
+    public void get(String url, @NonNull Map<String, String> headers,
+                    @NonNull Map<String, Object> queryMap, Observer<JSONObject> observer) {
         associate(RetrofitUtil.getInstance().create().get(url, headers, queryMap), observer);
     }
 
     @Override
-    public void getWithoutHeader(String url, @NonNull Map<String, String> queryMap, Observer<JSONObject> observer) {
+    public void getWithoutHeader(String url, @NonNull Map<String, Object> queryMap, Observer<JSONObject> observer) {
         associate(RetrofitUtil.getInstance().create().getWithoutHeader(url, queryMap), observer);
     }
 

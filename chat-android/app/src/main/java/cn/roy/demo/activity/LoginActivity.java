@@ -85,40 +85,40 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         hideSoftKeyboard();
         showProgressDialog("正在登录...");
-        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_LOGIN, user,
-                new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+        Observer<JSONObject> observer = new Observer<JSONObject>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                compositeDisposable.add(d);
+            }
 
-                    }
+            @Override
+            public void onNext(JSONObject jsonObject) {
+                dismissProgressDialog();
+                User u = JSON.parseObject(jsonObject.toString(), User.class);
+                CacheManager.getInstance().cacheCurrentUser(u);
+                SPUtil.saveParam(SPUtil.LOGIN_NAME,
+                        et_user_name.getText().toString().trim());
+                SPUtil.saveParam(SPUtil.LOGIN_PASSWORD,
+                        et_user_password.getText().toString().trim());
+                SPUtil.saveParam(SPUtil.USER_INFO, jsonObject.toString());
+                jump(MainActivity.class, true, null);
+            }
 
-                    @Override
-                    public void onNext(JSONObject jsonObject) {
-                        dismissProgressDialog();
-                        User u = JSON.parseObject(jsonObject.toString(), User.class);
-                        CacheManager.getInstance().cacheCurrentUser(u);
-                        SPUtil.saveParam(SPUtil.LOGIN_NAME,
-                                et_user_name.getText().toString().trim());
-                        SPUtil.saveParam(SPUtil.LOGIN_PASSWORD,
-                                et_user_password.getText().toString().trim());
-                        SPUtil.saveParam(SPUtil.USER_INFO, jsonObject.toString());
-                        jump(MainActivity.class, true, null);
-                    }
+            @Override
+            public void onError(Throwable e) {
+                dismissProgressDialog();
+                if (e instanceof HttpResponseException) {
+                    LogUtil.e(LoginActivity.this, "错误码：" + ((HttpResponseException) e).getCode());
+                }
+                toast(e.getMessage());
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        dismissProgressDialog();
-                        if (e instanceof HttpResponseException) {
-                            LogUtil.e(LoginActivity.this, "错误码：" + ((HttpResponseException) e).getCode());
-                        }
-                        toast(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        LogUtil.d(LoginActivity.this, "结束");
-                    }
-                });
+            @Override
+            public void onComplete() {
+                LogUtil.d(LoginActivity.this, "结束");
+            }
+        };
+        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_LOGIN, user, observer);
     }
 
 }

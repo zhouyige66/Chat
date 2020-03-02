@@ -1,13 +1,10 @@
 package cn.roy.demo.chat.handler;
 
-import android.util.Log;
-
 import com.alibaba.fastjson.JSON;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.chat.ChatClient;
-import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -70,4 +67,33 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+        LogUtil.d(this, "发送异常：" + cause.getMessage());
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        super.channelRegistered(ctx);
+        LogUtil.d(this, "channelRegistered");
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        super.channelUnregistered(ctx);
+        LogUtil.d(this, "channelUnregistered");
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        LogUtil.d(this, "channelActive");
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        LogUtil.d(this, "channelInactive");
+    }
 }

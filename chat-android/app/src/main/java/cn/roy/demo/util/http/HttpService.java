@@ -22,9 +22,9 @@ public interface HttpService {
     void get(String url, @NonNull Map<String, String> headers, Observer<JSONObject> observer);
 
     void get(String url, @NonNull Map<String, String> headers,
-             @NonNull Map<String, String> queryMap, Observer<JSONObject> observer);
+             @NonNull Map<String, Object> queryMap, Observer<JSONObject> observer);
 
-    void getWithoutHeader(String url,@NonNull Map<String, String> queryMap,
+    void getWithoutHeader(String url,@NonNull Map<String, Object> queryMap,
                           Observer<JSONObject> observer);
 
     void post(String url, Object obj, Observer<JSONObject> observer);

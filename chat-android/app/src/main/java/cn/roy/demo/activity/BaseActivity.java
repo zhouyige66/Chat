@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 /**
  * @Description:
  * @Author: Roy
@@ -20,13 +22,24 @@ import androidx.appcompat.app.AppCompatActivity;
 public class BaseActivity extends AppCompatActivity {
     public static final String BUNDLE_DATA = "data";
     private ProgressDialog progressDialog;
+    // 订阅管理器
+    protected CompositeDisposable compositeDisposable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        compositeDisposable = new CompositeDisposable();
         progressDialog = new ProgressDialog(this);
         progressDialog.setCanceledOnTouchOutside(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        compositeDisposable.dispose();
+        compositeDisposable = null;
     }
 
     protected void toast(String msg) {
@@ -59,6 +72,13 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 跳转
+     *
+     * @param target
+     * @param autoFinish
+     * @param data
+     */
     protected void jump(Class<?> target, boolean autoFinish, Bundle data) {
         Intent intent = new Intent(this, target);
         if (data != null) {
@@ -70,6 +90,11 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 获取传递数据
+     *
+     * @return
+     */
     protected Bundle getData() {
         return getIntent().getBundleExtra(BUNDLE_DATA);
     }

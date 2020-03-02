@@ -52,8 +52,6 @@ public class HandlerManager {
     }
 
     public void handleMessage(ChannelHandlerContext ctx, ChatMessage chatMessage, boolean isFromWeb) {
-        // 消息id统一变更为系统生成
-        chatMessage.setId(IdGenerateUtil.generateId());
         // 在此处统一存储，存入数据库或redis
         MessageModel messageModel = new MessageModel();
         messageModel.setId(chatMessage.getId());

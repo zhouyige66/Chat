@@ -101,6 +101,18 @@ public class ChatClient {
     }
 
     public void connectServer() {
+        if (config == null) {
+            LogUtil.d(this, "连接服务器配置未配置");
+            return;
+        }
+
+        if (connectSuccess) {
+            LogUtil.d(this, "已连接服务器，无需重连接");
+            return;
+        }
+        if (executorService != null) {
+            executorService.shutdown();
+        }
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
@@ -134,7 +146,6 @@ public class ChatClient {
                                         pipeline.addLast(
                                                 new StringEncoder(CharsetUtil.UTF_8),
                                                 new StringDecoder(CharsetUtil.UTF_8));
-
                                         break;
                                     case 1:// 方式二：分隔符方式
                                         ByteBuf delimiterByteBuf =
@@ -160,17 +171,20 @@ public class ChatClient {
                             }
                         });
                 // 发起异步连接操作
+                LogUtil.d(ChatClient.this, "连接server：执行一次");
                 try {
                     ChannelFuture future = bootstrap.connect(config.getHost(), config.getPort());
                     if (future.isSuccess()) {
                         connectSuccess = true;
-                        channel = future.channel();
-                        // 服务器同步连接断开时,这句代码才会往下执行
-                        channel.closeFuture().sync();
                     }
+                    channel = future.channel();
+                    // 服务器同步连接断开时,这句代码才会往下执行
+                    channel.closeFuture().sync();
                 } catch (InterruptedException e) {
+                    LogUtil.d(ChatClient.this, "连接server：出现异常");
                     e.printStackTrace();
                 } finally {
+                    LogUtil.d(ChatClient.this, "连接server：执行finally");
                     connectSuccess = false;
                     if (!eventLoopGroup.isShutdown()) {
                         eventLoopGroup.shutdownGracefully();
@@ -188,6 +202,10 @@ public class ChatClient {
             eventLoopGroup.shutdownGracefully();
             eventLoopGroup = null;
         }
+    }
+
+    public void setConfig(ChatConfig config) {
+        this.config = config;
     }
 
     public boolean isConnectSuccess() {

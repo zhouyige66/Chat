@@ -25,7 +25,6 @@ import cn.roy.demo.model.User;
 import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observer;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -39,9 +38,6 @@ public class RegisterActivity extends BaseActivity {
     private Toolbar toolbar;
     private Button btn_submit;
     private List<EditText> editTextList;
-
-    // 订阅管理器
-    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,21 +123,13 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        disposables.dispose();
-        disposables = null;
-    }
-
     private void register(User user) {
         hideSoftKeyboard();
 
         Observer<JSONObject> observer = new Observer<JSONObject>() {
             @Override
             public void onSubscribe(Disposable d) {
-                disposables.add(d);
+                compositeDisposable.add(d);
             }
 
             @Override

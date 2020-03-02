@@ -27,8 +27,8 @@ public class GroupMsgProcessor implements MessageProcessor {
     @Override
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, boolean isFromWeb) {
         Long toUserId = chatMessage.getToUserId();
-        Set<String> groupMemberSet = redisUtil.getSetValue(ConstantValue.MEMBER_OF_GROUP + toUserId);
-        for (String id : groupMemberSet) {
+        Set<Long> groupMemberSet = redisUtil.getSetValue(ConstantValue.MEMBER_OF_GROUP + toUserId);
+        for (Long id : groupMemberSet) {
             messageSender.sendMessage(id, chatMessage);
         }
     }

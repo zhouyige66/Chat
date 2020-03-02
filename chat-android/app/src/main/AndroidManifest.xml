@@ -28,6 +28,8 @@
         <activity android:name=".activity.ForgetPasswordActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.ChatActivity" />
+
+        <service android:name=".service.ChatService"/>
     </application>
 
 </manifest>

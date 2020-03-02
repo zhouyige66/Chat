@@ -7,6 +7,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import cn.roy.demo.chat.ChatClient;
+import cn.roy.demo.chat.ChatConfig;
 
 /**
  * @Description
@@ -15,7 +16,6 @@ import cn.roy.demo.chat.ChatClient;
  * @Version V1.0.0
  */
 public class ChatService extends Service {
-
     private ChatClient chatClient;
 
     @Override
@@ -23,10 +23,18 @@ public class ChatService extends Service {
         super.onCreate();
 
         chatClient = ChatClient.getInstance();
+        ChatConfig chatConfig = new ChatConfig();
+        chatConfig.setHost("192.168.43.133");
+        chatConfig.setPort(10001);
+        chatConfig.setAutoReconnectTime(10);
+        chatConfig.setHeartbeatFailCount(5);
+        chatClient.setConfig(chatConfig);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        chatClient.connectServer();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
