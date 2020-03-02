@@ -12,35 +12,35 @@ import java.io.Serializable;
  * @Version: v1.0
  */
 public class ChatMessage implements Serializable {
-    private String id;
-    private String fromUserId;
-    private String toUserId;
+    private Long id;
+    private Long fromUserId;
+    private Long toUserId;
     private ChatMessageType messageType;
     private MessageBody body;
     private String targetHost;
 
-    public String getFromUserId() {
-        return fromUserId;
-    }
-
-    public void setFromUserId(String fromUserId) {
-        this.fromUserId = fromUserId;
-    }
-
-    public String getToUserId() {
-        return toUserId;
-    }
-
-    public void setToUserId(String toUserId) {
-        this.toUserId = toUserId;
-    }
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getFromUserId() {
+        return fromUserId;
+    }
+
+    public void setFromUserId(Long fromUserId) {
+        this.fromUserId = fromUserId;
+    }
+
+    public Long getToUserId() {
+        return toUserId;
+    }
+
+    public void setToUserId(Long toUserId) {
+        this.toUserId = toUserId;
     }
 
     public ChatMessageType getMessageType() {

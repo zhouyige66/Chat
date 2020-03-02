@@ -19,7 +19,7 @@ final public class ConstantValue {
     // 分隔符
     public static final String DELIMITER = "*&v_secretary&*";
 
-    public static final String SERVER_ID = "server_id";
+    public static final Long SERVER_ID = 0L;
 
     // redis存储前缀
     public static final String HOST_OF_USER="host_of_user_";

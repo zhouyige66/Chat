@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ClientComponent
 public class UserChannelManager {
-    private ConcurrentHashMap<String, UserWrapper> clientList = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<Long, UserWrapper> clientList = new ConcurrentHashMap<>(12);
     private Channel centerChannel;
 
     @Autowired
@@ -28,7 +28,7 @@ public class UserChannelManager {
     RedisUtil redisUtil;
 
     public void addClient(UserWrapper userWrapper) {
-        String userId = userWrapper.getUserModel().getId();
+        Long userId = userWrapper.getUserModel().getId();
         UserWrapper existUserWrapper = clientList.get(userId);
         if (null != existUserWrapper) {
             // 已经存在且不是当前通道，则关闭
@@ -46,12 +46,12 @@ public class UserChannelManager {
         redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, host);
     }
 
-    public void removeClient(String userId) {
+    public void removeClient(Long userId) {
         clientList.remove(userId);
         redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
     }
 
-    public UserWrapper getClient(String userId) {
+    public UserWrapper getClient(Long userId) {
         return clientList.get(userId);
     }
 

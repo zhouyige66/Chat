@@ -9,7 +9,6 @@ import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.main.client.UserChannelManager;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
-import cn.kk20.chat.core.util.IdGenerateUtil;
 import cn.kk20.chat.core.util.LogUtil;
 import cn.kk20.chat.core.util.RedisUtil;
 import cn.kk20.chat.dao.model.UserModel;
@@ -51,7 +50,7 @@ public class LoginMsgProcessor implements MessageProcessor {
             return;
         }
 
-        String fromUserId = chatMessage.getFromUserId();
+        Long fromUserId = chatMessage.getFromUserId();
         UserModel userModel = new UserModel();
         userModel.setId(loginData.getUserId());
         userModel.setName(loginData.getUserName());
@@ -68,13 +67,13 @@ public class LoginMsgProcessor implements MessageProcessor {
         }
 
         // 查询好友列表
-        Set<String> userIdSet = redisUtil.getSetValue(ConstantValue.FRIEND_OF_USER + fromUserId);
+        Set<Long> userIdSet = redisUtil.getSetValue(ConstantValue.FRIEND_OF_USER + fromUserId);
         if (CollectionUtils.isEmpty(userIdSet)) {
             return;
         }
-        HashMap<String, String> onlineFriendConnectHostMap = new HashMap<>(userIdSet.size());
+        HashMap<Long, String> onlineFriendConnectHostMap = new HashMap<>(userIdSet.size());
         // 查询在线好友
-        for (String id : userIdSet) {
+        for (Long id : userIdSet) {
             String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + id);
             if (!StringUtils.isEmpty(host)) {
                 onlineFriendConnectHostMap.put(id, host);
@@ -86,7 +85,6 @@ public class LoginMsgProcessor implements MessageProcessor {
             ChatMessage replyMessage = new ChatMessage();
             replyMessage.setFromUserId(ConstantValue.SERVER_ID);
             replyMessage.setToUserId(fromUserId);
-            replyMessage.setId(IdGenerateUtil.generateId());
             replyMessage.setMessageType(ChatMessageType.LOGIN_NOTIFY);
             replyMessage.setBodyData(textData);
             messageSender.sendMessage(channelHandlerContext.channel(), replyMessage);
@@ -102,7 +100,7 @@ public class LoginMsgProcessor implements MessageProcessor {
         map.put("login", login);
         TextData textData = new TextData(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
         notifyMsg.setBodyData(textData);
-        for (String id : userIdSet) {
+        for (Long id : userIdSet) {
             messageSender.sendMessage(id, notifyMsg);
         }
     }

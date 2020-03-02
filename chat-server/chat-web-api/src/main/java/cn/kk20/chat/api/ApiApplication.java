@@ -9,10 +9,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
 @SpringBootApplication(scanBasePackages = "cn.kk20.chat")
 @MapperScan(value = "cn.kk20.chat.dao.mapper")
-public class ChatApp extends SpringBootServletInitializer implements CommandLineRunner {
+public class ApiApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
     public static void main(String[] args) {
-        SpringApplication.run(ChatApp.class, args);
+        SpringApplication.run(ApiApplication.class, args);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ChatApp extends SpringBootServletInitializer implements CommandLine
      */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(ChatApp.class);
+        return builder.sources(ApiApplication.class);
     }
 
 }

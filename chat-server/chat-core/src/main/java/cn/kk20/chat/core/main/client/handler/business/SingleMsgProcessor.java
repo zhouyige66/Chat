@@ -19,7 +19,7 @@ public class SingleMsgProcessor implements MessageProcessor {
 
     @Override
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, boolean isFromWeb) {
-        String toUserId = chatMessage.getToUserId();
+        Long toUserId = chatMessage.getToUserId();
         messageSender.sendMessage(toUserId, chatMessage);
     }
 

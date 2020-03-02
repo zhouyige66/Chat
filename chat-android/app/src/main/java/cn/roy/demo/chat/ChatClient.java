@@ -41,7 +41,6 @@ import io.netty.util.CharsetUtil;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * @Description:
@@ -84,17 +83,17 @@ public class ChatClient {
     }
 
     private void login(boolean isLogin) {
-        LoginData loginData = new LoginData();
-        loginData.setLogin(isLogin);
-        loginData.setUserId("id");
-        loginData.setUserName("name");
-
-        ChatMessage message = new ChatMessage();
-        message.setMessageType(ChatMessageType.LOGIN);
-        message.setFromUserId(CacheManager.getInstance().getCurrentUserId());
-        message.setBodyData(loginData);
-        // 发送消息
-        sendMessage(message);
+//        LoginData loginData = new LoginData();
+//        loginData.setLogin(isLogin);
+//        loginData.setUserId("id");
+//        loginData.setUserName("name");
+//
+//        ChatMessage message = new ChatMessage();
+//        message.setMessageType(ChatMessageType.LOGIN);
+//        message.setFromUserId(CacheManager.getInstance().getCurrentUserId());
+//        message.setBodyData(loginData);
+//        // 发送消息
+//        sendMessage(message);
     }
 
     public Observable<Boolean> getObservable() {

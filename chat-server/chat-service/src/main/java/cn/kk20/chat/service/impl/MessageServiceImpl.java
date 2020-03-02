@@ -26,7 +26,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public int delete(String id) {
+    public int delete(Long id) {
         return messageModelMapper.deleteByPrimaryKey(id);
     }
 
@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageModel find(String id) {
+    public MessageModel find(Long id) {
         return messageModelMapper.selectByPrimaryKey(id);
     }
 

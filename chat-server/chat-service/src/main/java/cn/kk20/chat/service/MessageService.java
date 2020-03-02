@@ -15,11 +15,11 @@ import java.util.List;
 public interface MessageService {
     int save(MessageModel model);
 
-    int delete(String id);
+    int delete(Long id);
 
     int update(MessageModel model);
 
-    MessageModel find(String id);
+    MessageModel find(Long id);
 
     List<MessageModel> selectAll();
 }

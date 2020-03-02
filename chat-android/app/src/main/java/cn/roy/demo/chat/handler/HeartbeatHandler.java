@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.chat.ChatClient;
+import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -58,7 +59,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
                 }
 
                 ChatMessage heartbeatMessage = new ChatMessage();
-                heartbeatMessage.setToUserId("server");
+                heartbeatMessage.setToUserId(0L);
                 heartbeatMessage.setMessageType(ChatMessageType.HEARTBEAT);
                 ChatClient.getInstance().sendMessage(heartbeatMessage);
             } else {

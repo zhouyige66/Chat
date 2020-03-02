@@ -9,15 +9,15 @@ import cn.kk20.chat.base.message.MessageBodyType;
  * @Version: v1.0
  */
 public class LoginData extends BodyData {
-    private String userId;
+    private Long userId;
     private String userName;
     private boolean login;
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

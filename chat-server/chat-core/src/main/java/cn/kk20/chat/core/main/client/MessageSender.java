@@ -34,7 +34,7 @@ public class MessageSender {
     @Autowired
     ChatConfigBean chatConfigBean;
 
-    public void sendMessage(String targetId, ChatMessage chatMessage) {
+    public void sendMessage(Long targetId, ChatMessage chatMessage) {
         // 实时发给目标客户
         UserWrapper userWrapper = userChannelManager.getClient(targetId);
         if (null == userWrapper) {
@@ -59,7 +59,7 @@ public class MessageSender {
         sendMessage(channel, chatMessage);
     }
 
-    public void sendMessage(String toUserId, String toClientId, ChatMessage chatMessage) {
+    public void sendMessage(Long toUserId, String toClientId, ChatMessage chatMessage) {
         // 实时发给目标客户
         UserWrapper userWrapper = userChannelManager.getClient(toUserId);
         if (null == userWrapper) {

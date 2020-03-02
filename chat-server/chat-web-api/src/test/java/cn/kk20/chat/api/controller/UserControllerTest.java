@@ -38,7 +38,7 @@ public class UserControllerTest {
     @Test
     public void test() throws Exception {
         UserModel userModel = new UserModel();
-        userModel.setId(UUID.randomUUID().toString());
+        userModel.setId(1L);
         userModel.setName("roy");
         userModel.setPassword("123456");
         userModel.setPhone("15881016542");

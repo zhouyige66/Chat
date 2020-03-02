@@ -4,12 +4,15 @@ import cn.kk20.chat.dao.mapper.UserModelMapper;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.dao.model.UserModelQuery;
 import cn.kk20.chat.service.UserService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -24,20 +27,32 @@ public class UserServiceImpl implements UserService {
     UserModelMapper userModelMapper;
 
     @Override
-    public UserModel save(UserModel model) {
-        // 判断注册的用户是否存在
-        UserModel searchResult = find(model.getName(), model.getPassword());
-        if (searchResult == null) {
-            model.setId(UUID.randomUUID().toString());
-            userModelMapper.insertSelective(model);
-            return model;
-        } else {
-            return null;
+    public UserModel save(UserModel model) throws Exception {
+        UserModelQuery query = new UserModelQuery();
+        query.createCriteria().andNameEqualTo(model.getName());
+        List<UserModel> userModelList = userModelMapper.selectByCondition(query);
+        if (!CollectionUtils.isEmpty(userModelList)) {
+            throw new Exception("该用户名已经被占用，请使用其他用户名");
         }
+        query.getOredCriteria().clear();
+        query.createCriteria().andPhoneEqualTo(model.getPhone());
+        List<UserModel> userModelList2 = userModelMapper.selectByCondition(query);
+        if (!CollectionUtils.isEmpty(userModelList2)) {
+            throw new Exception("该手机已被注册，请检查后重试");
+        }
+        query.getOredCriteria().clear();
+        query.createCriteria().andEmailEqualTo(model.getEmail());
+        List<UserModel> userModelList3 = userModelMapper.selectByCondition(query);
+        if (!CollectionUtils.isEmpty(userModelList3)) {
+            throw new Exception("该邮箱已被注册，请检查后重试");
+        }
+
+        userModelMapper.insertSelective(model);
+        return model;
     }
 
     @Override
-    public int delete(String id) {
+    public int delete(Long id) {
         return userModelMapper.deleteByPrimaryKey(id);
     }
 
@@ -47,18 +62,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel find(String id) {
+    public UserModel find(Long id) {
         return userModelMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public UserModel find(String name, String password) {
+    public UserModel find(String name, String password) throws Exception {
         UserModelQuery query = new UserModelQuery();
         UserModelQuery.Criteria criteria = query.createCriteria();
-        criteria.andNameEqualTo(name).andPasswordEqualTo(password);
+        UserModelQuery.Criteria criteria2 = query.or();
+        UserModelQuery.Criteria criteria3 = query.or();
+        criteria.andNameEqualTo(name);
+        criteria2.andPhoneEqualTo(name);
+        criteria3.andEmailEqualTo(name);
         List<UserModel> userModels = userModelMapper.selectByCondition(query);
         if (CollectionUtils.isEmpty(userModels)) {
-            return null;
+            throw new Exception("登录用户不存在，请先注册");
         }
 
         return userModels.get(0);
@@ -70,6 +89,29 @@ public class UserServiceImpl implements UserService {
         UserModelQuery.Criteria criteria = query.createCriteria();
         criteria.andIdIsNotNull();
         return userModelMapper.selectByCondition(query);
+    }
+
+    @Override
+    public List<UserModel> getFriendList(Long userId) {
+        UserModel userModel = userModelMapper.selectByPrimaryKey(userId);
+        String friends = userModel.getFriends();
+        List<Long> friendIdList = JSON.parseObject(friends, new TypeReference<List<Long>>() {
+        });
+        UserModelQuery query = new UserModelQuery();
+        UserModelQuery.Criteria criteria = query.createCriteria();
+        criteria.andIdIn(friendIdList);
+        List<UserModel> userModelList = userModelMapper.selectByCondition(query);
+        List<UserModel> friendList = userModelList.stream().map(e -> {
+            // 去除不必要属性
+            e.setPassword(null);
+            e.setGroups(null);
+            e.setFriends(null);
+            e.setCreateDate(null);
+            e.setModifyDate(null);
+            return e;
+        }).collect(Collectors.toList());
+
+        return friendList;
     }
 
 }

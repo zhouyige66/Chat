@@ -19,7 +19,7 @@ public class Test {
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessageType(ChatMessageType.HEARTBEAT);
-        chatMessage.setId("id");
+        chatMessage.setId(1L);
         chatMessage.setBodyData(textData);
         String str = JSON.toJSONString(chatMessage);
         ChatMessage message = JSON.parseObject(str, ChatMessage.class);
