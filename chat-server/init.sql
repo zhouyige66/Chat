@@ -85,6 +85,45 @@ CREATE TABLE `group_message_log`
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8 COMMENT '群消息删除记录表';
 
+-- ----------------------------
+--  Table structure for `add_friend_log`
+-- ----------------------------
+DROP TABLE
+    IF EXISTS `add_friend_log`;
+CREATE TABLE `add_friend_log`
+(
+    `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `from_user_id`      BIGINT    NOT NULL COMMENT '发起人',
+    `to_user_id`    BIGINT    NOT NULL COMMENT '申请人',
+    `is_agree`    BIT(1)    NOT NULL DEFAULT '0' COMMENT '是否同意',
+    `create_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `index_from_user_id` (`from_user_id`),
+    KEY `index_to_user_id` (`to_user_id`)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8 COMMENT '添加好友申请记录表';
+
+-- ----------------------------
+--  Table structure for `add_group_log`
+-- ----------------------------
+DROP TABLE
+    IF EXISTS `add_group_log`;
+CREATE TABLE `add_group_log`
+(
+    `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `group_id`      BIGINT    NOT NULL COMMENT '群ID',
+    `from_user_id`      BIGINT    NOT NULL COMMENT '发起人',
+    `to_user_id`    BIGINT    NOT NULL COMMENT '申请人',
+    `is_agree`    BIT(1)    NOT NULL DEFAULT '0' COMMENT '管理员是否同意',
+    `create_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `index_from_user_id` (`from_user_id`),
+    KEY `index_to_user_id` (`to_user_id`)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8 COMMENT '加入群申请记录表';
+
 # 重置外键约束
 SET FOREIGN_KEY_CHECKS = 1;
 
