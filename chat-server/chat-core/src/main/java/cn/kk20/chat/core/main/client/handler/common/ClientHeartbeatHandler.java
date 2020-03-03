@@ -3,12 +3,14 @@ package cn.kk20.chat.core.main.client.handler.common;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.main.ClientComponent;
+import cn.kk20.chat.core.main.client.MessageSender;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.net.SocketAddress;
@@ -23,10 +25,12 @@ import java.net.SocketAddress;
 @ChannelHandler.Sharable
 public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> {
     private Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
-
     private ApplicationContext context;
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
+
+    @Autowired
+    MessageSender messageSender;
 
     public ClientHeartbeatHandler(ApplicationContext context) {
         super();
@@ -52,8 +56,7 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
             }
 
             if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
-                ChatMessage heartbeatReplyMessage = new ChatMessage();
-                heartbeatReplyMessage.setMessageType(ChatMessageType.HEARTBEAT);
+                messageSender.sendMessage(ctx.channel(),chatMessage);
             } else {// 向下层传递
                 ctx.fireChannelRead(chatMessage);
             }
@@ -72,6 +75,7 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
                 logger.debug("心跳消息读失败：{}次", heartFailCount);
                 hasDeal = true;
                 if (heartFailCount > heartFailMax) {
+                    heartFailCount = 0;
                     heartbeatFail(ctx);
                     ctx.close();
                 }

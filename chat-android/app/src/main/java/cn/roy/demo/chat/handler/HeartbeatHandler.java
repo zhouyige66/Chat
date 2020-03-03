@@ -49,7 +49,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.WRITER_IDLE) {
                 heartFailCount++;
-                if (heartFailCount > 3) {
+                if (heartFailCount > ChatClient.getInstance().getConfig().getHeartbeatFailCount()) {
+                    heartFailCount = 0;
                     LogUtil.i(this, "客户端读超时，关闭通道：" + ctx.channel().remoteAddress().toString());
                     ctx.close();
                     return;
@@ -70,6 +71,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
+        cause.printStackTrace();
         LogUtil.d(this, "发送异常：" + cause.getMessage());
     }
 

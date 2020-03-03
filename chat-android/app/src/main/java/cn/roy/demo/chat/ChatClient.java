@@ -208,6 +208,10 @@ public class ChatClient {
         this.config = config;
     }
 
+    public ChatConfig getConfig() {
+        return config;
+    }
+
     public boolean isConnectSuccess() {
         return connectSuccess;
     }
@@ -228,7 +232,8 @@ public class ChatClient {
                 channelFuture = channel.writeAndFlush(chatMessage);
             }
 
-            String str = String.format("发送消息，类型-%，发送-%s", chatMessage.getMessageType(),
+            String str = String.format("发送消息，类型-%s，发送-%s",
+                    chatMessage.getMessageType().getDes(),
                     channelFuture.isSuccess() ? "成功" : "失败");
             LogUtil.d(this, str);
         } else {
