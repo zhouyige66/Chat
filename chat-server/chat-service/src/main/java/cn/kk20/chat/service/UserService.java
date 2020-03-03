@@ -13,17 +13,19 @@ import java.util.List;
  */
 @Service
 public interface UserService {
-    UserModel save(UserModel model) throws Exception;
-
     int delete(Long id);
 
     int update(UserModel model);
 
     UserModel find(Long id);
 
-    UserModel find(String name, String password) throws Exception;
-
     List<UserModel> selectAll();
+
+    UserModel register(UserModel model) throws Exception;
+
+    UserModel login(String name, String password) throws Exception;
+
+    List<UserModel> search(String key);
 
     List<UserModel> getFriendList(Long userId);
 

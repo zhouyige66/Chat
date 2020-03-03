@@ -6,6 +6,8 @@ import cn.kk20.chat.base.http.dto.SimpleDto;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class UserController {
     public ResultData register(@RequestBody UserModel userModel) {
         UserModel insertResult = null;
         try {
-            UserModel result = userService.save(userModel);
+            UserModel result = userService.register(userModel);
             return ResultData.success(new SimpleDto().setValue("注册成功"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,7 +50,7 @@ public class UserController {
     @GetMapping("/login/{name}/{password}")
     public ResultData login(@PathVariable("name") String name, @PathVariable("password") String password) {
         try {
-            UserModel userModel = userService.find(name, password);
+            UserModel userModel = userService.login(name, password);
             if (!userModel.getPassword().equals(password)) {
                 return ResultData.fail(202, "登录密码错误");
             }
@@ -64,11 +66,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("/search")
+    public ResultData fuzzySearch(@RequestParam String key) {
+        if (StringUtils.isEmpty(key)) {
+            return ResultData.fail(100, "参数错误");
+        }
+
+        List<UserModel> searchResult = userService.search(key);
+        if (CollectionUtils.isEmpty(searchResult)) {
+            return ResultData.success(new SimpleDto().setValue("暂无相关用户"));
+        }
+
+        return ResultData.success(new ListDto<UserModel>(searchResult));
+    }
+
     @GetMapping("/getFriendList")
     public ResultData getFriendList(@RequestParam Long userId) {
         List<UserModel> friendList = userService.getFriendList(userId);
         ListDto<UserModel> userModelListDto = new ListDto<UserModel>(friendList);
         return ResultData.success(userModelListDto);
     }
-
 }

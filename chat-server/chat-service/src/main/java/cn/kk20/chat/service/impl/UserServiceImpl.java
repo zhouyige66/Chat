@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -22,12 +21,34 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     UserModelMapper userModelMapper;
 
     @Override
-    public UserModel save(UserModel model) throws Exception {
+    public int delete(Long id) {
+        return userModelMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int update(UserModel model) {
+        return userModelMapper.updateByPrimaryKey(model);
+    }
+
+    @Override
+    public UserModel find(Long id) {
+        return userModelMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<UserModel> selectAll() {
+        UserModelQuery query = new UserModelQuery();
+        UserModelQuery.Criteria criteria = query.createCriteria();
+        criteria.andIdIsNotNull();
+        return userModelMapper.selectByCondition(query);
+    }
+
+    @Override
+    public UserModel register(UserModel model) throws Exception {
         UserModelQuery query = new UserModelQuery();
         query.createCriteria().andNameEqualTo(model.getName());
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
@@ -52,22 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int delete(Long id) {
-        return userModelMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public int update(UserModel model) {
-        return userModelMapper.updateByPrimaryKey(model);
-    }
-
-    @Override
-    public UserModel find(Long id) {
-        return userModelMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public UserModel find(String name, String password) throws Exception {
+    public UserModel login(String name, String password) throws Exception {
         UserModelQuery query = new UserModelQuery();
         UserModelQuery.Criteria criteria = query.createCriteria();
         UserModelQuery.Criteria criteria2 = query.or();
@@ -84,11 +90,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserModel> selectAll() {
+    public List<UserModel> search(String key) {
         UserModelQuery query = new UserModelQuery();
-        UserModelQuery.Criteria criteria = query.createCriteria();
-        criteria.andIdIsNotNull();
-        return userModelMapper.selectByCondition(query);
+        query.createCriteria().andNameLike(key);
+        query.or().andPhoneLike(key);
+        try {
+            long l = Long.parseLong(key);
+            query.or().andIdEqualTo(l);
+        } catch (Exception e) {
+            // 不能转换
+        }
+        List<UserModel> userModelList = userModelMapper.selectByCondition(query);
+        return userModelList;
     }
 
     @Override

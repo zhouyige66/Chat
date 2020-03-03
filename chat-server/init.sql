@@ -39,7 +39,7 @@ CREATE TABLE `group`
     `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
     `name`        VARCHAR(20)    DEFAULT NULL COMMENT '群名称',
     `description` varchar(256)   DEFAULT NULL COMMENT '群描述',
-    `creator`     BIGINT      NOT NULL COMMENT '创建者',
+    `creator`     BIGINT    NOT NULL COMMENT '创建者',
     `manager`     VARCHAR(256)   DEFAULT NULL COMMENT '管理员',
     `members`     TEXT           DEFAULT NULL COMMENT '群成员',
     `is_delete`   BIT(1)         DEFAULT FALSE COMMENT '是否删除',
@@ -92,12 +92,12 @@ DROP TABLE
     IF EXISTS `add_friend_log`;
 CREATE TABLE `add_friend_log`
 (
-    `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `from_user_id`      BIGINT    NOT NULL COMMENT '发起人',
-    `to_user_id`    BIGINT    NOT NULL COMMENT '申请人',
-    `is_agree`    BIT(1)    NOT NULL DEFAULT '0' COMMENT '是否同意',
-    `create_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`           BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `from_user_id` BIGINT    NOT NULL COMMENT '申请人',
+    `to_user_id`   BIGINT    NOT NULL COMMENT '好友人',
+    `is_agree`     BIT(1)    NOT NULL DEFAULT FALSE COMMENT '是否同意',
+    `create_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     KEY `index_from_user_id` (`from_user_id`),
     KEY `index_to_user_id` (`to_user_id`)
@@ -111,14 +111,15 @@ DROP TABLE
     IF EXISTS `add_group_log`;
 CREATE TABLE `add_group_log`
 (
-    `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `group_id`      BIGINT    NOT NULL COMMENT '群ID',
-    `from_user_id`      BIGINT    NOT NULL COMMENT '发起人',
-    `to_user_id`    BIGINT    NOT NULL COMMENT '申请人',
-    `is_agree`    BIT(1)    NOT NULL DEFAULT '0' COMMENT '管理员是否同意',
-    `create_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`           BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `group_id`     BIGINT    NOT NULL COMMENT '群ID',
+    `from_user_id` BIGINT    NOT NULL COMMENT '推荐人',
+    `to_user_id`   BIGINT    NOT NULL COMMENT '受邀人',
+    `is_agree`     BIT(1)    NOT NULL DEFAULT FALSE COMMENT '管理员是否同意',
+    `create_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
+    KEY `index_group_id` (`group_id`),
     KEY `index_from_user_id` (`from_user_id`),
     KEY `index_to_user_id` (`to_user_id`)
 ) ENGINE = INNODB
