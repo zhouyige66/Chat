@@ -2,18 +2,27 @@ package cn.kk20.chat.core.main.client.handler.common;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.data.TextData;
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
+import cn.kk20.chat.core.main.client.UserChannelManager;
+import cn.kk20.chat.core.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @Description: 读心跳处理器
@@ -25,17 +34,15 @@ import java.net.SocketAddress;
 @ChannelHandler.Sharable
 public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> {
     private Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
-    private ApplicationContext context;
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
     @Autowired
+    UserChannelManager userChannelManager;
+    @Autowired
     MessageSender messageSender;
-
-    public ClientHeartbeatHandler(ApplicationContext context) {
-        super();
-        this.context = context;
-    }
+    @Autowired
+    RedisUtil redisUtil;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -50,13 +57,13 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
                 try {
                     chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
                 } catch (Exception e) {
-                    logger.error("数据转换出错");
+                    logger.error("客户端：{}，数据转换出错", ctx.channel().remoteAddress());
                     return;
                 }
             }
 
             if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
-                messageSender.sendMessage(ctx.channel(),chatMessage);
+                messageSender.sendMessage(ctx.channel(), chatMessage);
             } else {// 向下层传递
                 ctx.fireChannelRead(chatMessage);
             }
@@ -72,12 +79,11 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
                 heartFailCount++;
-                logger.debug("心跳消息读失败：{}次", heartFailCount);
+                logger.debug("客户端：{}，心跳消息读失败：{}次", ctx.channel().remoteAddress(), heartFailCount);
                 hasDeal = true;
                 if (heartFailCount > heartFailMax) {
                     heartFailCount = 0;
                     heartbeatFail(ctx);
-                    ctx.close();
                 }
             }
         }
@@ -88,35 +94,46 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     private void heartbeatFail(ChannelHandlerContext ctx) {
-        logger.debug("客户端读超时，关闭通道");
+        logger.debug("客户端：{}，读超时，关闭通道", ctx.channel().remoteAddress());
         Channel channel = ctx.channel();
-        String name = ctx.name();
-        ChannelPipeline pipeline = ctx.pipeline();
-        SocketAddress localAddress = channel.localAddress();
-        SocketAddress remoteAddress = channel.remoteAddress();
+        Long userId = userChannelManager.getUserId(channel.remoteAddress());
+        userChannelManager.removeClient(userId);
+        // 通知好友，该用户下线了
+        notifyFriend(userId);
+        // 关闭通道
+        ctx.close();
     }
 
-    @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        super.channelRegistered(ctx);
-        logger.debug("channelRegistered");
+    private void notifyFriend(Long userId) {
+        if (null == userId) {
+            return;
+        }
+        // 查询好友列表
+        Set<Long> userIdSet = redisUtil.getSetValue(ConstantValue.FRIEND_OF_USER + userId);
+        if (CollectionUtils.isEmpty(userIdSet)) {
+            return;
+        }
+        HashMap<Long, String> onlineFriendMap = new HashMap<>(userIdSet.size());
+        // 查询在线好友
+        for (Long id : userIdSet) {
+            String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + id);
+            if (!StringUtils.isEmpty(host)) {
+                onlineFriendMap.put(id, host);
+            }
+        }
+
+        // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线的好友没必要通知
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", userId);
+        map.put("login", false);
+        TextData textData = new TextData(JSON.toJSONString(map));
+        ChatMessage notifyMsg = new ChatMessage();
+        notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
+        notifyMsg.setMessageType(ChatMessageType.LOGIN_NOTIFY);
+        notifyMsg.setBodyData(textData);
+        for (Long id : userIdSet) {
+            messageSender.sendMessage(id, notifyMsg);
+        }
     }
 
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        super.channelUnregistered(ctx);
-        logger.debug("channelUnregistered");
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-        logger.debug("channelActive");
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
-        logger.debug("channelInactive");
-    }
 }

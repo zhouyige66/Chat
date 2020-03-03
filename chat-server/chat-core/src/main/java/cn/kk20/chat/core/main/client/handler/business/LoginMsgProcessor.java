@@ -9,11 +9,12 @@ import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.main.client.UserChannelManager;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
-import cn.kk20.chat.core.util.LogUtil;
 import cn.kk20.chat.core.util.RedisUtil;
 import cn.kk20.chat.dao.model.UserModel;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +32,8 @@ import java.util.Set;
  */
 @MsgProcessor(messageType = ChatMessageType.LOGIN)
 public class LoginMsgProcessor implements MessageProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(LoginMsgProcessor.class);
+
     @Autowired
     RedisUtil redisUtil;
     @Autowired
@@ -46,7 +49,7 @@ public class LoginMsgProcessor implements MessageProcessor {
         try {
             loginData = JSON.parseObject(JSON.toJSONString(data), LoginData.class);
         } catch (Exception e) {
-            LogUtil.log("解析登录消息出错");
+            logger.error("解析登录消息出错:{}",channelHandlerContext.channel().remoteAddress());
             return;
         }
 
@@ -98,7 +101,7 @@ public class LoginMsgProcessor implements MessageProcessor {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", fromUserId);
         map.put("login", login);
-        TextData textData = new TextData(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
+        TextData textData = new TextData(JSON.toJSONString(map));
         notifyMsg.setBodyData(textData);
         for (Long id : userIdSet) {
             messageSender.sendMessage(id, notifyMsg);

@@ -6,7 +6,6 @@ import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
-import cn.kk20.chat.core.util.LogUtil;
 import cn.kk20.chat.core.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;

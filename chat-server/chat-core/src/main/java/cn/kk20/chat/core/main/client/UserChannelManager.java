@@ -9,6 +9,7 @@ import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,7 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ClientComponent
 public class UserChannelManager {
-    private ConcurrentHashMap<Long, UserWrapper> clientList = new ConcurrentHashMap<>(12);
+    // 客户端通道
+    private ConcurrentHashMap<Long, UserWrapper> userMap = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<SocketAddress, Long> hostUserMap = new ConcurrentHashMap<>(12);
+    // 中心服务器通道
     private Channel centerChannel;
 
     @Autowired
@@ -29,16 +33,19 @@ public class UserChannelManager {
 
     public void addClient(UserWrapper userWrapper) {
         Long userId = userWrapper.getUserModel().getId();
-        UserWrapper existUserWrapper = clientList.get(userId);
+        UserWrapper existUserWrapper = userMap.get(userId);
         if (null != existUserWrapper) {
             // 已经存在且不是当前通道，则关闭
             Channel channel = existUserWrapper.getChannel();
             if (channel != null && channel.isActive() && channel != userWrapper.getChannel()) {
                 channel.closeFuture();
             }
+            hostUserMap.remove(channel.remoteAddress());
         }
         // 添加到通道容器
-        clientList.put(userId, userWrapper);
+        userMap.put(userId, userWrapper);
+        SocketAddress socketAddress = userWrapper.getChannel().remoteAddress();
+        hostUserMap.put(socketAddress,userId);
         // 存储到redis
         String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
                 chatConfigBean.getClient().getCommonServer().getPort(),
@@ -47,14 +54,20 @@ public class UserChannelManager {
     }
 
     public void removeClient(Long userId) {
-        clientList.remove(userId);
+        UserWrapper remove = userMap.remove(userId);
+        hostUserMap.remove(remove.getChannel().remoteAddress());
         redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
     }
 
     public UserWrapper getClient(Long userId) {
-        return clientList.get(userId);
+        return userMap.get(userId);
     }
 
+    public Long getUserId(SocketAddress socketAddress){
+        return hostUserMap.get(socketAddress);
+    }
+    
+    /**********功能：服务器通道**********/
     public Channel getCenterChannel() {
         return centerChannel;
     }
@@ -63,7 +76,7 @@ public class UserChannelManager {
         this.centerChannel = centerChannel;
     }
 
-    public void removeCenterChannel(){
+    public void removeCenterChannel() {
         this.centerChannel = null;
     }
 

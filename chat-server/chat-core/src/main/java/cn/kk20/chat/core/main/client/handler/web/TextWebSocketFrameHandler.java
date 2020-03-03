@@ -3,7 +3,6 @@ package cn.kk20.chat.core.main.client.handler.web;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.HandlerManager;
-import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

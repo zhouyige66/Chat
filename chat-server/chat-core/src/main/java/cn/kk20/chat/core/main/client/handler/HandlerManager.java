@@ -5,8 +5,6 @@ import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.handler.business.MessageProcessor;
 import cn.kk20.chat.core.main.client.handler.business.MsgProcessor;
-import cn.kk20.chat.core.util.IdGenerateUtil;
-import cn.kk20.chat.core.util.LogUtil;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.MessageService;
 import com.alibaba.fastjson.JSON;
@@ -58,8 +56,8 @@ public class HandlerManager {
         messageModel.setFromUserId(chatMessage.getFromUserId());
         messageModel.setToUserId(chatMessage.getToUserId());
         messageModel.setContent(JSON.toJSONString(chatMessage));
-        int result = messageService.save(messageModel);
-        LogUtil.log("存储消息：" + result);
+        messageService.save(messageModel);
+        LogUtil.log("存储消息：" + messageModel.getId());
         // 分配至业务处理器
         int messageType = chatMessage.getMessageType().getCode();
         MessageProcessor processor = messageProcessorMap.get(messageType);

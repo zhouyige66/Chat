@@ -4,7 +4,6 @@ import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.coder.CoderType;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ServerComponent;
-import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -27,7 +26,7 @@ public class MessageSender {
 
     public void sendMessage(Channel channel, ChatMessage chatMessage) {
         if (channel == null || !channel.isActive()) {
-            LogUtil.log("指定的消息接收者已断开连接");
+            logger.debug("指定的消息接收者已断开连接");
             return;
         }
 

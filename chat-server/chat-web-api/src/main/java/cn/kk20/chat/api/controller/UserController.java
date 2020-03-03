@@ -52,7 +52,12 @@ public class UserController {
             if (!userModel.getPassword().equals(password)) {
                 return ResultData.fail(202, "登录密码错误");
             }
-            return ResultData.success(new SimpleDto().setValue("登录成功"));
+            userModel.setPassword(null);
+            userModel.setCreateDate(null);
+            userModel.setModifyDate(null);
+            userModel.setGroups(null);
+            userModel.setFriends(null);
+            return ResultData.success(new SimpleDto().setValue(userModel));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultData.fail(201, e.getMessage());

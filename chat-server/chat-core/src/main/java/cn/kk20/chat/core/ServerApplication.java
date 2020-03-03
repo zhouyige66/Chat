@@ -1,9 +1,10 @@
 package cn.kk20.chat.core;
 
 import cn.kk20.chat.core.config.ChatConfigBean;
-import cn.kk20.chat.core.util.LogUtil;
 import cn.kk20.chat.core.main.Launcher;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +26,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @ComponentScan("cn.kk20.chat")
 @MapperScan(basePackages = "cn.kk20.chat")
 public class ServerApplication implements ApplicationListener<ApplicationContextEvent> {
+    private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
     @Autowired
     Launcher launcher;
@@ -36,13 +38,13 @@ public class ServerApplication implements ApplicationListener<ApplicationContext
     @Override
     public void onApplicationEvent(ApplicationContextEvent applicationContextEvent) {
         if (applicationContextEvent instanceof ContextRefreshedEvent) {
-            LogUtil.log("程序启动完成，启动ChatServer");
+            logger.debug("程序启动完成，启动ChatServer");
             launcher.launch();
         } else if (applicationContextEvent instanceof ContextClosedEvent) {
-            LogUtil.log("程序关闭，停止ChatServer");
+            logger.debug("程序关闭，停止ChatServer");
             launcher.stop();
         } else {
-            LogUtil.log("ApplicationContextEvent==" + applicationContextEvent.getClass().getSimpleName());
+            logger.debug("ApplicationContextEvent==" + applicationContextEvent.getClass().getSimpleName());
         }
     }
 

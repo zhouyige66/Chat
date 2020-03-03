@@ -3,11 +3,12 @@ package cn.kk20.chat.core.coder.custom;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
-import cn.kk20.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @Description: 自定义消息编码器
@@ -16,12 +17,13 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * @Version: v1.0
  */
 public class MessageEncoder extends MessageToByteEncoder<ChatMessage> {
+    private static final Logger logger = LoggerFactory.getLogger(MessageEncoder.class);
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, ByteBuf byteBuf)
             throws Exception {
-        if(chatMessage.getMessageType() != ChatMessageType.HEARTBEAT){
-            LogUtil.log("发送消息：" + JSON.toJSONString(chatMessage));
+        if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
+            logger.debug("发送消息：" + JSON.toJSONString(chatMessage));
         }
 
         String msgStr = JSON.toJSONString(chatMessage);
