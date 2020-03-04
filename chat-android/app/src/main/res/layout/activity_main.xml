@@ -1,14 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/layout_title_bar"/>
-
-    <ListView
-        android:id="@+id/lv"
+    <RelativeLayout
+        android:id="@+id/v_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="50dp"
+        android:background="@color/colorBtnRegister">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Roy" />
+
+            <TextView
+                android:id="@+id/tv_chat_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="未连接"
+                android:textColor="#efefef"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@android:drawable/ic_input_add" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#cbcbca" />
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/v_menu"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorBtnRegister"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_menu1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:checked="true"
+            android:text="Chat"
+            android:textSize="18sp"
+            android:textColor="@color/selector_color_menu" />
+
+        <RadioButton
+            android:id="@+id/rb_menu2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="联系人"
+            android:textSize="18sp"
+            android:textColor="@color/selector_color_menu" />
+
+        <RadioButton
+            android:id="@+id/rb_menu3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="我的"
+            android:textColor="@color/selector_color_menu" />
+    </RadioGroup>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/v_menu"
+        android:layout_below="@+id/v_title"
+        android:background="#FFFFFF" />
+
+</RelativeLayout>

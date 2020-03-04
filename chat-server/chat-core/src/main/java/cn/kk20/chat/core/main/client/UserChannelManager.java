@@ -45,28 +45,36 @@ public class UserChannelManager {
         // 添加到通道容器
         userMap.put(userId, userWrapper);
         SocketAddress socketAddress = userWrapper.getChannel().remoteAddress();
-        hostUserMap.put(socketAddress,userId);
+        hostUserMap.put(socketAddress, userId);
         // 存储到redis
+        String host = getHost();
+        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, host);
+        // 更新当前主机的连接数据量
+        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + host, userMap.size());
+    }
+
+    private String getHost(){
         String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
                 chatConfigBean.getClient().getCommonServer().getPort(),
                 chatConfigBean.getClient().getWebServer().getPort());
-        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, host);
+        return host;
     }
 
     public void removeClient(Long userId) {
         UserWrapper remove = userMap.remove(userId);
         hostUserMap.remove(remove.getChannel().remoteAddress());
         redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userMap.size());
     }
 
     public UserWrapper getClient(Long userId) {
         return userMap.get(userId);
     }
 
-    public Long getUserId(SocketAddress socketAddress){
+    public Long getUserId(SocketAddress socketAddress) {
         return hostUserMap.get(socketAddress);
     }
-    
+
     /**********功能：服务器通道**********/
     public Channel getCenterChannel() {
         return centerChannel;

@@ -10,6 +10,8 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
   # 指定bean所在的包
   type-aliases-package: cn.kk20.chat.dao
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 server:
   tomcat:

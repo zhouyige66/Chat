@@ -1,10 +1,13 @@
 package cn.kk20.chat.core.main.server;
 
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ServerComponent;
+import cn.kk20.chat.core.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,9 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerComponent
 public class ClientChannelManager {
     private final Logger logger = LoggerFactory.getLogger(ClientChannelManager.class);
-
     private ConcurrentHashMap<String, Channel> clientMap = new ConcurrentHashMap<>(12);
     private ConcurrentHashMap<Channel, String> channelMap = new ConcurrentHashMap<>(12);
+
+    @Autowired
+    RedisUtil redisUtil;
 
     public void addClient(String clientId, Channel channel) {
         Channel existChannel = clientMap.get(clientId);
@@ -34,6 +39,7 @@ public class ClientChannelManager {
         // 添加到通道容器
         clientMap.put(clientId, channel);
         channelMap.put(channel, clientId);
+
         log();
     }
 
@@ -51,6 +57,8 @@ public class ClientChannelManager {
     }
 
     private void log() {
+        // 更新当前可服务主机地址列表
+        redisUtil.saveParam(ConstantValue.LIST_OF_HOST,JSON.toJSONString(clientMap.keys()));
         logger.debug("客户端：{}", JSON.toJSONString(clientMap));
         logger.debug("通道：{}", JSON.toJSONString(channelMap));
     }

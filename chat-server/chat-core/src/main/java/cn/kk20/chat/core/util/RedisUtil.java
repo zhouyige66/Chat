@@ -56,4 +56,12 @@ public class RedisUtil {
         return members;
     }
 
+    public void saveParam(String key,Object value){
+        redisTemplate.opsForValue().set(key,value);
+    }
+
+    public void getParam(String key){
+        redisTemplate.opsForValue().get(key);
+    }
+
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/shape_border"
+        android:padding="3dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#FFF">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:textColor="#555"
+            android:textSize="14sp"
+            tools:text="用户名" />
+
+        <TextView
+            android:id="@+id/et_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_name"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_indicator"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#ededed" />
+    </RelativeLayout>
+
+</LinearLayout>

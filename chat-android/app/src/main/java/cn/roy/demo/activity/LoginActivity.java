@@ -94,8 +94,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onNext(JSONObject jsonObject) {
                 dismissProgressDialog();
-                User u = JSON.parseObject(jsonObject.toString(), User.class);
-                CacheManager.getInstance().cacheCurrentUser(u);
+                User user = JSON.parseObject(jsonObject.getJSONObject("value").toJSONString(), User.class);
+                CacheManager.getInstance().cacheCurrentUser(user);
                 SPUtil.saveParam(SPUtil.LOGIN_NAME,
                         et_user_name.getText().toString().trim());
                 SPUtil.saveParam(SPUtil.LOGIN_PASSWORD,
@@ -108,7 +108,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void onError(Throwable e) {
                 dismissProgressDialog();
                 if (e instanceof HttpResponseException) {
-                    LogUtil.e(LoginActivity.this, "错误码：" + ((HttpResponseException) e).getCode());
+                    LogUtil.e(LoginActivity.this,
+                            "错误码：" + ((HttpResponseException) e).getCode());
                 }
                 toast(e.getMessage());
             }

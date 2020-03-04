@@ -226,62 +226,62 @@ public class GroupMessageLogModelQuery {
         }
 
         public Criteria andOperatorIsNull() {
-            addCriterion("operator is null");
+            addCriterion("`operator` is null");
             return (Criteria) this;
         }
 
         public Criteria andOperatorIsNotNull() {
-            addCriterion("operator is not null");
+            addCriterion("`operator` is not null");
             return (Criteria) this;
         }
 
         public Criteria andOperatorEqualTo(Long value) {
-            addCriterion("operator =", value, "operator");
+            addCriterion("`operator` =", value, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorNotEqualTo(Long value) {
-            addCriterion("operator <>", value, "operator");
+            addCriterion("`operator` <>", value, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorGreaterThan(Long value) {
-            addCriterion("operator >", value, "operator");
+            addCriterion("`operator` >", value, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorGreaterThanOrEqualTo(Long value) {
-            addCriterion("operator >=", value, "operator");
+            addCriterion("`operator` >=", value, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorLessThan(Long value) {
-            addCriterion("operator <", value, "operator");
+            addCriterion("`operator` <", value, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorLessThanOrEqualTo(Long value) {
-            addCriterion("operator <=", value, "operator");
+            addCriterion("`operator` <=", value, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorIn(List<Long> values) {
-            addCriterion("operator in", values, "operator");
+            addCriterion("`operator` in", values, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorNotIn(List<Long> values) {
-            addCriterion("operator not in", values, "operator");
+            addCriterion("`operator` not in", values, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorBetween(Long value1, Long value2) {
-            addCriterion("operator between", value1, value2, "operator");
+            addCriterion("`operator` between", value1, value2, "operator");
             return (Criteria) this;
         }
 
         public Criteria andOperatorNotBetween(Long value1, Long value2) {
-            addCriterion("operator not between", value1, value2, "operator");
+            addCriterion("`operator` not between", value1, value2, "operator");
             return (Criteria) this;
         }
 

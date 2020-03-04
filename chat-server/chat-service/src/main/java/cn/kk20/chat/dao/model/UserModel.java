@@ -22,9 +22,9 @@ public class UserModel implements Serializable {
 
     private Date modifyDate;
 
-    private String friends;
+    private String friend;
 
-    private String groups;
+    private String group;
 
     private static final long serialVersionUID = 1L;
 
@@ -145,30 +145,30 @@ public class UserModel implements Serializable {
         this.modifyDate = modifyDate;
     }
 
-    public String getFriends() {
-        return friends;
+    public String getFriend() {
+        return friend;
     }
 
-    public UserModel withFriends(String friends) {
-        this.setFriends(friends);
+    public UserModel withFriend(String friend) {
+        this.setFriend(friend);
         return this;
     }
 
-    public void setFriends(String friends) {
-        this.friends = friends;
+    public void setFriend(String friend) {
+        this.friend = friend;
     }
 
-    public String getGroups() {
-        return groups;
+    public String getGroup() {
+        return group;
     }
 
-    public UserModel withGroups(String groups) {
-        this.setGroups(groups);
+    public UserModel withGroup(String group) {
+        this.setGroup(group);
         return this;
     }
 
-    public void setGroups(String groups) {
-        this.groups = groups;
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     @Override
@@ -186,8 +186,8 @@ public class UserModel implements Serializable {
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);
-        sb.append(", friends=").append(friends);
-        sb.append(", groups=").append(groups);
+        sb.append(", friend=").append(friend);
+        sb.append(", group=").append(group);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

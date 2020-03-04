@@ -1,6 +1,7 @@
 package cn.kk20.chat.service;
 
 import cn.kk20.chat.dao.model.AddFriendLogModel;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * @Date: 2020/3/3 15:31
  * @Version: v1.0
  */
+@Service
 public interface FriendDealService {
 
     /**

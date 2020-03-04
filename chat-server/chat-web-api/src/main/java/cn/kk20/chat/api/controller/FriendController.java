@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * @Version: v1.0
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/friend")
 @CrossOrigin // 跨越支持
 public class FriendController {
     @Autowired
@@ -23,7 +23,7 @@ public class FriendController {
         return "hello";
     }
 
-    @GetMapping("/addFriend")
+    @GetMapping("/add")
     public ResultData addFriend(@RequestParam Long fromId, @RequestParam Long toId) {
         if (fromId == null || toId == null) {
             return ResultData.fail(100, "参数错误");
@@ -38,7 +38,7 @@ public class FriendController {
         }
     }
 
-    @GetMapping("/agreeAddFriend")
+    @GetMapping("/agree")
     public ResultData agreeAddFriend(@RequestParam Long applyId, @RequestParam Long targetId) {
         if (applyId == null || targetId == null) {
             return ResultData.fail(100, "参数错误");

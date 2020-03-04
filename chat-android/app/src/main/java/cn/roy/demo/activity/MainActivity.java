@@ -3,19 +3,29 @@ package cn.roy.demo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
-import cn.roy.demo.adapter.CommonAdapter;
-import cn.roy.demo.chat.ChatClient;
-import cn.roy.demo.model.User;
+import cn.roy.demo.adapter.HomePagePagerAdapter;
+import cn.roy.demo.fragment.ChatListFragment;
+import cn.roy.demo.fragment.ContactListFragment;
+import cn.roy.demo.fragment.UserInfoFragment;
 import cn.roy.demo.service.ChatService;
 import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
@@ -23,53 +33,103 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends BaseActivity {
-    private TextView tv_left, tv_title, tv_right;
-    private ListView lv;
-    private CommonAdapter<User> adapter;
+    private TextView tv_user_name, tv_chat_status;
+    private ImageView iv_add;
+    private ViewPager vp_content;
+    private RadioGroup v_menu;
+
+    // 内容页面
+    ChatListFragment chatListFragment;
+    ContactListFragment contactListFragment;
+    UserInfoFragment userInfoFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv_left = findViewById(R.id.tv_left);
-        tv_left.setVisibility(View.GONE);
+        tv_user_name = findViewById(R.id.tv_user_name);
+        tv_chat_status = findViewById(R.id.tv_chat_status);
+        iv_add = findViewById(R.id.iv_add);
+        vp_content = findViewById(R.id.vp_content);
+        v_menu = findViewById(R.id.v_menu);
 
-        tv_title = findViewById(R.id.tv_title);
-        tv_right = findViewById(R.id.tv_right);
-        tv_right.setOnClickListener(new View.OnClickListener() {
+        // 赋值或添加监听器
+        tv_user_name.setText("Roy");
+        tv_chat_status.setText("未连接");
+        iv_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 启动聊天服务器
-                Intent intent = new Intent(MainActivity.this, ChatService.class);
-                startService(intent);
+                toast("添加联系人");
             }
         });
 
-//        adapter = new CommonAdapter<User>(this, R.layout.item_user_list,
-//                MessageManager.getInstance().getUserList()) {
-//            @Override
-//            public void convert(AdapterViewHolder holder, User user) {
-//                TextView tv = holder.getView(R.id.tv_user);
-//                tv.setText(user.getName());
-//            }
-//        };
-//        lv = findViewById(R.id.lv);
-//        lv.setAdapter(adapter);
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                User user = MessageManager.getInstance().getUserList().get(position);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("userId", user.getId());
-//                bundle.putString("userName", user.getName());
-//                jump(ChatActivity.class, false, bundle);
-//            }
-//        });
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        chatListFragment = new ChatListFragment();
+        contactListFragment = new ContactListFragment();
+        userInfoFragment = new UserInfoFragment();
+        List<Fragment> fragmentList = new ArrayList<>();
+        fragmentList.add(chatListFragment);
+        fragmentList.add(contactListFragment);
+        fragmentList.add(userInfoFragment);
+        HomePagePagerAdapter adapter = new HomePagePagerAdapter(fragmentManager,
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragmentList);
+        vp_content.setAdapter(adapter);
+        vp_content.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                RadioButton radioButton = (RadioButton) v_menu.getChildAt(position);
+                radioButton.setChecked(true);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        v_menu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int currentItem = vp_content.getCurrentItem();
+                int index = 0;
+                switch (checkedId) {
+                    case R.id.rb_menu1:
+                        index = 0;
+                        break;
+                    case R.id.rb_menu2:
+                        index = 1;
+                        break;
+                    case R.id.rb_menu3:
+                        index = 2;
+                        break;
+                    default:
+                        break;
+                }
+                if (index == currentItem) {
+                    return;
+                }
+                vp_content.setCurrentItem(index);
+            }
+        });
+
+        // 启动聊天服务器
+        Intent intent = new Intent(MainActivity.this, ChatService.class);
+        startService(intent);
+
+        // 获取最近聊天列表记录
+
+        // 获取好友列表
+        getFriendList();
     }
 
     private void getFriendList() {
+        showProgressDialog("加载中...");
         Map<String, Object> params = new HashMap<>();
         params.put("userId", 1L);
         Observer<JSONObject> observer = new Observer<JSONObject>() {

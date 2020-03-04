@@ -9,9 +9,11 @@ import cn.kk20.chat.service.FriendDealService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import java.util.Set;
  * @Date: 2020/3/3 15:40
  * @Version: v1.0
  */
+@Service
 public class FriendDealServiceImpl implements FriendDealService {
     @Autowired
     UserModelMapper userModelMapper;
@@ -113,15 +116,18 @@ public class FriendDealServiceImpl implements FriendDealService {
     }
 
     private void updateUserFriends(UserModel userModel, Long friendId, boolean add) {
-        String friends = userModel.getFriends();
+        String friends = userModel.getFriend();
         Set<Long> longs = JSON.parseObject(friends, new TypeReference<Set<Long>>() {
         });
+        if (CollectionUtils.isEmpty(longs)) {
+            longs = new HashSet<>();
+        }
         if (add) {
             longs.add(friendId);
         } else {
             longs.remove(friendId);
         }
-        userModel.setFriends(JSON.toJSONString(longs));
+        userModel.setFriend(JSON.toJSONString(longs));
         userModelMapper.updateByPrimaryKey(userModel);
     }
 

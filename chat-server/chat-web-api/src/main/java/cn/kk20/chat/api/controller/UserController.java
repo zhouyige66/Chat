@@ -55,10 +55,8 @@ public class UserController {
                 return ResultData.fail(202, "登录密码错误");
             }
             userModel.setPassword(null);
-            userModel.setCreateDate(null);
-            userModel.setModifyDate(null);
-            userModel.setGroups(null);
-            userModel.setFriends(null);
+            userModel.setGroup(null);
+            userModel.setFriend(null);
             return ResultData.success(new SimpleDto().setValue(userModel));
         } catch (Exception e) {
             e.printStackTrace();

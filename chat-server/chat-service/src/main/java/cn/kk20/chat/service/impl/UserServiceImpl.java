@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -107,18 +108,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserModel> getFriendList(Long userId) {
         UserModel userModel = userModelMapper.selectByPrimaryKey(userId);
-        String friends = userModel.getFriends();
-        List<Long> friendIdList = JSON.parseObject(friends, new TypeReference<List<Long>>() {
+        String friend = userModel.getFriend();
+        Set<Long> friendSet = JSON.parseObject(friend, new TypeReference<Set<Long>>() {
         });
+        if (CollectionUtils.isEmpty(friendSet)) {
+            return null;
+        }
         UserModelQuery query = new UserModelQuery();
         UserModelQuery.Criteria criteria = query.createCriteria();
-        criteria.andIdIn(friendIdList);
+        criteria.andIdIn(friendSet.stream().collect(Collectors.toList()));
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
         List<UserModel> friendList = userModelList.stream().map(e -> {
             // 去除不必要属性
             e.setPassword(null);
-            e.setGroups(null);
-            e.setFriends(null);
+            e.setGroup(null);
+            e.setFriend(null);
             e.setCreateDate(null);
             e.setModifyDate(null);
             return e;
