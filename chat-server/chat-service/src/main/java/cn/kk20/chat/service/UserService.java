@@ -1,7 +1,6 @@
 package cn.kk20.chat.service;
 
 import cn.kk20.chat.dao.model.UserModel;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -11,7 +10,6 @@ import java.util.List;
  * @Date: 2019-01-29 16:53
  * @Version: v1.0
  */
-@Service
 public interface UserService {
     int delete(Long id);
 

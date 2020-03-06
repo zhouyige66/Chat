@@ -17,9 +17,8 @@ public class HomePagePagerAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> fragmentList;
 
-    public HomePagePagerAdapter(@NonNull FragmentManager fm, int behavior,
-                                List<Fragment> fragmentList) {
-        super(fm, behavior);
+    public HomePagePagerAdapter(@NonNull FragmentManager fm, List<Fragment> fragmentList) {
+        super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fragmentList = fragmentList;
     }
 

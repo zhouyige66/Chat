@@ -4,7 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/selector_btn_login"
+        android:text="退出登录"
+        android:textColor="#FFF" />
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
@@ -18,11 +25,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#FFF">
+        android:background="#e4d3e3">
 
         <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="80dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
@@ -31,21 +37,16 @@
             tools:text="用户名" />
 
         <TextView
-            android:id="@+id/et_value"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/tv_name"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="#000"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_indicator"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:drawableRight="@drawable/ic_indicator"
+            android:drawablePadding="5dp"
+            android:textColor="#000"
+            android:textSize="14sp"
+            tools:text="Roy" />
 
         <View
             android:layout_width="match_parent"
@@ -53,5 +54,114 @@
             android:layout_alignParentBottom="true"
             android:background="#ededed" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#e4d3e3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:textColor="#555"
+            android:textSize="14sp"
+            tools:text="电话" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:drawableRight="@drawable/ic_indicator"
+            android:drawablePadding="5dp"
+            android:singleLine="true"
+            android:text="未绑定"
+            android:textColor="#000"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#ededed" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#e4d3e3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:textColor="#555"
+            android:textSize="14sp"
+            tools:text="邮箱" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:drawableRight="@drawable/ic_indicator"
+            android:drawablePadding="5dp"
+            android:text="未绑定"
+            android:textColor="#000"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#ededed" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#e4d3e3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:textColor="#555"
+            android:textSize="14sp"
+            tools:text="注册时间" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/tv_name"
+            android:drawableRight="@drawable/ic_indicator"
+            android:drawablePadding="5dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="14sp"
+            tools:text="2020-03-01 " />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#ededed" />
+    </RelativeLayout>
+
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

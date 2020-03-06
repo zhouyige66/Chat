@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.fastjson.JSONObject;
@@ -72,8 +71,7 @@ public class MainActivity extends BaseActivity {
         fragmentList.add(chatListFragment);
         fragmentList.add(contactListFragment);
         fragmentList.add(userInfoFragment);
-        HomePagePagerAdapter adapter = new HomePagePagerAdapter(fragmentManager,
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragmentList);
+        HomePagePagerAdapter adapter = new HomePagePagerAdapter(fragmentManager, fragmentList);
         vp_content.setAdapter(adapter);
         vp_content.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -121,42 +119,6 @@ public class MainActivity extends BaseActivity {
         // 启动聊天服务器
         Intent intent = new Intent(MainActivity.this, ChatService.class);
         startService(intent);
-
-        // 获取最近聊天列表记录
-
-        // 获取好友列表
-        getFriendList();
-    }
-
-    private void getFriendList() {
-        showProgressDialog("加载中...");
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", 1L);
-        Observer<JSONObject> observer = new Observer<JSONObject>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(JSONObject jsonObject) {
-                dismissProgressDialog();
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                dismissProgressDialog();
-                toast(e.getMessage());
-            }
-
-            @Override
-            public void onComplete() {
-                LogUtil.d(MainActivity.this, "结束");
-            }
-        };
-        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_FRIEND_LIST,
-                params, observer);
     }
 
 }

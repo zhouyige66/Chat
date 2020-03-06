@@ -57,7 +57,7 @@ public class HandlerManager {
         messageModel.setToUserId(chatMessage.getToUserId());
         messageModel.setContent(JSON.toJSONString(chatMessage));
         messageService.save(messageModel);
-        LogUtil.log("存储消息：" + messageModel.getId());
+
         // 分配至业务处理器
         int messageType = chatMessage.getMessageType().getCode();
         MessageProcessor processor = messageProcessorMap.get(messageType);

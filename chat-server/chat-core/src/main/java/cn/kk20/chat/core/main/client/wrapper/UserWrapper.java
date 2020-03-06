@@ -1,6 +1,5 @@
 package cn.kk20.chat.core.main.client.wrapper;
 
-import cn.kk20.chat.dao.model.UserModel;
 import io.netty.channel.Channel;
 
 /**

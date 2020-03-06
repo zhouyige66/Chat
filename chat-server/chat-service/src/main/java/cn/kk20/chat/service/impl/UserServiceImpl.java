@@ -9,6 +9,7 @@ import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -56,17 +57,23 @@ public class UserServiceImpl implements UserService {
         if (!CollectionUtils.isEmpty(userModelList)) {
             throw new Exception("该用户名已经被占用，请使用其他用户名");
         }
-        query.getOredCriteria().clear();
-        query.createCriteria().andPhoneEqualTo(model.getPhone());
-        List<UserModel> userModelList2 = userModelMapper.selectByCondition(query);
-        if (!CollectionUtils.isEmpty(userModelList2)) {
-            throw new Exception("该手机已被注册，请检查后重试");
+        // 检查电话是否被注册
+        if(!StringUtils.isEmpty(model.getPhone())){
+            query.getOredCriteria().clear();
+            query.createCriteria().andPhoneEqualTo(model.getPhone());
+            List<UserModel> userModelList2 = userModelMapper.selectByCondition(query);
+            if (!CollectionUtils.isEmpty(userModelList2)) {
+                throw new Exception("该手机已被注册，请检查后重试");
+            }
         }
-        query.getOredCriteria().clear();
-        query.createCriteria().andEmailEqualTo(model.getEmail());
-        List<UserModel> userModelList3 = userModelMapper.selectByCondition(query);
-        if (!CollectionUtils.isEmpty(userModelList3)) {
-            throw new Exception("该邮箱已被注册，请检查后重试");
+        // 检查邮箱是否被注册
+        if(!StringUtils.isEmpty(model.getEmail())){
+            query.getOredCriteria().clear();
+            query.createCriteria().andEmailEqualTo(model.getEmail());
+            List<UserModel> userModelList3 = userModelMapper.selectByCondition(query);
+            if (!CollectionUtils.isEmpty(userModelList3)) {
+                throw new Exception("该邮箱已被注册，请检查后重试");
+            }
         }
 
         userModelMapper.insertSelective(model);
@@ -108,7 +115,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserModel> getFriendList(Long userId) {
         UserModel userModel = userModelMapper.selectByPrimaryKey(userId);
-        String friend = userModel.getFriend();
+        String friend = userModel.getFriends();
         Set<Long> friendSet = JSON.parseObject(friend, new TypeReference<Set<Long>>() {
         });
         if (CollectionUtils.isEmpty(friendSet)) {
@@ -121,8 +128,8 @@ public class UserServiceImpl implements UserService {
         List<UserModel> friendList = userModelList.stream().map(e -> {
             // 去除不必要属性
             e.setPassword(null);
-            e.setGroup(null);
-            e.setFriend(null);
+            e.setGroups(null);
+            e.setFriends(null);
             e.setCreateDate(null);
             e.setModifyDate(null);
             return e;

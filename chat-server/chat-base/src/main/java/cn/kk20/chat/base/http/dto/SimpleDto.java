@@ -11,6 +11,10 @@ import java.io.Serializable;
 public class SimpleDto extends BaseDto{
     private Serializable value;
 
+    public SimpleDto(Serializable value) {
+        this.value = value;
+    }
+
     public Serializable getValue() {
         return value;
     }

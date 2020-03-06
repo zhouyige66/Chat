@@ -89,41 +89,24 @@ CREATE TABLE `group_message_log`
 --  Table structure for `add_friend_log`
 -- ----------------------------
 DROP TABLE
-    IF EXISTS `add_friend_log`;
-CREATE TABLE `add_friend_log`
+    IF EXISTS `apply_log`;
+CREATE TABLE `apply_log`
 (
-    `id`           BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `from_user_id` BIGINT    NOT NULL COMMENT '申请人',
-    `to_user_id`   BIGINT    NOT NULL COMMENT '好友人',
-    `is_agree`     BIT(1)    NOT NULL DEFAULT FALSE COMMENT '是否同意',
-    `create_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `modify_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`             BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `type`           INTEGER   NOT NULL COMMENT '申请类型：0-加人，1-加群',
+    `apply_user_id`  BIGINT    NOT NULL COMMENT '申请人',
+    `target_user_id` BIGINT    NOT NULL COMMENT '目标：好友或群组',
+    `verify_user_id` BIGINT    NOT NULL COMMENT '审批人',
+    `is_agree`       BIT(1)         DEFAULT NULL COMMENT '是否同意',
+    `remark`         VARCHAR(255)   DEFAULT NULL COMMENT '备注',
+    `is_delete`      BIT(1)         DEFAULT FALSE COMMENT '是否删除',
+    `create_date`    TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date`    TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `index_from_user_id` (`from_user_id`),
-    KEY `index_to_user_id` (`to_user_id`)
+    KEY `index_apply_user_id` (`apply_user_id`),
+    KEY `index_target_user_id` (`target_user_id`)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8 COMMENT '添加好友申请记录表';
-
--- ----------------------------
---  Table structure for `add_group_log`
--- ----------------------------
-DROP TABLE
-    IF EXISTS `add_group_log`;
-CREATE TABLE `add_group_log`
-(
-    `id`           BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `group_id`     BIGINT    NOT NULL COMMENT '群ID',
-    `from_user_id` BIGINT    NOT NULL COMMENT '推荐人',
-    `to_user_id`   BIGINT    NOT NULL COMMENT '受邀人',
-    `is_agree`     BIT(1)    NOT NULL DEFAULT FALSE COMMENT '管理员是否同意',
-    `create_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `modify_date`  TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    KEY `index_group_id` (`group_id`),
-    KEY `index_from_user_id` (`from_user_id`),
-    KEY `index_to_user_id` (`to_user_id`)
-) ENGINE = INNODB
-  DEFAULT CHARSET = utf8 COMMENT '加入群申请记录表';
 
 # 重置外键约束
 SET FOREIGN_KEY_CHECKS = 1;
