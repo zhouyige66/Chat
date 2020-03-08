@@ -18,6 +18,12 @@ public class MessageModel implements Serializable {
 
     private Boolean toUserDelete;
 
+    private Boolean isDelete;
+
+    private Date createDate;
+
+    private Date modifyDate;
+
     private String content;
 
     private static final long serialVersionUID = 1L;
@@ -113,6 +119,45 @@ public class MessageModel implements Serializable {
         this.toUserDelete = toUserDelete;
     }
 
+    public Boolean getIsDelete() {
+        return isDelete;
+    }
+
+    public MessageModel withIsDelete(Boolean isDelete) {
+        this.setIsDelete(isDelete);
+        return this;
+    }
+
+    public void setIsDelete(Boolean isDelete) {
+        this.isDelete = isDelete;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public MessageModel withCreateDate(Date createDate) {
+        this.setCreateDate(createDate);
+        return this;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getModifyDate() {
+        return modifyDate;
+    }
+
+    public MessageModel withModifyDate(Date modifyDate) {
+        this.setModifyDate(modifyDate);
+        return this;
+    }
+
+    public void setModifyDate(Date modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+
     public String getContent() {
         return content;
     }
@@ -139,6 +184,9 @@ public class MessageModel implements Serializable {
         sb.append(", status=").append(status);
         sb.append(", fromUserDelete=").append(fromUserDelete);
         sb.append(", toUserDelete=").append(toUserDelete);
+        sb.append(", isDelete=").append(isDelete);
+        sb.append(", createDate=").append(createDate);
+        sb.append(", modifyDate=").append(modifyDate);
         sb.append(", content=").append(content);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

@@ -83,6 +83,7 @@ public class GroupController {
 
         try {
             ApplyLogModel applyLogModel = new ApplyLogModel();
+            applyLogModel.setType(1);
             applyLogModel.setId(verifyBean.getApplyId());
             applyLogModel.setVerifyUserId(verifyBean.getVerifyUserId());
             applyLogModel.setIsAgree(verifyBean.getAgree());

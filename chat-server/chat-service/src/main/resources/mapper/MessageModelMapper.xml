@@ -9,6 +9,9 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="from_user_delete" jdbcType="BIT" property="fromUserDelete" />
     <result column="to_user_delete" jdbcType="BIT" property="toUserDelete" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cn.kk20.chat.dao.model.MessageModel">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
@@ -72,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, from_user_id, to_user_id, send_time, `status`, from_user_delete, to_user_delete
+    id, from_user_id, to_user_id, send_time, `status`, from_user_delete, to_user_delete, 
+    is_delete, create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -131,9 +135,11 @@
     </selectKey>
     insert into c_message (from_user_id, to_user_id, send_time, 
       `status`, from_user_delete, to_user_delete, 
+      is_delete, create_date, modify_date, 
       content)
     values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{sendTime,jdbcType=TIMESTAMP}, 
       #{status,jdbcType=TINYINT}, #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT}, 
+      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
       #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.MessageModel">
@@ -160,6 +166,15 @@
       <if test="toUserDelete != null">
         to_user_delete,
       </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
       <if test="content != null">
         content,
       </if>
@@ -182,6 +197,15 @@
       </if>
       <if test="toUserDelete != null">
         #{toUserDelete,jdbcType=BIT},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="content != null">
         #{content,jdbcType=LONGVARCHAR},
@@ -218,6 +242,15 @@
       <if test="record.toUserDelete != null">
         to_user_delete = #{record.toUserDelete,jdbcType=BIT},
       </if>
+      <if test="record.isDelete != null">
+        is_delete = #{record.isDelete,jdbcType=BIT},
+      </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modifyDate != null">
+        modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=LONGVARCHAR},
       </if>
@@ -235,6 +268,9 @@
       `status` = #{record.status,jdbcType=TINYINT},
       from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
       to_user_delete = #{record.toUserDelete,jdbcType=BIT},
+      is_delete = #{record.isDelete,jdbcType=BIT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Condition_Where_Clause" />
@@ -248,7 +284,10 @@
       send_time = #{record.sendTime,jdbcType=TIMESTAMP},
       `status` = #{record.status,jdbcType=TINYINT},
       from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
-      to_user_delete = #{record.toUserDelete,jdbcType=BIT}
+      to_user_delete = #{record.toUserDelete,jdbcType=BIT},
+      is_delete = #{record.isDelete,jdbcType=BIT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = #{record.modifyDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Condition_Where_Clause" />
     </if>
@@ -274,6 +313,15 @@
       <if test="toUserDelete != null">
         to_user_delete = #{toUserDelete,jdbcType=BIT},
       </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="content != null">
         content = #{content,jdbcType=LONGVARCHAR},
       </if>
@@ -288,6 +336,9 @@
       `status` = #{status,jdbcType=TINYINT},
       from_user_delete = #{fromUserDelete,jdbcType=BIT},
       to_user_delete = #{toUserDelete,jdbcType=BIT},
+      is_delete = #{isDelete,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP},
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -298,7 +349,10 @@
       send_time = #{sendTime,jdbcType=TIMESTAMP},
       `status` = #{status,jdbcType=TINYINT},
       from_user_delete = #{fromUserDelete,jdbcType=BIT},
-      to_user_delete = #{toUserDelete,jdbcType=BIT}
+      to_user_delete = #{toUserDelete,jdbcType=BIT},
+      is_delete = #{isDelete,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

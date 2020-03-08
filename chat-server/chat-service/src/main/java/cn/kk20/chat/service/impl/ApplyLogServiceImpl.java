@@ -81,7 +81,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
             // 去除冗余的记录
             for (ApplyLogModel existModel : applyLogModelList) {
                 existModel.setIsDelete(true);
-                applyLogModelMapper.updateByPrimaryKey(existModel);
+                applyLogModelMapper.updateByPrimaryKeySelective(existModel);
             }
         }
         applyLogModelMapper.insertSelective(model);
@@ -90,8 +90,12 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     @Override
     public void verifyApply(ApplyLogModel model) throws Exception {
         ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
-        if (existModel == null || !existModel.getVerifyUserId().equals(model.getVerifyUserId())) {
-            String msg = String.format("申请记录数据有误，记录id为%d", model.getId());
+        if (existModel == null) {
+            String msg = String.format("申请记录数据：记录id=%d的申请记录不存在", model.getId());
+            throw new Exception(msg);
+        }
+        if (!existModel.getVerifyUserId().equals(model.getVerifyUserId())) {
+            String msg = String.format("申请记录数据：记录id=%d的申请的审批人不符", model.getId());
             throw new Exception(msg);
         }
 
@@ -126,7 +130,8 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                 }
                 memberSet.add(applyUserId);
                 groupModel.setMembers(JSON.toJSONString(memberSet));
-
+                groupModel.setModifyDate(null);
+                groupModelMapper.updateByPrimaryKeySelective(groupModel);
                 // 更新用户的群列表
                 String groups = applyUserModel.getGroupList();
                 Set<Long> groupSet;
@@ -138,7 +143,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                 }
                 groupSet.add(targetUserId);
                 applyUserModel.setGroupList(JSON.toJSONString(groupSet));
-                userModelMapper.updateByPrimaryKey(applyUserModel);
+                userModelMapper.updateByPrimaryKeySelective(applyUserModel);
             }
         }
     }
@@ -156,7 +161,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
             longs.remove(friendId);
         }
         userModel.setFriends(JSON.toJSONString(longs));
-        userModelMapper.updateByPrimaryKey(userModel);
+        userModelMapper.updateByPrimaryKeySelective(userModel);
     }
 
 }

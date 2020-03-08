@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="msg_id" jdbcType="BIGINT" property="msgId" />
     <result column="operator" jdbcType="BIGINT" property="operator" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
   </resultMap>
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, msg_id, `operator`, create_date, modify_date
+    id, msg_id, `operator`, is_delete, create_date, modify_date
   </sql>
   <select id="selectByCondition" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModelQuery" resultMap="BaseResultMap">
     select
@@ -103,10 +104,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_group_message_log (msg_id, `operator`, create_date, 
-      modify_date)
-    values (#{msgId,jdbcType=BIGINT}, #{operator,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{modifyDate,jdbcType=TIMESTAMP})
+    insert into c_group_message_log (msg_id, `operator`, is_delete, 
+      create_date, modify_date)
+    values (#{msgId,jdbcType=BIGINT}, #{operator,jdbcType=BIGINT}, #{isDelete,jdbcType=BIT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -119,6 +120,9 @@
       </if>
       <if test="operator != null">
         `operator`,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
       </if>
       <if test="createDate != null">
         create_date,
@@ -133,6 +137,9 @@
       </if>
       <if test="operator != null">
         #{operator,jdbcType=BIGINT},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=BIT},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
@@ -160,6 +167,9 @@
       <if test="record.operator != null">
         `operator` = #{record.operator,jdbcType=BIGINT},
       </if>
+      <if test="record.isDelete != null">
+        is_delete = #{record.isDelete,jdbcType=BIT},
+      </if>
       <if test="record.createDate != null">
         create_date = #{record.createDate,jdbcType=TIMESTAMP},
       </if>
@@ -176,6 +186,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       msg_id = #{record.msgId,jdbcType=BIGINT},
       `operator` = #{record.operator,jdbcType=BIGINT},
+      is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -191,6 +202,9 @@
       <if test="operator != null">
         `operator` = #{operator,jdbcType=BIGINT},
       </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=BIT},
+      </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
@@ -204,6 +218,7 @@
     update c_group_message_log
     set msg_id = #{msgId,jdbcType=BIGINT},
       `operator` = #{operator,jdbcType=BIGINT},
+      is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

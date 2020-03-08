@@ -10,6 +10,8 @@ public class GroupMessageLogModel implements Serializable {
 
     private Long operator;
 
+    private Boolean isDelete;
+
     private Date createDate;
 
     private Date modifyDate;
@@ -55,6 +57,19 @@ public class GroupMessageLogModel implements Serializable {
         this.operator = operator;
     }
 
+    public Boolean getIsDelete() {
+        return isDelete;
+    }
+
+    public GroupMessageLogModel withIsDelete(Boolean isDelete) {
+        this.setIsDelete(isDelete);
+        return this;
+    }
+
+    public void setIsDelete(Boolean isDelete) {
+        this.isDelete = isDelete;
+    }
+
     public Date getCreateDate() {
         return createDate;
     }
@@ -90,6 +105,7 @@ public class GroupMessageLogModel implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", msgId=").append(msgId);
         sb.append(", operator=").append(operator);
+        sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);
         sb.append(", serialVersionUID=").append(serialVersionUID);
