@@ -59,6 +59,7 @@ public class FriendController {
 
         try {
             ApplyLogModel applyLogModel = new ApplyLogModel();
+            applyLogModel.setType(0);
             applyLogModel.setId(verifyBean.getApplyId());
             applyLogModel.setVerifyUserId(verifyBean.getVerifyUserId());
             applyLogModel.setIsAgree(verifyBean.getAgree());

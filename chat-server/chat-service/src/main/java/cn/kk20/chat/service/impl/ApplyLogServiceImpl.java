@@ -50,21 +50,67 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         if (type == null) {
             throw new Exception("申请类型为0-添加好友，1-添加群，不能为空");
         }
-
-        UserModel applyUserModel = userModelMapper.selectByPrimaryKey(model.getApplyUserId());
+        Long applyUserId = model.getApplyUserId();
+        Long targetUserId = model.getTargetUserId();
+        UserModel applyUserModel = userModelMapper.selectByPrimaryKey(applyUserId);
         if (applyUserModel == null) {
             throw new Exception("申请发起者不存在");
         }
         if (type == 0) {
-            UserModel targetUserModel = userModelMapper.selectByPrimaryKey(model.getTargetUserId());
+            UserModel targetUserModel = userModelMapper.selectByPrimaryKey(targetUserId);
             if (targetUserModel == null || targetUserModel.getIsDelete()) {
                 throw new Exception("申请添加的好友不存在");
             }
+            // 检查两者是否已经是好友了
+            String targetUserFriends = targetUserModel.getFriends();
+            if (!StringUtils.isEmpty(targetUserFriends)) {
+                Set<Long> targetUserFriendSet = JSON.parseObject(targetUserFriends, new TypeReference<Set<Long>>() {
+                });
+                if (targetUserFriendSet.contains(applyUserModel.getId())) {
+                    String applyUserFriends = applyUserModel.getFriends();
+                    Set<Long> applyUserFriendSet;
+                    if (StringUtils.isEmpty(applyUserFriends)) {
+                        applyUserFriendSet = new HashSet<>();
+                    } else {
+                        applyUserFriendSet = JSON.parseObject(applyUserFriends, new TypeReference<Set<Long>>() {
+                        });
+                    }
+                    if (!applyUserFriendSet.contains(targetUserId)) {
+                        // 更新申请者的好友列表
+                        applyUserFriendSet.add(targetUserId);
+                        applyUserModel.setFriends(JSON.toJSONString(applyUserFriends));
+                        userModelMapper.updateByPrimaryKeySelective(applyUserModel);
+                    }
+                    throw new Exception("申请添加的好友已经存在，不必重复添加");
+                }
+            }
             model.setVerifyUserId(targetUserModel.getId());
         } else {
-            GroupModel targetGroupModel = groupModelMapper.selectByPrimaryKey(model.getTargetUserId());
+            GroupModel targetGroupModel = groupModelMapper.selectByPrimaryKey(targetUserId);
             if (targetGroupModel == null || targetGroupModel.getIsDelete()) {
                 throw new Exception("申请加入的群不存在");
+            }
+            // 检查申请人是否已经在群成员中
+            String groupMembers = targetGroupModel.getMembers();
+            if (StringUtils.isEmpty(groupMembers)) {
+                Set<Long> memberSet = JSON.parseObject(groupMembers, new TypeReference<Set<Long>>() {
+                });
+                if (memberSet.contains(applyUserId)) {
+                    String applyUserGroups = applyUserModel.getGroupList();
+                    Set<Long> applyUserGroupSet;
+                    if (StringUtils.isEmpty(applyUserGroups)) {
+                        applyUserGroupSet = new HashSet<>();
+                    } else {
+                        applyUserGroupSet = JSON.parseObject(applyUserGroups, new TypeReference<Set<Long>>() {
+                        });
+                    }
+                    if (!applyUserGroupSet.contains(targetUserId)) {
+                        applyUserGroupSet.add(targetUserId);
+                        applyUserModel.setGroupList(JSON.toJSONString(applyUserGroupSet));
+                        userModelMapper.updateByPrimaryKeySelective(applyUserModel);
+                    }
+                    throw new Exception("申请人已经是该群的成员了");
+                }
             }
             model.setVerifyUserId(targetGroupModel.getCreator());
         }
@@ -74,8 +120,8 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         query.setOrderByClause("`id` DESC");
         ApplyLogModelQuery.Criteria criteria = query.createCriteria();
         criteria.andIsDeleteEqualTo(false);
-        criteria.andApplyUserIdEqualTo(model.getApplyUserId());
-        criteria.andTargetUserIdEqualTo(model.getTargetUserId());
+        criteria.andApplyUserIdEqualTo(applyUserId);
+        criteria.andTargetUserIdEqualTo(targetUserId);
         List<ApplyLogModel> applyLogModelList = applyLogModelMapper.selectByCondition(query);
         if (!CollectionUtils.isEmpty(applyLogModelList)) {
             // 去除冗余的记录
