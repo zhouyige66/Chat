@@ -60,7 +60,7 @@
                              targetProject="src/main/java" type="XMLMAPPER"/>
 
         <!--table标签可以有多个，至少一个，tableName指定表名，可以使用_和%通配符-->
-        <table tableName="user" domainObjectName="UserModel">
+        <table tableName="c_user" domainObjectName="UserModel">
             <!--generatedKey用于生成生成主键的方法，
                 如果设置了该元素，MBG会在生成的<insert>元素中生成一条正确的<selectKey>元素，该元素可选
                 column:主键的列名；
@@ -77,21 +77,24 @@
                     JDBC      :相当于在生成的insert元素上添加useGeneratedKeys="true"和keyProperty属性-->
             <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
             <!--数据库中表名有时我们都会带个前缀，而实体又不想带前缀，这个配置可以把实体的前缀去掉-->
-            <!--<domainObjectRenamingRule searchString="^Tbl" replaceString=""/>-->
-            <columnOverride column="groups" delimitedColumnName="`groups`"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
         </table>
-<!--        <table tableName="group" domainObjectName="GroupModel">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>-->
-<!--        </table>-->
-<!--        <table tableName="message" domainObjectName="MessageModel">-->
-<!--            <property name="mapperName" value="MessageModelMapper"/>-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>-->
-<!--        </table>-->
-<!--        <table tableName="group_message_log" domainObjectName="GroupMessageLogModel">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>-->
-<!--        </table>-->
-<!--        <table tableName="apply_log" domainObjectName="ApplyLogModel">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>-->
-<!--        </table>-->
+        <table tableName="c_group" domainObjectName="GroupModel">
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
+        </table>
+        <table tableName="c_message" domainObjectName="MessageModel">
+            <property name="mapperName" value="MessageModelMapper"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
+        </table>
+        <table tableName="c_group_message_log" domainObjectName="GroupMessageLogModel">
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
+        </table>
+        <table tableName="c_apply_log" domainObjectName="ApplyLogModel">
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
+        </table>
     </context>
 </generatorConfiguration>

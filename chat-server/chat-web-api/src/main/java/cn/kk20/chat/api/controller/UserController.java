@@ -73,7 +73,7 @@ public class UserController {
                 return ResultData.fail(202, "登录密码错误");
             }
             userModel.setPassword(null);
-            userModel.setGroups(null);
+            userModel.setGroupList(null);
             userModel.setFriends(null);
             return ResultData.success(new SimpleDto(userModel));
         } catch (Exception e) {

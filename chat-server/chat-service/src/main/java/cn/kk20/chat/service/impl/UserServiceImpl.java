@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
         List<UserModel> friendList = userModelList.stream().map(e -> {
             // 去除不必要属性
             e.setPassword(null);
-            e.setGroups(null);
+            e.setGroupList(null);
             e.setFriends(null);
             e.setCreateDate(null);
             e.setModifyDate(null);

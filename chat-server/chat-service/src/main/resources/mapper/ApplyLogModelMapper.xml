@@ -81,7 +81,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from apply_log
+    from c_apply_log
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -92,15 +92,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from apply_log
+    from c_apply_log
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from apply_log
+    delete from c_apply_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByCondition" parameterType="cn.kk20.chat.dao.model.ApplyLogModelQuery">
-    delete from apply_log
+    delete from c_apply_log
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -109,7 +109,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into apply_log (`type`, apply_user_id, target_user_id, 
+    insert into c_apply_log (`type`, apply_user_id, target_user_id, 
       verify_user_id, is_agree, remark, 
       is_delete, create_date, modify_date
       )
@@ -122,7 +122,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into apply_log
+    insert into c_apply_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="type != null">
         `type`,
@@ -183,13 +183,13 @@
     </trim>
   </insert>
   <select id="countByCondition" parameterType="cn.kk20.chat.dao.model.ApplyLogModelQuery" resultType="java.lang.Long">
-    select count(*) from apply_log
+    select count(*) from c_apply_log
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
   </select>
   <update id="updateByConditionSelective" parameterType="map">
-    update apply_log
+    update c_apply_log
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -227,7 +227,7 @@
     </if>
   </update>
   <update id="updateByCondition" parameterType="map">
-    update apply_log
+    update c_apply_log
     set id = #{record.id,jdbcType=BIGINT},
       `type` = #{record.type,jdbcType=INTEGER},
       apply_user_id = #{record.applyUserId,jdbcType=BIGINT},
@@ -243,7 +243,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="cn.kk20.chat.dao.model.ApplyLogModel">
-    update apply_log
+    update c_apply_log
     <set>
       <if test="type != null">
         `type` = #{type,jdbcType=INTEGER},
@@ -276,7 +276,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.ApplyLogModel">
-    update apply_log
+    update c_apply_log
     set `type` = #{type,jdbcType=INTEGER},
       apply_user_id = #{applyUserId,jdbcType=BIGINT},
       target_user_id = #{targetUserId,jdbcType=BIGINT},

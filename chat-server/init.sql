@@ -21,7 +21,7 @@ CREATE TABLE `user`
     `password`    VARCHAR(20)    DEFAULT NULL COMMENT '密码',
     `head`        VARCHAR(256)   DEFAULT NULL COMMENT '用户头像',
     `friends`     TEXT           DEFAULT NULL COMMENT '好友列表',
-    `groups`      TEXT           DEFAULT NULL COMMENT '群列表',
+    `group_list`  TEXT           DEFAULT NULL COMMENT '群列表',
     `is_delete`   BIT(1)         DEFAULT FALSE COMMENT '是否删除',
     `create_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

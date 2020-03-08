@@ -128,7 +128,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                 groupModel.setMembers(JSON.toJSONString(memberSet));
 
                 // 更新用户的群列表
-                String groups = applyUserModel.getGroups();
+                String groups = applyUserModel.getGroupList();
                 Set<Long> groupSet;
                 if (StringUtils.isEmpty(groups)) {
                     groupSet = new HashSet<>();
@@ -137,7 +137,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                     });
                 }
                 groupSet.add(targetUserId);
-                applyUserModel.setGroups(JSON.toJSONString(groupSet));
+                applyUserModel.setGroupList(JSON.toJSONString(groupSet));
                 userModelMapper.updateByPrimaryKey(applyUserModel);
             }
         }

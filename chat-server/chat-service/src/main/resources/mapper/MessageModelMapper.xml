@@ -85,7 +85,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from message
+    from c_message
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -99,7 +99,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from message
+    from c_message
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -112,15 +112,15 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from message
+    from c_message
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from message
+    delete from c_message
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByCondition" parameterType="cn.kk20.chat.dao.model.MessageModelQuery">
-    delete from message
+    delete from c_message
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -129,7 +129,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into message (from_user_id, to_user_id, send_time, 
+    insert into c_message (from_user_id, to_user_id, send_time, 
       `status`, from_user_delete, to_user_delete, 
       content)
     values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{sendTime,jdbcType=TIMESTAMP}, 
@@ -140,7 +140,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into message
+    insert into c_message
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="fromUserId != null">
         from_user_id,
@@ -189,13 +189,13 @@
     </trim>
   </insert>
   <select id="countByCondition" parameterType="cn.kk20.chat.dao.model.MessageModelQuery" resultType="java.lang.Long">
-    select count(*) from message
+    select count(*) from c_message
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
   </select>
   <update id="updateByConditionSelective" parameterType="map">
-    update message
+    update c_message
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -227,7 +227,7 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
-    update message
+    update c_message
     set id = #{record.id,jdbcType=BIGINT},
       from_user_id = #{record.fromUserId,jdbcType=BIGINT},
       to_user_id = #{record.toUserId,jdbcType=BIGINT},
@@ -241,7 +241,7 @@
     </if>
   </update>
   <update id="updateByCondition" parameterType="map">
-    update message
+    update c_message
     set id = #{record.id,jdbcType=BIGINT},
       from_user_id = #{record.fromUserId,jdbcType=BIGINT},
       to_user_id = #{record.toUserId,jdbcType=BIGINT},
@@ -254,7 +254,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="cn.kk20.chat.dao.model.MessageModel">
-    update message
+    update c_message
     <set>
       <if test="fromUserId != null">
         from_user_id = #{fromUserId,jdbcType=BIGINT},
@@ -281,7 +281,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByConditionWithBLOBs" parameterType="cn.kk20.chat.dao.model.MessageModel">
-    update message
+    update c_message
     set from_user_id = #{fromUserId,jdbcType=BIGINT},
       to_user_id = #{toUserId,jdbcType=BIGINT},
       send_time = #{sendTime,jdbcType=TIMESTAMP},
@@ -292,7 +292,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.MessageModel">
-    update message
+    update c_message
     set from_user_id = #{fromUserId,jdbcType=BIGINT},
       to_user_id = #{toUserId,jdbcType=BIGINT},
       send_time = #{sendTime,jdbcType=TIMESTAMP},

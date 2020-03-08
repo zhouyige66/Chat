@@ -47,7 +47,6 @@ public class GroupController {
             e.printStackTrace();
             return ResultData.fail(500, e.getMessage());
         }
-
     }
 
     @PostMapping("/add")

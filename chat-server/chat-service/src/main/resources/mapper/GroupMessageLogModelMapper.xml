@@ -75,7 +75,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from group_message_log
+    from c_group_message_log
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -86,15 +86,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from group_message_log
+    from c_group_message_log
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from group_message_log
+    delete from c_group_message_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByCondition" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModelQuery">
-    delete from group_message_log
+    delete from c_group_message_log
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -103,7 +103,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into group_message_log (msg_id, `operator`, create_date, 
+    insert into c_group_message_log (msg_id, `operator`, create_date, 
       modify_date)
     values (#{msgId,jdbcType=BIGINT}, #{operator,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
       #{modifyDate,jdbcType=TIMESTAMP})
@@ -112,7 +112,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into group_message_log
+    insert into c_group_message_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="msgId != null">
         msg_id,
@@ -143,13 +143,13 @@
     </trim>
   </insert>
   <select id="countByCondition" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModelQuery" resultType="java.lang.Long">
-    select count(*) from group_message_log
+    select count(*) from c_group_message_log
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
   </select>
   <update id="updateByConditionSelective" parameterType="map">
-    update group_message_log
+    update c_group_message_log
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -172,7 +172,7 @@
     </if>
   </update>
   <update id="updateByCondition" parameterType="map">
-    update group_message_log
+    update c_group_message_log
     set id = #{record.id,jdbcType=BIGINT},
       msg_id = #{record.msgId,jdbcType=BIGINT},
       `operator` = #{record.operator,jdbcType=BIGINT},
@@ -183,7 +183,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModel">
-    update group_message_log
+    update c_group_message_log
     <set>
       <if test="msgId != null">
         msg_id = #{msgId,jdbcType=BIGINT},
@@ -201,7 +201,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModel">
-    update group_message_log
+    update c_group_message_log
     set msg_id = #{msgId,jdbcType=BIGINT},
       `operator` = #{operator,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP},

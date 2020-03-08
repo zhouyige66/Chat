@@ -24,7 +24,7 @@ public class UserModel implements Serializable {
 
     private String friends;
 
-    private String groups;
+    private String groupList;
 
     private static final long serialVersionUID = 1L;
 
@@ -158,17 +158,17 @@ public class UserModel implements Serializable {
         this.friends = friends;
     }
 
-    public String getGroups() {
-        return groups;
+    public String getGroupList() {
+        return groupList;
     }
 
-    public UserModel withGroups(String groups) {
-        this.setGroups(groups);
+    public UserModel withGroupList(String groupList) {
+        this.setGroupList(groupList);
         return this;
     }
 
-    public void setGroups(String groups) {
-        this.groups = groups;
+    public void setGroupList(String groupList) {
+        this.groupList = groupList;
     }
 
     @Override
@@ -187,7 +187,7 @@ public class UserModel implements Serializable {
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);
         sb.append(", friends=").append(friends);
-        sb.append(", groups=").append(groups);
+        sb.append(", groupList=").append(groupList);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -86,7 +86,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from group
+    from c_group
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -100,7 +100,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from group
+    from c_group
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -113,15 +113,15 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from group
+    from c_group
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from group
+    delete from c_group
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByCondition" parameterType="cn.kk20.chat.dao.model.GroupModelQuery">
-    delete from group
+    delete from c_group
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
@@ -130,7 +130,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into group (`name`, description, creator, 
+    insert into c_group (`name`, description, creator, 
       manager, is_delete, create_date, 
       modify_date, members)
     values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{creator,jdbcType=BIGINT}, 
@@ -141,7 +141,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into group
+    insert into c_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">
         `name`,
@@ -196,13 +196,13 @@
     </trim>
   </insert>
   <select id="countByCondition" parameterType="cn.kk20.chat.dao.model.GroupModelQuery" resultType="java.lang.Long">
-    select count(*) from group
+    select count(*) from c_group
     <if test="_parameter != null">
       <include refid="Condition_Where_Clause" />
     </if>
   </select>
   <update id="updateByConditionSelective" parameterType="map">
-    update group
+    update c_group
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -237,7 +237,7 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
-    update group
+    update c_group
     set id = #{record.id,jdbcType=BIGINT},
       `name` = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
@@ -252,7 +252,7 @@
     </if>
   </update>
   <update id="updateByCondition" parameterType="map">
-    update group
+    update c_group
     set id = #{record.id,jdbcType=BIGINT},
       `name` = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
@@ -266,7 +266,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="cn.kk20.chat.dao.model.GroupModel">
-    update group
+    update c_group
     <set>
       <if test="name != null">
         `name` = #{name,jdbcType=VARCHAR},
@@ -296,7 +296,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByConditionWithBLOBs" parameterType="cn.kk20.chat.dao.model.GroupModel">
-    update group
+    update c_group
     set `name` = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=BIGINT},
@@ -308,7 +308,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.GroupModel">
-    update group
+    update c_group
     set `name` = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=BIGINT},
