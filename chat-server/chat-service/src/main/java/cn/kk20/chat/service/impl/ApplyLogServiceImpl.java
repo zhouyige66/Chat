@@ -37,7 +37,12 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     ApplyLogModelMapper applyLogModelMapper;
 
     @Override
-    public List<ApplyLogModel> getApplyLogList(Long verifyUserId) {
+    public List<ApplyLogModel> getApplyLogList(Long verifyUserId) throws Exception {
+        UserModel userModel = userModelMapper.selectByPrimaryKey(verifyUserId);
+        if(userModel == null|| userModel.getIsDelete()){
+            throw new RequestParamException("审批人不存在或已删除");
+        }
+
         ApplyLogModelQuery query = new ApplyLogModelQuery();
         query.createCriteria().andVerifyUserIdEqualTo(verifyUserId).andIsDeleteEqualTo(false);
         List<ApplyLogModel> applyLogModelList = applyLogModelMapper.selectByCondition(query);

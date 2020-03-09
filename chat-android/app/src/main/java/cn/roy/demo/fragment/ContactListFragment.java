@@ -11,11 +11,14 @@ import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
+import cn.roy.demo.adapter.ContactListAdapter;
 import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -35,6 +38,20 @@ public class ContactListFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
         elv = (ExpandableListView) view;
+
+        List<String> groupList = new ArrayList<>();
+        groupList.add("apply");
+        groupList.add("group");
+        groupList.add("friend");
+        Map<String, List> map = new HashMap<>();
+        for (String key : groupList) {
+            map.put(key, new ArrayList());
+        }
+
+        ContactListAdapter contactListAdapter = new ContactListAdapter(groupList, map);
+        elv.setAdapter(contactListAdapter);
+        int width = getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        elv.setIndicatorBounds(width - 40, width - 10);
 
         return view;
     }

@@ -4,6 +4,7 @@ import cn.kk20.chat.api.model.request.ApplyBean;
 import cn.kk20.chat.api.model.request.CreateGroupBean;
 import cn.kk20.chat.api.model.request.VerifyBean;
 import cn.kk20.chat.base.http.ResultData;
+import cn.kk20.chat.base.http.dto.ListDto;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.dao.model.GroupModel;
 import cn.kk20.chat.service.ApplyLogService;
@@ -12,9 +13,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Description:
@@ -23,9 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version: v1.0
  */
 @RestController("group")
-@Api(tags = "GroupController")
+@Api(tags = "群组Controller")
 public class GroupController {
-
     @Autowired
     GroupService groupService;
     @Autowired
@@ -48,7 +48,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping("apply")
     @ApiOperation(value = "申请加入群", notes = "功能：提交加入群申请")
     @ApiImplicitParam(name = "applyBean", value = "申请参数", dataType = "ApplyBean")
     public ResultData addFriend(@RequestBody ApplyBean applyBean) throws Exception {
@@ -65,7 +65,7 @@ public class GroupController {
         return ResultData.success("申请已提交");
     }
 
-    @PostMapping("/verify")
+    @PostMapping("verify")
     @ApiOperation(value = "审批-加入群申请", notes = "功能：审批加入群组申请")
     @ApiImplicitParam(name = "verifyBean", value = "审批参数", dataType = "VerifyBean")
     public ResultData verify(@RequestBody VerifyBean verifyBean) throws Exception {
@@ -84,4 +84,12 @@ public class GroupController {
         return ResultData.success("操作成功");
     }
 
+    @GetMapping("list")
+    @ApiOperation(value = "查询用户群列表", notes = "功能：根据用户ID查询用户群组列表")
+    @ApiImplicitParam(name = "userId", value = "用户ID")
+    public ResultData getGroupList(@RequestParam Long userId) throws Exception {
+        List<GroupModel> groupList = groupService.getGroupList(userId);
+        ListDto<GroupModel> listDto = new ListDto<>(groupList);
+        return ResultData.success(listDto);
+    }
 }

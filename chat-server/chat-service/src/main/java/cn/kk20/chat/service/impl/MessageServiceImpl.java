@@ -31,6 +31,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public int batchDelete(List<Long> ids) {
+        MessageModelQuery query = new MessageModelQuery();
+        query.createCriteria().andIdIn(ids);
+        int i = messageModelMapper.deleteByCondition(query);
+        return i;
+    }
+
+    @Override
     public int update(MessageModel model) {
         return messageModelMapper.updateByPrimaryKey(model);
     }
@@ -48,4 +56,5 @@ public class MessageServiceImpl implements MessageService {
         List<MessageModel> messageModels = messageModelMapper.selectByCondition(query);
         return messageModels;
     }
+
 }

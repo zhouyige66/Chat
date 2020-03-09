@@ -3,13 +3,18 @@ package cn.kk20.chat.api.controller;
 import cn.kk20.chat.api.model.request.ApplyBean;
 import cn.kk20.chat.api.model.request.VerifyBean;
 import cn.kk20.chat.base.http.ResultData;
+import cn.kk20.chat.base.http.dto.ListDto;
 import cn.kk20.chat.dao.model.ApplyLogModel;
+import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.ApplyLogService;
+import cn.kk20.chat.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Description:
@@ -18,14 +23,16 @@ import org.springframework.web.bind.annotation.*;
  * @Version: v1.0
  */
 @RestController
-@RequestMapping("/friend")
-@Api(tags = "FriendController")
+@RequestMapping("friend")
+@Api(tags = "好友Controller")
 @CrossOrigin // 跨越支持
 public class FriendController {
     @Autowired
     ApplyLogService applyLogService;
+    @Autowired
+    UserService userService;
 
-    @PostMapping("/add")
+    @PostMapping("apply")
     @ApiOperation(value = "添加好友", notes = "功能：添加好友申请")
     @ApiImplicitParam(name = "applyBean", value = "申请参数", dataType = "ApplyBean")
     public ResultData addFriend(@RequestBody ApplyBean applyBean) throws Exception {
@@ -43,7 +50,7 @@ public class FriendController {
         return ResultData.success("申请已提交");
     }
 
-    @PostMapping("/verify")
+    @PostMapping("verify")
     @ApiOperation(value = "审批-加好友申请", notes = "功能：审批好友申请")
     @ApiImplicitParam(name = "verifyBean", value = "审批参数", dataType = "VerifyBean")
     public ResultData verify(@RequestBody VerifyBean verifyBean) {
@@ -66,4 +73,12 @@ public class FriendController {
         }
     }
 
+    @GetMapping("list")
+    @ApiOperation(value = "查询好友列表", notes = "功能：根据用户ID查询用户好友列表")
+    @ApiImplicitParam(name = "userId", value = "用户ID")
+    public ResultData getFriendList(@RequestParam Long userId) {
+        List<UserModel> friendList = userService.getFriendList(userId);
+        ListDto<UserModel> userModelListDto = new ListDto<UserModel>(friendList);
+        return ResultData.success(userModelListDto);
+    }
 }

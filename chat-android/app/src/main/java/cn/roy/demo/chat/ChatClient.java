@@ -9,15 +9,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.data.LoginData;
 import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.chat.coder.custom.MessageDecoder;
 import cn.roy.demo.chat.coder.custom.MessageEncoder;
 import cn.roy.demo.chat.coder.delimiter.DelimiterBasedFrameEncoder;
 import cn.roy.demo.chat.handler.HeartbeatHandler;
 import cn.roy.demo.chat.handler.MessageHandler;
-import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -130,6 +127,7 @@ public class ChatClient {
                  * 4.重连
                  * 5.重登录
                  */
+
 
                 eventLoopGroup = new NioEventLoopGroup();
                 bootstrap = new Bootstrap();

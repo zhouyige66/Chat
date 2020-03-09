@@ -2,6 +2,8 @@ package cn.kk20.chat.service;
 
 import cn.kk20.chat.dao.model.GroupModel;
 
+import java.util.List;
+
 /**
  * @Description:
  * @Author: Roy Z
@@ -12,4 +14,5 @@ public interface GroupService {
 
     void create(GroupModel model) throws Exception;
 
+    List<GroupModel> getGroupList(Long userId) throws Exception;
 }

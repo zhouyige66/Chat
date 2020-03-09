@@ -25,20 +25,20 @@ import java.util.List;
  * @Version: v1.0
  */
 @RestController
-@RequestMapping("/user")
-@Api(tags = "UserController")
+@RequestMapping("user")
+@Api(tags = "用户Controller")
 @CrossOrigin // 跨越支持
 public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/test")
+    @GetMapping("test")
     @ApiOperation(value = "测试接口", notes = "功能：测试UserController是否可用")
     public String sayHello() {
         return "hello";
     }
 
-    @PostMapping(value = "/register")
+    @PostMapping(value = "register")
     @ApiOperation(value = "用户注册接口", notes = "功能：注册新用户")
     @ApiImplicitParam(name = "registerBean", value = "用户信息", dataType = "RegisterBean")
     public ResultData register(@RequestBody RegisterBean registerBean) throws Exception {
@@ -48,14 +48,15 @@ public class UserController {
         return ResultData.success("注册成功");
     }
 
-    @PostMapping("/login")
-    @ApiOperation(value = "登录接口", notes = "android、iOS用户登录使用")
+    @PostMapping("login")
+    @ApiOperation(value = "登录接口", notes = "用户android、iOS登录使用")
     @ApiImplicitParam(name = "loginBean", value = "登录信息", dataType = "LoginBean")
     public ResultData login(@RequestBody LoginBean loginBean) throws Exception {
         return login(loginBean.getUserName(), loginBean.getPassword());
     }
 
-    @GetMapping("/login/{userName}/{password}")
+    @GetMapping("login/{userName}/{password}")
+    @ApiOperation(value = "登录接口", notes = "用户web登录使用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "用户名或电话或邮箱"),
             @ApiImplicitParam(name = "password", value = "密码")
@@ -72,7 +73,7 @@ public class UserController {
         return ResultData.success(userModel);
     }
 
-    @GetMapping("/search")
+    @GetMapping("search")
     @ApiOperation(value = "模糊查询用户接口", notes = "功能：根据用户（ID、用户名、电话）模糊搜索用户")
     @ApiImplicitParam(name = "key", value = "ID或用户名或电话")
     public ResultData fuzzySearch(@RequestParam String key) {
@@ -88,12 +89,4 @@ public class UserController {
         return ResultData.success(new ListDto<UserModel>(searchResult));
     }
 
-    @GetMapping("/getFriendList")
-    @ApiOperation(value = "查询好友列表", notes = "功能：根据用户ID查询用户好友列表")
-    @ApiImplicitParam(name = "userId", value = "用户ID")
-    public ResultData getFriendList(@RequestParam Long userId) {
-        List<UserModel> friendList = userService.getFriendList(userId);
-        ListDto<UserModel> userModelListDto = new ListDto<UserModel>(friendList);
-        return ResultData.success(userModelListDto);
-    }
 }

@@ -15,6 +15,8 @@ public interface MessageService {
 
     int delete(Long id);
 
+    int batchDelete(List<Long> ids);
+
     int update(MessageModel model);
 
     MessageModel find(Long id);
