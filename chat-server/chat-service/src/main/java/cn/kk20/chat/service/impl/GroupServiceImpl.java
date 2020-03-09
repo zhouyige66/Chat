@@ -6,6 +6,7 @@ import cn.kk20.chat.dao.mapper.UserModelMapper;
 import cn.kk20.chat.dao.model.GroupModel;
 import cn.kk20.chat.dao.model.GroupModelQuery;
 import cn.kk20.chat.dao.model.UserModel;
+import cn.kk20.chat.dao.model.UserModelQuery;
 import cn.kk20.chat.service.GroupService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -54,10 +55,11 @@ public class GroupServiceImpl implements GroupService {
         // 添加创建人的群列表
         String groupList = userModel.getGroupList();
         Set<Long> groupSet;
-        if(StringUtils.isEmpty(groupList)){
-            groupSet =new HashSet<>();
-        }else {
-            groupSet = JSON.parseObject(groupList,new TypeReference<Set<Long>>(){});
+        if (StringUtils.isEmpty(groupList)) {
+            groupSet = new HashSet<>();
+        } else {
+            groupSet = JSON.parseObject(groupList, new TypeReference<Set<Long>>() {
+            });
         }
         groupSet.add(model.getId());
         userModel.setGroupList(JSON.toJSONString(groupSet));
@@ -72,7 +74,7 @@ public class GroupServiceImpl implements GroupService {
             throw new RequestParamException("查询群列表的人员不存在或已注销");
         }
         String groupList = userModel.getGroupList();
-        if(StringUtils.isEmpty(groupList)){
+        if (StringUtils.isEmpty(groupList)) {
             return new ArrayList<>(0);
         }
 
@@ -82,6 +84,36 @@ public class GroupServiceImpl implements GroupService {
         query.createCriteria().andIdIn(groupSet.stream().collect(Collectors.toList()));
         List<GroupModel> groupModelList = groupModelMapper.selectByCondition(query);
         return groupModelList;
+    }
+
+    @Override
+    public List<UserModel> getGroupMemberList(Long groupId) throws Exception {
+        if (groupId == null) {
+            throw new RequestParamException("群组ID不能为空");
+        }
+        GroupModel groupModel = groupModelMapper.selectByPrimaryKey(groupId);
+        if (groupModel == null) {
+            throw new RequestParamException("该群组ID不存在");
+        }
+
+        String memberList = groupModel.getMemberList();
+        if (StringUtils.isEmpty(memberList)) {
+            return new ArrayList<>(0);
+        }
+        Set<Long> memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
+        });
+        UserModelQuery query = new UserModelQuery();
+        query.createCriteria().andIdIn(memberSet.stream().collect(Collectors.toList()));
+        List<UserModel> userModelList = userModelMapper.selectByCondition(query);
+        return userModelList.stream().map(e -> {
+            // 去除不必要属性
+            e.setPassword(null);
+            e.setGroupList(null);
+            e.setFriendList(null);
+            e.setCreateDate(null);
+            e.setModifyDate(null);
+            return e;
+        }).collect(Collectors.toList());
     }
 
 }

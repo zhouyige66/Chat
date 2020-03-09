@@ -7,11 +7,13 @@ import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.base.http.dto.ListDto;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.dao.model.GroupModel;
+import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.ApplyLogService;
 import cn.kk20.chat.service.GroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,6 +87,15 @@ public class GroupController {
     public ResultData getGroupList(@RequestParam Long userId) throws Exception {
         List<GroupModel> groupList = groupService.getGroupList(userId);
         ListDto<GroupModel> listDto = new ListDto<>(groupList);
+        return ResultData.success(listDto);
+    }
+
+    @GetMapping("members")
+    @ApiOperation(value = "查询群成员列表", notes = "功能：根据群ID查询成员列表")
+    @ApiImplicitParam(name = "groupId", value = "群组ID")
+    public ResultData getGroupMemberList(@RequestParam Long groupId) throws Exception {
+        List<UserModel> groupList = groupService.getGroupMemberList(groupId);
+        ListDto<UserModel> listDto = new ListDto<>(groupList);
         return ResultData.success(listDto);
     }
 }
