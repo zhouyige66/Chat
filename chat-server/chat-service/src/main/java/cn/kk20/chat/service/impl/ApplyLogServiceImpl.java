@@ -157,7 +157,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         // 更新申请表数据
         existModel.setIsAgree(isAgree);
         existModel.setModifyDate(new Date());
-        existModel.setApplyRemark(model.getApplyRemark());
+        existModel.setVerifyRemark(model.getVerifyRemark());
         applyLogModelMapper.updateByPrimaryKeySelective(existModel);
 
         // 同意添加好友或加入群

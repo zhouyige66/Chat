@@ -34,18 +34,13 @@ public class GroupController {
     @PostMapping("create")
     @ApiOperation(value = "创建群", notes = "功能：新建群组")
     @ApiImplicitParam(name = "createGroupBean", value = "群基本信息", dataType = "CreateGroupBean")
-    public ResultData create(@RequestBody CreateGroupBean createGroupBean) {
+    public ResultData create(@RequestBody CreateGroupBean createGroupBean) throws Exception {
         GroupModel model = new GroupModel();
         model.setCreatorId(createGroupBean.getCreator());
         model.setName(createGroupBean.getName());
         model.setDescription(createGroupBean.getDescription());
-        try {
-            groupService.create(model);
-            return ResultData.success(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultData.fail(500, e.getMessage());
-        }
+        groupService.create(model);
+        return ResultData.success(model);
     }
 
     @PostMapping("apply")

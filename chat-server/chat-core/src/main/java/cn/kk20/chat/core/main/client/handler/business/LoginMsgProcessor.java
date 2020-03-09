@@ -10,6 +10,7 @@ import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.main.client.UserChannelManager;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.RedisUtil;
+import cn.kk20.chat.dao.model.UserModel;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;

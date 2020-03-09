@@ -8,6 +8,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ClientComponent
 @ChannelHandler.Sharable
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+    private static final Logger logger = LoggerFactory.getLogger(TextWebSocketFrameHandler.class);
 
     @Autowired
     HandlerManager handlerManager;
@@ -26,7 +29,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
         String msg = textWebSocketFrame.text();
-        LogUtil.log("收到消息：" + msg);
+        logger.debug("收到消息：{}",msg);
         ChatMessage chatMessage = JSON.parseObject(msg, ChatMessage.class);
         handlerManager.handleMessage(ctx, chatMessage, true);
     }

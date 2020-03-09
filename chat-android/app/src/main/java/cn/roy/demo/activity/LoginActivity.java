@@ -98,9 +98,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                 User user = JSON.parseObject(jsonObject.toJSONString(), User.class);
                 CacheManager.getInstance().cacheCurrentUser(user);
+                SPUtil.saveParam(SPUtil.USER_INFO, jsonObject.toJSONString());
                 SPUtil.saveParam(SPUtil.LOGIN_NAME, et_user_name.getText().toString().trim());
                 SPUtil.saveParam(SPUtil.LOGIN_PASSWORD, et_user_password.getText().toString().trim());
-                SPUtil.saveParam(SPUtil.USER_INFO, jsonObject.toJSONString());
                 jump(MainActivity.class, true, null);
             }
 

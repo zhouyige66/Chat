@@ -1,5 +1,7 @@
 package cn.roy.demo.chat;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ public class ChatClient {
     private EventLoopGroup eventLoopGroup;
     private Channel channel;
     private boolean connectSuccess = false;
+    private int failCount = 0;
     // 被观察者
     private Observable<Boolean> observable;
     private List<ObservableEmitter<Boolean>> observableEmitterList;
@@ -93,10 +96,9 @@ public class ChatClient {
 //        sendMessage(message);
     }
 
-    public Observable<Boolean> getObservable() {
-        return observable;
-    }
-
+    /**
+     * 连接聊天服务器
+     */
     public void connectServer() {
         if (config == null) {
             LogUtil.d(this, "连接服务器配置未配置");
@@ -127,71 +129,94 @@ public class ChatClient {
                  * 4.重连
                  * 5.重登录
                  */
-
-
-                eventLoopGroup = new NioEventLoopGroup();
-                bootstrap = new Bootstrap();
-                bootstrap.group(eventLoopGroup)
-                        .channel(NioSocketChannel.class)
-                        .option(ChannelOption.TCP_NODELAY, true)
-                        .option(ChannelOption.SO_KEEPALIVE, true)
-                        .handler(new LoggingHandler(LogLevel.INFO))
-                        .handler(new ChannelInitializer<SocketChannel>() {
-                            @Override
-                            protected void initChannel(SocketChannel ch) throws Exception {
-                                ChannelPipeline pipeline = ch.pipeline();
-                                switch (ConstantValue.CODER_TYPE) {
-                                    case 0:// 方式一：字符串方式
-                                        pipeline.addLast(
-                                                new StringEncoder(CharsetUtil.UTF_8),
-                                                new StringDecoder(CharsetUtil.UTF_8));
-                                        break;
-                                    case 1:// 方式二：分隔符方式
-                                        ByteBuf delimiterByteBuf =
-                                                Unpooled.copiedBuffer(ConstantValue.DELIMITER.getBytes());
-                                        pipeline.addLast(
-                                                new DelimiterBasedFrameEncoder(),
-                                                new DelimiterBasedFrameDecoder(2048, delimiterByteBuf),
-                                                new StringDecoder(CharsetUtil.UTF_8));
-                                        break;
-                                    case 2:// 方式三：自定义编解码器方式
-                                        pipeline.addLast(
-                                                new MessageEncoder(),
-                                                new MessageDecoder());
-                                        break;
-                                    default:
-                                        LogUtil.d(this, "暂无实现该种编码方式");
-                                        break;
-                                }
-                                pipeline.addLast(new IdleStateHandler(0,
-                                                5, 0),
-                                        new HeartbeatHandler(),
-                                        new MessageHandler());
-                            }
-                        });
-                // 发起异步连接操作
-                LogUtil.d(ChatClient.this, "连接server：执行一次");
-                try {
-                    ChannelFuture future = bootstrap.connect(config.getHost(), config.getPort());
-                    if (future.isSuccess()) {
-                        connectSuccess = true;
-                    }
-                    channel = future.channel();
-                    // 服务器同步连接断开时,这句代码才会往下执行
-                    channel.closeFuture().sync();
-                } catch (InterruptedException e) {
-                    LogUtil.d(ChatClient.this, "连接server：出现异常");
-                    e.printStackTrace();
-                } finally {
-                    LogUtil.d(ChatClient.this, "连接server：执行finally");
-                    connectSuccess = false;
-                    if (!eventLoopGroup.isShutdown()) {
-                        eventLoopGroup.shutdownGracefully();
-                    }
-                    eventLoopGroup = null;
+                if (TextUtils.isEmpty(config.getHost()) || failCount >= 5) {
+                    // 调用接口获取服务器地址
+                    getHostFromServer();
+                    return;
                 }
+
+                reconnect();
             }
         }, 0, config.getAutoReconnectTime(), TimeUnit.SECONDS);
+    }
+
+    private void getHostFromServer() {
+        LogUtil.d(this, "调用接口查询聊天服务器Host");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        failCount = 0;
+        config.setHost("192.168.43.133");
+    }
+
+    private void reconnect() {
+        eventLoopGroup = new NioEventLoopGroup();
+        bootstrap = new Bootstrap();
+        bootstrap.group(eventLoopGroup)
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new LoggingHandler(LogLevel.INFO))
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        ChannelPipeline pipeline = ch.pipeline();
+                        switch (ConstantValue.CODER_TYPE) {
+                            case 0:// 方式一：字符串方式
+                                pipeline.addLast(
+                                        new StringEncoder(CharsetUtil.UTF_8),
+                                        new StringDecoder(CharsetUtil.UTF_8));
+                                break;
+                            case 1:// 方式二：分隔符方式
+                                ByteBuf delimiterByteBuf =
+                                        Unpooled.copiedBuffer(ConstantValue.DELIMITER.getBytes());
+                                pipeline.addLast(
+                                        new DelimiterBasedFrameEncoder(),
+                                        new DelimiterBasedFrameDecoder(2048, delimiterByteBuf),
+                                        new StringDecoder(CharsetUtil.UTF_8));
+                                break;
+                            case 2:// 方式三：自定义编解码器方式
+                                pipeline.addLast(
+                                        new MessageEncoder(),
+                                        new MessageDecoder());
+                                break;
+                            default:
+                                LogUtil.d(this, "暂无实现该种编码方式");
+                                break;
+                        }
+                        pipeline.addLast(new IdleStateHandler(0,
+                                        5, 0),
+                                new HeartbeatHandler(),
+                                new MessageHandler());
+                    }
+                });
+        // 发起异步连接操作
+        LogUtil.d(ChatClient.this, "连接server：执行一次");
+        try {
+            ChannelFuture future = bootstrap.connect(config.getHost(), config.getPort());
+            if (future.isSuccess()) {
+                connectSuccess = true;
+                // 重置失败次数
+                failCount = 0;
+            }
+            channel = future.channel();
+            // 服务器同步连接断开时,这句代码才会往下执行
+            channel.closeFuture().sync();
+        } catch (InterruptedException e) {
+            LogUtil.d(ChatClient.this, "连接server：出现异常");
+            e.printStackTrace();
+        } finally {
+            LogUtil.d(ChatClient.this, "连接server：执行finally");
+            connectSuccess = false;
+            if (!eventLoopGroup.isShutdown()) {
+                eventLoopGroup.shutdownGracefully();
+            }
+            eventLoopGroup = null;
+            failCount++;
+            LogUtil.d(ChatClient.this, "失败次数：" + failCount);
+        }
     }
 
     public void disConnectServer() {
@@ -213,6 +238,10 @@ public class ChatClient {
 
     public boolean isConnectSuccess() {
         return connectSuccess;
+    }
+
+    public Observable<Boolean> getObservable() {
+        return observable;
     }
 
     /**

@@ -77,7 +77,7 @@ public class MessageSender {
 
     public void sendMessage(Channel channel, ChatMessage chatMessage) {
         if (channel == null || !channel.isActive()) {
-            LogUtil.log("指定的消息接收者已断开连接");
+            logger.debug("指定的消息接收者已断开连接");
             return;
         }
 

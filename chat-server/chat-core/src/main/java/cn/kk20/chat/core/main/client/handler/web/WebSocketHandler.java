@@ -15,6 +15,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ClientComponent
 public class WebSocketHandler extends ChannelInboundHandlerAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
 
     @Autowired
     HandlerManager handlerManager;
@@ -32,18 +35,18 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
-            LogUtil.log("收到消息：" + JSON.toJSONString(msg));
+            logger.debug("收到消息：{}", JSON.toJSONString(msg));
             handleHttpRequest(ctx, (FullHttpRequest) msg);
         } else if (msg instanceof WebSocketFrame) {
             try {
                 ctx.fireChannelRead(msg);
             } catch (Exception e) {
-                LogUtil.log("捕获异常");
+                logger.error("捕获异常");
             }
         } else {
             ChatMessage chatMessage;
             if (msg instanceof ChatMessage) {
-                LogUtil.log("上级传递而来");
+                logger.debug("上级传递而来");
                 chatMessage = (ChatMessage) msg;
             } else {
                 chatMessage = JSON.parseObject(msg.toString(), ChatMessage.class);
@@ -55,7 +58,7 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-        LogUtil.log("通道异常");
+        logger.error("通道异常");
     }
 
     /**********功能：WebSocket功能**********/
