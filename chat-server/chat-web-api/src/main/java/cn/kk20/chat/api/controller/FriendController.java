@@ -3,7 +3,6 @@ package cn.kk20.chat.api.controller;
 import cn.kk20.chat.api.model.request.ApplyBean;
 import cn.kk20.chat.api.model.request.VerifyBean;
 import cn.kk20.chat.base.http.ResultData;
-import cn.kk20.chat.base.http.dto.SimpleDto;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.service.ApplyLogService;
 import io.swagger.annotations.Api;

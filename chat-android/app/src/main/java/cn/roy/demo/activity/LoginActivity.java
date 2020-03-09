@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
+import cn.roy.demo.model.LoginBean;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
@@ -79,9 +80,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
 
-        User user = new User();
-        user.setName(userName);
-        user.setPassword(userPassword);
+        LoginBean loginBean = new LoginBean();
+        loginBean.setUserName(userName);
+        loginBean.setPassword(userPassword);
 
         hideSoftKeyboard();
         showProgressDialog("正在登录...");
@@ -94,13 +95,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onNext(JSONObject jsonObject) {
                 dismissProgressDialog();
-                User user = JSON.parseObject(jsonObject.getJSONObject("value").toJSONString(), User.class);
+
+                User user = JSON.parseObject(jsonObject.toJSONString(), User.class);
                 CacheManager.getInstance().cacheCurrentUser(user);
-                SPUtil.saveParam(SPUtil.LOGIN_NAME,
-                        et_user_name.getText().toString().trim());
-                SPUtil.saveParam(SPUtil.LOGIN_PASSWORD,
-                        et_user_password.getText().toString().trim());
-                SPUtil.saveParam(SPUtil.USER_INFO, jsonObject.toString());
+                SPUtil.saveParam(SPUtil.LOGIN_NAME, et_user_name.getText().toString().trim());
+                SPUtil.saveParam(SPUtil.LOGIN_PASSWORD, et_user_password.getText().toString().trim());
+                SPUtil.saveParam(SPUtil.USER_INFO, jsonObject.toJSONString());
                 jump(MainActivity.class, true, null);
             }
 
@@ -119,7 +119,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 LogUtil.d(LoginActivity.this, "结束");
             }
         };
-        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_LOGIN, user, observer);
+        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_LOGIN, loginBean, observer);
     }
 
 }

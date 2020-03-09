@@ -4,7 +4,6 @@ import cn.kk20.chat.api.model.request.LoginBean;
 import cn.kk20.chat.api.model.request.RegisterBean;
 import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.base.http.dto.ListDto;
-import cn.kk20.chat.base.http.dto.SimpleDto;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.UserService;
 import io.swagger.annotations.Api;
@@ -46,7 +45,7 @@ public class UserController {
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(registerBean, userModel);
         userService.register(userModel);
-        return ResultData.success(new SimpleDto("注册成功"));
+        return ResultData.success("注册成功");
     }
 
     @PostMapping("/login")
@@ -70,7 +69,7 @@ public class UserController {
         userModel.setPassword(null);
         userModel.setGroupList(null);
         userModel.setFriendList(null);
-        return ResultData.success(new SimpleDto(userModel));
+        return ResultData.success(userModel);
     }
 
     @GetMapping("/search")
@@ -83,7 +82,7 @@ public class UserController {
 
         List<UserModel> searchResult = userService.search(key);
         if (CollectionUtils.isEmpty(searchResult)) {
-            return ResultData.success(new SimpleDto("暂无相关用户"));
+            return ResultData.success("暂无相关用户");
         }
 
         return ResultData.success(new ListDto<UserModel>(searchResult));

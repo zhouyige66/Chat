@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Description:
+ * @Description: map类型的DTO
  * @Author: Roy Z
  * @Date: 2019/10/29 11:17
  * @Version: v1.0

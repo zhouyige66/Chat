@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import cn.roy.demo.R;
 
@@ -18,14 +18,14 @@ import cn.roy.demo.R;
  * @Version: v1.0
  */
 public class ChatListFragment extends BaseFragment {
-    private ListView lv;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
-        lv = (ListView) view;
+        recyclerView = (RecyclerView) view;
 
         return view;
     }

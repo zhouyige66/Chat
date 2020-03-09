@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
             throw new RequestParamException("该用户名已经被占用，请使用其他用户名");
         }
         // 检查电话是否被注册
-        if(!StringUtils.isEmpty(model.getPhone())){
+        if (!StringUtils.isEmpty(model.getPhone())) {
             query.getOredCriteria().clear();
             query.createCriteria().andPhoneEqualTo(model.getPhone());
             List<UserModel> userModelList2 = userModelMapper.selectByCondition(query);
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         // 检查邮箱是否被注册
-        if(!StringUtils.isEmpty(model.getEmail())){
+        if (!StringUtils.isEmpty(model.getEmail())) {
             query.getOredCriteria().clear();
             query.createCriteria().andEmailEqualTo(model.getEmail());
             List<UserModel> userModelList3 = userModelMapper.selectByCondition(query);
@@ -101,8 +101,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserModel> search(String key) {
         UserModelQuery query = new UserModelQuery();
-        query.createCriteria().andNameLike(key);
-        query.or().andPhoneLike(key);
+        query.createCriteria().andNameLike("%" + key + "%");
+        query.or().andPhoneLike("%" + key + "%");
         try {
             long l = Long.parseLong(key);
             query.or().andIdEqualTo(l);

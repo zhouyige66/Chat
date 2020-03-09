@@ -2,6 +2,8 @@ package cn.roy.demo.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.Date;
+
 /**
  * @Description:
  * @Author: Roy
@@ -20,7 +22,7 @@ public class User {
     private String email;
 
     @JSONField(name = "createDate", format = "yyyy-MM-dd HH:mm:ss")
-    private String registerTime;
+    private Date registerTime;
 
     public String getId() {
         return id;
@@ -87,11 +89,11 @@ public class User {
         this.email = email;
     }
 
-    public String getRegisterTime() {
+    public Date getRegisterTime() {
         return registerTime;
     }
 
-    public void setRegisterTime(String registerTime) {
+    public void setRegisterTime(Date registerTime) {
         this.registerTime = registerTime;
     }
 }

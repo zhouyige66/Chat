@@ -21,6 +21,7 @@ import java.util.List;
 
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
+import cn.roy.demo.model.RegisterBean;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
@@ -84,7 +85,7 @@ public class RegisterActivity extends BaseActivity {
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user = new User();
+                RegisterBean registerBean = new RegisterBean();
                 // 校验输入是否合法
                 String passwordConfirm = null;
                 for (EditText et : editTextList) {
@@ -95,35 +96,35 @@ public class RegisterActivity extends BaseActivity {
                         return;
                     }
                     if (tag.equals("用户名")) {
-                        user.setName(value);
+                        registerBean.setName(value);
                     } else if (tag.equals("电话")) {
-                        user.setPhone(value);
+                        registerBean.setPhone(value);
                     } else if (tag.equals("邮箱")) {
-                        user.setEmail(value);
+                        registerBean.setEmail(value);
                     } else if (tag.equals("密码")) {
-                        user.setPassword(value);
+                        registerBean.setPassword(value);
                     } else if (tag.equals("确认密码")) {
                         passwordConfirm = value;
                     }
                 }
-                if (user.getName().length() > 10) {
+                if (registerBean.getName().length() > 10) {
                     toast("用户名长度不能大于10");
                     return;
                 }
-                if (user.getPhone().length() > 11) {
+                if (registerBean.getPhone().length() > 11) {
                     toast("电话长度不能大于11");
                     return;
                 }
-                if (!passwordConfirm.equals(user.getPassword())) {
+                if (!passwordConfirm.equals(registerBean.getPassword())) {
                     toast("两次输入密码不一致，请检查后重试");
                     return;
                 }
-                register(user);
+                register(registerBean);
             }
         });
     }
 
-    private void register(User user) {
+    private void register(RegisterBean registerBean) {
         hideSoftKeyboard();
 
         Observer<JSONObject> observer = new Observer<JSONObject>() {
@@ -152,7 +153,7 @@ public class RegisterActivity extends BaseActivity {
             }
         };
         showProgressDialog("正在提交注册信息...");
-        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_REGISTER, user, observer);
+        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_REGISTER, registerBean, observer);
     }
 
 }

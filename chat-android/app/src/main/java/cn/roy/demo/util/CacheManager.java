@@ -26,18 +26,19 @@ public class CacheManager {
         return instance;
     }
 
+    /**********功能：缓存用户信息**********/
     private User currentUser;
     private String currentUserId;
     private String currentUserName;
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
 
     public void cacheCurrentUser(User currentUser) {
         this.currentUser = currentUser;
         this.currentUserId = currentUser.getId();
         this.currentUserName = currentUser.getName();
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     public String getCurrentUserId() {

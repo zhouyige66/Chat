@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @Description:
+ * @Description: 集合类型的DTO
  * @Author: Roy Z
  * @Date: 2019/10/29 13:31
  * @Version: v1.0

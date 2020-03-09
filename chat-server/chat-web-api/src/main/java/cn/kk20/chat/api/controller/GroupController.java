@@ -4,7 +4,6 @@ import cn.kk20.chat.api.model.request.ApplyBean;
 import cn.kk20.chat.api.model.request.CreateGroupBean;
 import cn.kk20.chat.api.model.request.VerifyBean;
 import cn.kk20.chat.base.http.ResultData;
-import cn.kk20.chat.base.http.dto.SimpleDto;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.dao.model.GroupModel;
 import cn.kk20.chat.service.ApplyLogService;
@@ -42,7 +41,7 @@ public class GroupController {
         model.setDescription(createGroupBean.getDescription());
         try {
             groupService.create(model);
-            return ResultData.success(new SimpleDto(model));
+            return ResultData.success(model);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultData.fail(500, e.getMessage());
@@ -63,7 +62,7 @@ public class GroupController {
         applyLogModel.setTargetUserId(applyBean.getTargetUserId());
         applyLogModel.setApplyRemark(applyBean.getRemark());
         applyLogService.addApply(applyLogModel);
-        return ResultData.success(new SimpleDto("申请已提交"));
+        return ResultData.success("申请已提交");
     }
 
     @PostMapping("/verify")
@@ -82,7 +81,7 @@ public class GroupController {
         applyLogModel.setIsAgree(verifyBean.getAgree());
         applyLogModel.setVerifyRemark(verifyBean.getRemark());
         applyLogService.verifyApply(applyLogModel);
-        return ResultData.success(new SimpleDto("操作成功"));
+        return ResultData.success("操作成功");
     }
 
 }

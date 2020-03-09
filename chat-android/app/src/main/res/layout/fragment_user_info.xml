@@ -3,40 +3,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#efefef"
     android:orientation="vertical">
-    <Button
-        android:id="@+id/btn_logout"
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/selector_btn_login"
-        android:text="退出登录"
-        android:textColor="#FFF" />
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="60dp"
-        android:background="@drawable/shape_border"
-        android:padding="3dp"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_height="240dp"
+        android:background="#FFF">
+
+        <ImageView
+            android:id="@+id/iv_head"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/shape_border"
+            android:padding="3dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#ededed" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#e4d3e3">
+        android:background="#FFF">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:text="用户名"
             android:textColor="#555"
-            android:textSize="14sp"
-            tools:text="用户名" />
+            android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -58,18 +69,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#e4d3e3">
+        android:background="#FFF">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:text="电话"
             android:textColor="#555"
-            android:textSize="14sp"
-            tools:text="电话" />
+            android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_user_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -92,23 +104,24 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#e4d3e3">
+        android:background="#FFF">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:text="邮箱"
             android:textColor="#555"
-            android:textSize="14sp"
-            tools:text="邮箱" />
+            android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_user_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
             android:drawableRight="@drawable/ic_indicator"
             android:drawablePadding="5dp"
             android:text="未绑定"
@@ -125,18 +138,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#e4d3e3">
+        android:background="#FFF">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:text="注册时间"
             android:textColor="#555"
-            android:textSize="14sp"
-            tools:text="注册时间" />
+            android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_user_register_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -158,10 +172,13 @@
             android:background="#ededed" />
     </RelativeLayout>
 
-
-
-    <EditText
+    <Button
+        android:id="@+id/btn_logout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="45dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/selector_btn_login"
+        android:text="退出登录"
+        android:textColor="#FFF" />
 
 </LinearLayout>

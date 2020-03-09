@@ -12,26 +12,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.alibaba.fastjson.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.HomePagePagerAdapter;
 import cn.roy.demo.fragment.ChatListFragment;
 import cn.roy.demo.fragment.ContactListFragment;
 import cn.roy.demo.fragment.UserInfoFragment;
 import cn.roy.demo.service.ChatService;
-import cn.roy.demo.util.LogUtil;
-import cn.roy.demo.util.http.HttpUtil;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import cn.roy.demo.util.CacheManager;
 
 public class MainActivity extends BaseActivity {
+    private View v_title;
     private TextView tv_user_name, tv_chat_status;
     private ImageView iv_add;
     private ViewPager vp_content;
@@ -47,6 +40,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        v_title = findViewById(R.id.v_title);
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_chat_status = findViewById(R.id.tv_chat_status);
         iv_add = findViewById(R.id.iv_add);
@@ -54,7 +48,7 @@ public class MainActivity extends BaseActivity {
         v_menu = findViewById(R.id.v_menu);
 
         // 赋值或添加监听器
-        tv_user_name.setText("Roy");
+        tv_user_name.setText(CacheManager.getInstance().getCurrentUserName());
         tv_chat_status.setText("未连接");
         iv_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,12 +92,21 @@ public class MainActivity extends BaseActivity {
                 int index = 0;
                 switch (checkedId) {
                     case R.id.rb_menu1:
+                        if (v_title.getVisibility() == View.GONE) {
+                            v_title.setVisibility(View.VISIBLE);
+                        }
                         index = 0;
                         break;
                     case R.id.rb_menu2:
+                        if (v_title.getVisibility() == View.GONE) {
+                            v_title.setVisibility(View.VISIBLE);
+                        }
                         index = 1;
                         break;
                     case R.id.rb_menu3:
+                        if (v_title.getVisibility() == View.VISIBLE) {
+                            v_title.setVisibility(View.GONE);
+                        }
                         index = 2;
                         break;
                     default:
