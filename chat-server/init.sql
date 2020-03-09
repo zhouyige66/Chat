@@ -20,7 +20,7 @@ CREATE TABLE `c_user`
     `email`       VARCHAR(20)        DEFAULT NULL COMMENT '邮箱',
     `password`    VARCHAR(20)        DEFAULT NULL COMMENT '密码',
     `head`        VARCHAR(256)       DEFAULT NULL COMMENT '用户头像',
-    `friends`     TEXT               DEFAULT NULL COMMENT '好友列表',
+    `friend_list` TEXT               DEFAULT NULL COMMENT '好友列表',
     `group_list`  TEXT               DEFAULT NULL COMMENT '群列表',
     `is_delete`   BIT(1)             DEFAULT FALSE COMMENT '是否删除',
     `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -36,15 +36,15 @@ DROP TABLE
     IF EXISTS `c_group`;
 CREATE TABLE `c_group`
 (
-    `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `name`        VARCHAR(20)        DEFAULT NULL COMMENT '群名称',
-    `description` varchar(256)       DEFAULT NULL COMMENT '群描述',
-    `creator`     BIGINT    NOT NULL COMMENT '创建者',
-    `manager`     VARCHAR(256)       DEFAULT NULL COMMENT '管理员',
-    `members`     TEXT               DEFAULT NULL COMMENT '群成员',
-    `is_delete`   BIT(1)             DEFAULT FALSE COMMENT '是否删除',
-    `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `modify_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`           BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `name`         VARCHAR(20)        DEFAULT NULL COMMENT '群名称',
+    `description`  varchar(256)       DEFAULT NULL COMMENT '群描述',
+    `creator_id`   BIGINT    NOT NULL COMMENT '创建者',
+    `manager_list` VARCHAR(256)       DEFAULT NULL COMMENT '管理员',
+    `member_list`  TEXT               DEFAULT NULL COMMENT '群成员',
+    `is_delete`    BIT(1)             DEFAULT FALSE COMMENT '是否删除',
+    `create_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8 COMMENT '群分组表';
@@ -80,7 +80,7 @@ CREATE TABLE `c_group_message_log`
 (
     `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
     `msg_id`      BIGINT    NOT NULL COMMENT '消息ID',
-    `operator`    BIGINT    NOT NULL COMMENT '操作者',
+    `operator_id` BIGINT    NOT NULL COMMENT '操作者',
     `is_delete`   BIT(1)             DEFAULT FALSE COMMENT '是否删除',
     `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modify_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -102,7 +102,8 @@ CREATE TABLE `c_apply_log`
     `target_user_id` BIGINT    NOT NULL COMMENT '目标：好友或群组',
     `verify_user_id` BIGINT    NOT NULL COMMENT '审批人',
     `is_agree`       BIT(1)             DEFAULT NULL COMMENT '是否同意',
-    `remark`         VARCHAR(255)       DEFAULT NULL COMMENT '备注',
+    `apply_remark`   VARCHAR(255)       DEFAULT NULL COMMENT '申请备注',
+    `verify_remark`  VARCHAR(255)       DEFAULT NULL COMMENT '审批备注',
     `is_delete`      BIT(1)             DEFAULT FALSE COMMENT '是否删除',
     `create_date`    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modify_date`    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

@@ -1,5 +1,6 @@
 package cn.kk20.chat.service.impl;
 
+import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.dao.mapper.ApplyLogModelMapper;
 import cn.kk20.chat.dao.mapper.GroupModelMapper;
 import cn.kk20.chat.dao.mapper.UserModelMapper;
@@ -48,26 +49,26 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         // 校验用户是否存在
         Integer type = model.getType();
         if (type == null) {
-            throw new Exception("申请类型为0-添加好友，1-添加群，不能为空");
+            throw new RequestParamException("申请类型为0-添加好友，1-添加群，不能为空");
         }
         Long applyUserId = model.getApplyUserId();
         Long targetUserId = model.getTargetUserId();
         UserModel applyUserModel = userModelMapper.selectByPrimaryKey(applyUserId);
         if (applyUserModel == null) {
-            throw new Exception("申请发起者不存在");
+            throw new RequestParamException("申请发起者不存在");
         }
         if (type == 0) {
             UserModel targetUserModel = userModelMapper.selectByPrimaryKey(targetUserId);
             if (targetUserModel == null || targetUserModel.getIsDelete()) {
-                throw new Exception("申请添加的好友不存在");
+                throw new RequestParamException("申请添加的好友不存在");
             }
             // 检查两者是否已经是好友了
-            String targetUserFriends = targetUserModel.getFriends();
+            String targetUserFriends = targetUserModel.getFriendList();
             if (!StringUtils.isEmpty(targetUserFriends)) {
                 Set<Long> targetUserFriendSet = JSON.parseObject(targetUserFriends, new TypeReference<Set<Long>>() {
                 });
                 if (targetUserFriendSet.contains(applyUserModel.getId())) {
-                    String applyUserFriends = applyUserModel.getFriends();
+                    String applyUserFriends = applyUserModel.getFriendList();
                     Set<Long> applyUserFriendSet;
                     if (StringUtils.isEmpty(applyUserFriends)) {
                         applyUserFriendSet = new HashSet<>();
@@ -78,20 +79,20 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                     if (!applyUserFriendSet.contains(targetUserId)) {
                         // 更新申请者的好友列表
                         applyUserFriendSet.add(targetUserId);
-                        applyUserModel.setFriends(JSON.toJSONString(applyUserFriends));
+                        applyUserModel.setFriendList(JSON.toJSONString(applyUserFriends));
                         userModelMapper.updateByPrimaryKeySelective(applyUserModel);
                     }
-                    throw new Exception("申请添加的好友已经存在，不必重复添加");
+                    throw new RequestParamException("申请添加的好友已经存在，不必重复添加");
                 }
             }
             model.setVerifyUserId(targetUserModel.getId());
         } else {
             GroupModel targetGroupModel = groupModelMapper.selectByPrimaryKey(targetUserId);
             if (targetGroupModel == null || targetGroupModel.getIsDelete()) {
-                throw new Exception("申请加入的群不存在");
+                throw new RequestParamException("申请加入的群不存在");
             }
             // 检查申请人是否已经在群成员中
-            String groupMembers = targetGroupModel.getMembers();
+            String groupMembers = targetGroupModel.getMemberList();
             if (StringUtils.isEmpty(groupMembers)) {
                 Set<Long> memberSet = JSON.parseObject(groupMembers, new TypeReference<Set<Long>>() {
                 });
@@ -109,10 +110,10 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                         applyUserModel.setGroupList(JSON.toJSONString(applyUserGroupSet));
                         userModelMapper.updateByPrimaryKeySelective(applyUserModel);
                     }
-                    throw new Exception("申请人已经是该群的成员了");
+                    throw new RequestParamException("申请人已经是该群的成员了");
                 }
             }
-            model.setVerifyUserId(targetGroupModel.getCreator());
+            model.setVerifyUserId(targetGroupModel.getCreatorId());
         }
 
         // 处理申请记录
@@ -138,11 +139,11 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
         if (existModel == null) {
             String msg = String.format("申请记录数据：记录id=%d的申请记录不存在", model.getId());
-            throw new Exception(msg);
+            throw new RequestParamException(msg);
         }
         if (!existModel.getVerifyUserId().equals(model.getVerifyUserId())) {
             String msg = String.format("申请记录数据：记录id=%d的申请的审批人不符", model.getId());
-            throw new Exception(msg);
+            throw new RequestParamException(msg);
         }
 
         Long applyUserId = existModel.getApplyUserId();
@@ -151,7 +152,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         // 更新申请表数据
         existModel.setIsAgree(isAgree);
         existModel.setModifyDate(new Date());
-        existModel.setRemark(model.getRemark());
+        existModel.setApplyRemark(model.getApplyRemark());
         applyLogModelMapper.updateByPrimaryKeySelective(existModel);
 
         // 同意添加好友或加入群
@@ -166,25 +167,25 @@ public class ApplyLogServiceImpl implements ApplyLogService {
             } else {
                 // 更新群成员
                 GroupModel groupModel = groupModelMapper.selectByPrimaryKey(targetUserId);
-                String members = groupModel.getMembers();
+                String memberList = groupModel.getMemberList();
                 Set<Long> memberSet;
-                if (StringUtils.isEmpty(members)) {
+                if (StringUtils.isEmpty(memberList)) {
                     memberSet = new HashSet<>();
                 } else {
-                    memberSet = JSON.parseObject(members, new TypeReference<Set<Long>>() {
+                    memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
                     });
                 }
                 memberSet.add(applyUserId);
-                groupModel.setMembers(JSON.toJSONString(memberSet));
+                groupModel.setMemberList(JSON.toJSONString(memberSet));
                 groupModel.setModifyDate(null);
                 groupModelMapper.updateByPrimaryKeySelective(groupModel);
                 // 更新用户的群列表
-                String groups = applyUserModel.getGroupList();
+                String groupList = applyUserModel.getGroupList();
                 Set<Long> groupSet;
-                if (StringUtils.isEmpty(groups)) {
+                if (StringUtils.isEmpty(groupList)) {
                     groupSet = new HashSet<>();
                 } else {
-                    groupSet = JSON.parseObject(members, new TypeReference<Set<Long>>() {
+                    groupSet = JSON.parseObject(groupList, new TypeReference<Set<Long>>() {
                     });
                 }
                 groupSet.add(targetUserId);
@@ -195,18 +196,20 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     }
 
     private void updateUserFriends(UserModel userModel, Long friendId, boolean add) {
-        String friends = userModel.getFriends();
-        Set<Long> longs = JSON.parseObject(friends, new TypeReference<Set<Long>>() {
-        });
-        if (CollectionUtils.isEmpty(longs)) {
-            longs = new HashSet<>();
+        String friendList = userModel.getFriendList();
+        Set<Long> friendSet;
+        if (StringUtils.isEmpty(friendList)) {
+            friendSet = new HashSet<>();
+        } else {
+            friendSet = JSON.parseObject(friendList, new TypeReference<Set<Long>>() {
+            });
         }
         if (add) {
-            longs.add(friendId);
+            friendSet.add(friendId);
         } else {
-            longs.remove(friendId);
+            friendSet.remove(friendId);
         }
-        userModel.setFriends(JSON.toJSONString(longs));
+        userModel.setFriendList(JSON.toJSONString(friendSet));
         userModelMapper.updateByPrimaryKeySelective(userModel);
     }
 

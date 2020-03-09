@@ -5,14 +5,14 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="description" jdbcType="VARCHAR" property="description" />
-    <result column="creator" jdbcType="BIGINT" property="creator" />
-    <result column="manager" jdbcType="VARCHAR" property="manager" />
+    <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
+    <result column="manager_list" jdbcType="VARCHAR" property="managerList" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cn.kk20.chat.dao.model.GroupModel">
-    <result column="members" jdbcType="LONGVARCHAR" property="members" />
+    <result column="member_list" jdbcType="LONGVARCHAR" property="memberList" />
   </resultMap>
   <sql id="Condition_Where_Clause">
     <where>
@@ -73,10 +73,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, description, creator, manager, is_delete, create_date, modify_date
+    id, `name`, description, creator_id, manager_list, is_delete, create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
-    members
+    member_list
   </sql>
   <select id="selectByConditionWithBLOBs" parameterType="cn.kk20.chat.dao.model.GroupModelQuery" resultMap="ResultMapWithBLOBs">
     select
@@ -130,12 +130,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_group (`name`, description, creator, 
-      manager, is_delete, create_date, 
-      modify_date, members)
-    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{creator,jdbcType=BIGINT}, 
-      #{manager,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{modifyDate,jdbcType=TIMESTAMP}, #{members,jdbcType=LONGVARCHAR})
+    insert into c_group (`name`, description, creator_id, 
+      manager_list, is_delete, create_date, 
+      modify_date, member_list)
+    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{creatorId,jdbcType=BIGINT}, 
+      #{managerList,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{modifyDate,jdbcType=TIMESTAMP}, #{memberList,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.GroupModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -149,11 +149,11 @@
       <if test="description != null">
         description,
       </if>
-      <if test="creator != null">
-        creator,
+      <if test="creatorId != null">
+        creator_id,
       </if>
-      <if test="manager != null">
-        manager,
+      <if test="managerList != null">
+        manager_list,
       </if>
       <if test="isDelete != null">
         is_delete,
@@ -164,8 +164,8 @@
       <if test="modifyDate != null">
         modify_date,
       </if>
-      <if test="members != null">
-        members,
+      <if test="memberList != null">
+        member_list,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -175,11 +175,11 @@
       <if test="description != null">
         #{description,jdbcType=VARCHAR},
       </if>
-      <if test="creator != null">
-        #{creator,jdbcType=BIGINT},
+      <if test="creatorId != null">
+        #{creatorId,jdbcType=BIGINT},
       </if>
-      <if test="manager != null">
-        #{manager,jdbcType=VARCHAR},
+      <if test="managerList != null">
+        #{managerList,jdbcType=VARCHAR},
       </if>
       <if test="isDelete != null">
         #{isDelete,jdbcType=BIT},
@@ -190,8 +190,8 @@
       <if test="modifyDate != null">
         #{modifyDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="members != null">
-        #{members,jdbcType=LONGVARCHAR},
+      <if test="memberList != null">
+        #{memberList,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -213,11 +213,11 @@
       <if test="record.description != null">
         description = #{record.description,jdbcType=VARCHAR},
       </if>
-      <if test="record.creator != null">
-        creator = #{record.creator,jdbcType=BIGINT},
+      <if test="record.creatorId != null">
+        creator_id = #{record.creatorId,jdbcType=BIGINT},
       </if>
-      <if test="record.manager != null">
-        manager = #{record.manager,jdbcType=VARCHAR},
+      <if test="record.managerList != null">
+        manager_list = #{record.managerList,jdbcType=VARCHAR},
       </if>
       <if test="record.isDelete != null">
         is_delete = #{record.isDelete,jdbcType=BIT},
@@ -228,8 +228,8 @@
       <if test="record.modifyDate != null">
         modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.members != null">
-        members = #{record.members,jdbcType=LONGVARCHAR},
+      <if test="record.memberList != null">
+        member_list = #{record.memberList,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -241,12 +241,12 @@
     set id = #{record.id,jdbcType=BIGINT},
       `name` = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
-      creator = #{record.creator,jdbcType=BIGINT},
-      manager = #{record.manager,jdbcType=VARCHAR},
+      creator_id = #{record.creatorId,jdbcType=BIGINT},
+      manager_list = #{record.managerList,jdbcType=VARCHAR},
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
-      members = #{record.members,jdbcType=LONGVARCHAR}
+      member_list = #{record.memberList,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Condition_Where_Clause" />
     </if>
@@ -256,8 +256,8 @@
     set id = #{record.id,jdbcType=BIGINT},
       `name` = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
-      creator = #{record.creator,jdbcType=BIGINT},
-      manager = #{record.manager,jdbcType=VARCHAR},
+      creator_id = #{record.creatorId,jdbcType=BIGINT},
+      manager_list = #{record.managerList,jdbcType=VARCHAR},
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP}
@@ -274,11 +274,11 @@
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
       </if>
-      <if test="creator != null">
-        creator = #{creator,jdbcType=BIGINT},
+      <if test="creatorId != null">
+        creator_id = #{creatorId,jdbcType=BIGINT},
       </if>
-      <if test="manager != null">
-        manager = #{manager,jdbcType=VARCHAR},
+      <if test="managerList != null">
+        manager_list = #{managerList,jdbcType=VARCHAR},
       </if>
       <if test="isDelete != null">
         is_delete = #{isDelete,jdbcType=BIT},
@@ -289,8 +289,8 @@
       <if test="modifyDate != null">
         modify_date = #{modifyDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="members != null">
-        members = #{members,jdbcType=LONGVARCHAR},
+      <if test="memberList != null">
+        member_list = #{memberList,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -299,20 +299,20 @@
     update c_group
     set `name` = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
-      creator = #{creator,jdbcType=BIGINT},
-      manager = #{manager,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=BIGINT},
+      manager_list = #{managerList,jdbcType=VARCHAR},
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP},
-      members = #{members,jdbcType=LONGVARCHAR}
+      member_list = #{memberList,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.GroupModel">
     update c_group
     set `name` = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
-      creator = #{creator,jdbcType=BIGINT},
-      manager = #{manager,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=BIGINT},
+      manager_list = #{managerList,jdbcType=VARCHAR},
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP}

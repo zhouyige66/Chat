@@ -8,7 +8,8 @@
     <result column="target_user_id" jdbcType="BIGINT" property="targetUserId" />
     <result column="verify_user_id" jdbcType="BIGINT" property="verifyUserId" />
     <result column="is_agree" jdbcType="BIT" property="isAgree" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="apply_remark" jdbcType="VARCHAR" property="applyRemark" />
+    <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `type`, apply_user_id, target_user_id, verify_user_id, is_agree, remark, is_delete, 
-    create_date, modify_date
+    id, `type`, apply_user_id, target_user_id, verify_user_id, is_agree, apply_remark, 
+    verify_remark, is_delete, create_date, modify_date
   </sql>
   <select id="selectByCondition" parameterType="cn.kk20.chat.dao.model.ApplyLogModelQuery" resultMap="BaseResultMap">
     select
@@ -110,13 +111,13 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into c_apply_log (`type`, apply_user_id, target_user_id, 
-      verify_user_id, is_agree, remark, 
-      is_delete, create_date, modify_date
-      )
+      verify_user_id, is_agree, apply_remark, 
+      verify_remark, is_delete, create_date, 
+      modify_date)
     values (#{type,jdbcType=INTEGER}, #{applyUserId,jdbcType=BIGINT}, #{targetUserId,jdbcType=BIGINT}, 
-      #{verifyUserId,jdbcType=BIGINT}, #{isAgree,jdbcType=BIT}, #{remark,jdbcType=VARCHAR}, 
-      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}
-      )
+      #{verifyUserId,jdbcType=BIGINT}, #{isAgree,jdbcType=BIT}, #{applyRemark,jdbcType=VARCHAR}, 
+      #{verifyRemark,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{modifyDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.ApplyLogModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -139,8 +140,11 @@
       <if test="isAgree != null">
         is_agree,
       </if>
-      <if test="remark != null">
-        remark,
+      <if test="applyRemark != null">
+        apply_remark,
+      </if>
+      <if test="verifyRemark != null">
+        verify_remark,
       </if>
       <if test="isDelete != null">
         is_delete,
@@ -168,8 +172,11 @@
       <if test="isAgree != null">
         #{isAgree,jdbcType=BIT},
       </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
+      <if test="applyRemark != null">
+        #{applyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyRemark != null">
+        #{verifyRemark,jdbcType=VARCHAR},
       </if>
       <if test="isDelete != null">
         #{isDelete,jdbcType=BIT},
@@ -209,8 +216,11 @@
       <if test="record.isAgree != null">
         is_agree = #{record.isAgree,jdbcType=BIT},
       </if>
-      <if test="record.remark != null">
-        remark = #{record.remark,jdbcType=VARCHAR},
+      <if test="record.applyRemark != null">
+        apply_remark = #{record.applyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verifyRemark != null">
+        verify_remark = #{record.verifyRemark,jdbcType=VARCHAR},
       </if>
       <if test="record.isDelete != null">
         is_delete = #{record.isDelete,jdbcType=BIT},
@@ -234,7 +244,8 @@
       target_user_id = #{record.targetUserId,jdbcType=BIGINT},
       verify_user_id = #{record.verifyUserId,jdbcType=BIGINT},
       is_agree = #{record.isAgree,jdbcType=BIT},
-      remark = #{record.remark,jdbcType=VARCHAR},
+      apply_remark = #{record.applyRemark,jdbcType=VARCHAR},
+      verify_remark = #{record.verifyRemark,jdbcType=VARCHAR},
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP}
@@ -260,8 +271,11 @@
       <if test="isAgree != null">
         is_agree = #{isAgree,jdbcType=BIT},
       </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
+      <if test="applyRemark != null">
+        apply_remark = #{applyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyRemark != null">
+        verify_remark = #{verifyRemark,jdbcType=VARCHAR},
       </if>
       <if test="isDelete != null">
         is_delete = #{isDelete,jdbcType=BIT},
@@ -282,7 +296,8 @@
       target_user_id = #{targetUserId,jdbcType=BIGINT},
       verify_user_id = #{verifyUserId,jdbcType=BIGINT},
       is_agree = #{isAgree,jdbcType=BIT},
-      remark = #{remark,jdbcType=VARCHAR},
+      apply_remark = #{applyRemark,jdbcType=VARCHAR},
+      verify_remark = #{verifyRemark,jdbcType=VARCHAR},
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP}

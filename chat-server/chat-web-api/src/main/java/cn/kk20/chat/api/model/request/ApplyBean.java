@@ -9,22 +9,12 @@ import io.swagger.annotations.ApiModelProperty;
  * @Version: v1.0
  */
 public class ApplyBean {
-    @ApiModelProperty(value = "申请类型：0-加好友，1-加群")
-    private Integer type;
     @ApiModelProperty(value = "申请人")
     private Long applyUserId;
-    @ApiModelProperty(value = "添加目标（好友或群）")
+    @ApiModelProperty(value = "添加目标（好友ID或群ID）")
     private Long targetUserId;
     @ApiModelProperty(value = "备注")
     private String remark;
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
 
     public Long getApplyUserId() {
         return applyUserId;

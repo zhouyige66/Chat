@@ -10,10 +10,4 @@ import java.io.Serializable;
  */
 public class BaseDto implements Serializable {
 
-    public static BaseDto EMPTY = null;
-
-    public BaseDto(){
-
-    }
-
 }

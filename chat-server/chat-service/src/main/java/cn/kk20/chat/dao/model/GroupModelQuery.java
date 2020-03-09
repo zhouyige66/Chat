@@ -305,133 +305,133 @@ public class GroupModelQuery {
             return (Criteria) this;
         }
 
-        public Criteria andCreatorIsNull() {
-            addCriterion("creator is null");
+        public Criteria andCreatorIdIsNull() {
+            addCriterion("creator_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorIsNotNull() {
-            addCriterion("creator is not null");
+        public Criteria andCreatorIdIsNotNull() {
+            addCriterion("creator_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorEqualTo(Long value) {
-            addCriterion("creator =", value, "creator");
+        public Criteria andCreatorIdEqualTo(Long value) {
+            addCriterion("creator_id =", value, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorNotEqualTo(Long value) {
-            addCriterion("creator <>", value, "creator");
+        public Criteria andCreatorIdNotEqualTo(Long value) {
+            addCriterion("creator_id <>", value, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorGreaterThan(Long value) {
-            addCriterion("creator >", value, "creator");
+        public Criteria andCreatorIdGreaterThan(Long value) {
+            addCriterion("creator_id >", value, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorGreaterThanOrEqualTo(Long value) {
-            addCriterion("creator >=", value, "creator");
+        public Criteria andCreatorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("creator_id >=", value, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorLessThan(Long value) {
-            addCriterion("creator <", value, "creator");
+        public Criteria andCreatorIdLessThan(Long value) {
+            addCriterion("creator_id <", value, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorLessThanOrEqualTo(Long value) {
-            addCriterion("creator <=", value, "creator");
+        public Criteria andCreatorIdLessThanOrEqualTo(Long value) {
+            addCriterion("creator_id <=", value, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorIn(List<Long> values) {
-            addCriterion("creator in", values, "creator");
+        public Criteria andCreatorIdIn(List<Long> values) {
+            addCriterion("creator_id in", values, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorNotIn(List<Long> values) {
-            addCriterion("creator not in", values, "creator");
+        public Criteria andCreatorIdNotIn(List<Long> values) {
+            addCriterion("creator_id not in", values, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorBetween(Long value1, Long value2) {
-            addCriterion("creator between", value1, value2, "creator");
+        public Criteria andCreatorIdBetween(Long value1, Long value2) {
+            addCriterion("creator_id between", value1, value2, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andCreatorNotBetween(Long value1, Long value2) {
-            addCriterion("creator not between", value1, value2, "creator");
+        public Criteria andCreatorIdNotBetween(Long value1, Long value2) {
+            addCriterion("creator_id not between", value1, value2, "creatorId");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIsNull() {
-            addCriterion("manager is null");
+        public Criteria andManagerListIsNull() {
+            addCriterion("manager_list is null");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIsNotNull() {
-            addCriterion("manager is not null");
+        public Criteria andManagerListIsNotNull() {
+            addCriterion("manager_list is not null");
             return (Criteria) this;
         }
 
-        public Criteria andManagerEqualTo(String value) {
-            addCriterion("manager =", value, "manager");
+        public Criteria andManagerListEqualTo(String value) {
+            addCriterion("manager_list =", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerNotEqualTo(String value) {
-            addCriterion("manager <>", value, "manager");
+        public Criteria andManagerListNotEqualTo(String value) {
+            addCriterion("manager_list <>", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerGreaterThan(String value) {
-            addCriterion("manager >", value, "manager");
+        public Criteria andManagerListGreaterThan(String value) {
+            addCriterion("manager_list >", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerGreaterThanOrEqualTo(String value) {
-            addCriterion("manager >=", value, "manager");
+        public Criteria andManagerListGreaterThanOrEqualTo(String value) {
+            addCriterion("manager_list >=", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerLessThan(String value) {
-            addCriterion("manager <", value, "manager");
+        public Criteria andManagerListLessThan(String value) {
+            addCriterion("manager_list <", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerLessThanOrEqualTo(String value) {
-            addCriterion("manager <=", value, "manager");
+        public Criteria andManagerListLessThanOrEqualTo(String value) {
+            addCriterion("manager_list <=", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerLike(String value) {
-            addCriterion("manager like", value, "manager");
+        public Criteria andManagerListLike(String value) {
+            addCriterion("manager_list like", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerNotLike(String value) {
-            addCriterion("manager not like", value, "manager");
+        public Criteria andManagerListNotLike(String value) {
+            addCriterion("manager_list not like", value, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIn(List<String> values) {
-            addCriterion("manager in", values, "manager");
+        public Criteria andManagerListIn(List<String> values) {
+            addCriterion("manager_list in", values, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerNotIn(List<String> values) {
-            addCriterion("manager not in", values, "manager");
+        public Criteria andManagerListNotIn(List<String> values) {
+            addCriterion("manager_list not in", values, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerBetween(String value1, String value2) {
-            addCriterion("manager between", value1, value2, "manager");
+        public Criteria andManagerListBetween(String value1, String value2) {
+            addCriterion("manager_list between", value1, value2, "managerList");
             return (Criteria) this;
         }
 
-        public Criteria andManagerNotBetween(String value1, String value2) {
-            addCriterion("manager not between", value1, value2, "manager");
+        public Criteria andManagerListNotBetween(String value1, String value2) {
+            addCriterion("manager_list not between", value1, value2, "managerList");
             return (Criteria) this;
         }
 

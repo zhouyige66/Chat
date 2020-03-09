@@ -42,44 +42,35 @@ public class UserController {
     @PostMapping(value = "/register")
     @ApiOperation(value = "用户注册接口", notes = "功能：注册新用户")
     @ApiImplicitParam(name = "registerBean", value = "用户信息", dataType = "RegisterBean")
-    public ResultData register(@RequestBody RegisterBean registerBean) {
-        try {
-            UserModel userModel = new UserModel();
-            BeanUtils.copyProperties(registerBean, userModel);
-            UserModel result = userService.register(userModel);
-            return ResultData.success(new SimpleDto("注册成功"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultData.fail(101, e.getMessage());
-        }
+    public ResultData register(@RequestBody RegisterBean registerBean) throws Exception {
+        UserModel userModel = new UserModel();
+        BeanUtils.copyProperties(registerBean, userModel);
+        userService.register(userModel);
+        return ResultData.success(new SimpleDto("注册成功"));
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "登录接口", notes = "android、iOS用户登录使用")
     @ApiImplicitParam(name = "loginBean", value = "登录信息", dataType = "LoginBean")
-    public ResultData login(@RequestBody LoginBean loginBean) {
+    public ResultData login(@RequestBody LoginBean loginBean) throws Exception {
         return login(loginBean.getUserName(), loginBean.getPassword());
     }
 
     @GetMapping("/login/{userName}/{password}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "用户名或电话或邮箱"),
+            @ApiImplicitParam(name = "userName", value = "用户名或电话或邮箱"),
             @ApiImplicitParam(name = "password", value = "密码")
     })
-    public ResultData login(@PathVariable("userName") String userName, @PathVariable("password") String password) {
-        try {
-            UserModel userModel = userService.login(userName, password);
-            if (!userModel.getPassword().equals(password)) {
-                return ResultData.fail(202, "登录密码错误");
-            }
-            userModel.setPassword(null);
-            userModel.setGroupList(null);
-            userModel.setFriends(null);
-            return ResultData.success(new SimpleDto(userModel));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultData.fail(201, e.getMessage());
+    public ResultData login(@PathVariable("userName") String userName, @PathVariable("password") String password)
+            throws Exception {
+        UserModel userModel = userService.login(userName, password);
+        if (!userModel.getPassword().equals(password)) {
+            return ResultData.fail(202, "登录密码错误");
         }
+        userModel.setPassword(null);
+        userModel.setGroupList(null);
+        userModel.setFriendList(null);
+        return ResultData.success(new SimpleDto(userModel));
     }
 
     @GetMapping("/search")
@@ -87,7 +78,7 @@ public class UserController {
     @ApiImplicitParam(name = "key", value = "ID或用户名或电话")
     public ResultData fuzzySearch(@RequestParam String key) {
         if (StringUtils.isEmpty(key)) {
-            return ResultData.fail(100, "参数错误");
+            return ResultData.requestError("参数错误");
         }
 
         List<UserModel> searchResult = userService.search(key);

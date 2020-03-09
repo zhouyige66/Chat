@@ -465,73 +465,143 @@ public class ApplyLogModelQuery {
             return (Criteria) this;
         }
 
-        public Criteria andRemarkIsNull() {
-            addCriterion("remark is null");
+        public Criteria andApplyRemarkIsNull() {
+            addCriterion("apply_remark is null");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkIsNotNull() {
-            addCriterion("remark is not null");
+        public Criteria andApplyRemarkIsNotNull() {
+            addCriterion("apply_remark is not null");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkEqualTo(String value) {
-            addCriterion("remark =", value, "remark");
+        public Criteria andApplyRemarkEqualTo(String value) {
+            addCriterion("apply_remark =", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkNotEqualTo(String value) {
-            addCriterion("remark <>", value, "remark");
+        public Criteria andApplyRemarkNotEqualTo(String value) {
+            addCriterion("apply_remark <>", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkGreaterThan(String value) {
-            addCriterion("remark >", value, "remark");
+        public Criteria andApplyRemarkGreaterThan(String value) {
+            addCriterion("apply_remark >", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkGreaterThanOrEqualTo(String value) {
-            addCriterion("remark >=", value, "remark");
+        public Criteria andApplyRemarkGreaterThanOrEqualTo(String value) {
+            addCriterion("apply_remark >=", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkLessThan(String value) {
-            addCriterion("remark <", value, "remark");
+        public Criteria andApplyRemarkLessThan(String value) {
+            addCriterion("apply_remark <", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkLessThanOrEqualTo(String value) {
-            addCriterion("remark <=", value, "remark");
+        public Criteria andApplyRemarkLessThanOrEqualTo(String value) {
+            addCriterion("apply_remark <=", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkLike(String value) {
-            addCriterion("remark like", value, "remark");
+        public Criteria andApplyRemarkLike(String value) {
+            addCriterion("apply_remark like", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkNotLike(String value) {
-            addCriterion("remark not like", value, "remark");
+        public Criteria andApplyRemarkNotLike(String value) {
+            addCriterion("apply_remark not like", value, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkIn(List<String> values) {
-            addCriterion("remark in", values, "remark");
+        public Criteria andApplyRemarkIn(List<String> values) {
+            addCriterion("apply_remark in", values, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkNotIn(List<String> values) {
-            addCriterion("remark not in", values, "remark");
+        public Criteria andApplyRemarkNotIn(List<String> values) {
+            addCriterion("apply_remark not in", values, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkBetween(String value1, String value2) {
-            addCriterion("remark between", value1, value2, "remark");
+        public Criteria andApplyRemarkBetween(String value1, String value2) {
+            addCriterion("apply_remark between", value1, value2, "applyRemark");
             return (Criteria) this;
         }
 
-        public Criteria andRemarkNotBetween(String value1, String value2) {
-            addCriterion("remark not between", value1, value2, "remark");
+        public Criteria andApplyRemarkNotBetween(String value1, String value2) {
+            addCriterion("apply_remark not between", value1, value2, "applyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkIsNull() {
+            addCriterion("verify_remark is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkIsNotNull() {
+            addCriterion("verify_remark is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkEqualTo(String value) {
+            addCriterion("verify_remark =", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkNotEqualTo(String value) {
+            addCriterion("verify_remark <>", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkGreaterThan(String value) {
+            addCriterion("verify_remark >", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkGreaterThanOrEqualTo(String value) {
+            addCriterion("verify_remark >=", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkLessThan(String value) {
+            addCriterion("verify_remark <", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkLessThanOrEqualTo(String value) {
+            addCriterion("verify_remark <=", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkLike(String value) {
+            addCriterion("verify_remark like", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkNotLike(String value) {
+            addCriterion("verify_remark not like", value, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkIn(List<String> values) {
+            addCriterion("verify_remark in", values, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkNotIn(List<String> values) {
+            addCriterion("verify_remark not in", values, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkBetween(String value1, String value2) {
+            addCriterion("verify_remark between", value1, value2, "verifyRemark");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyRemarkNotBetween(String value1, String value2) {
+            addCriterion("verify_remark not between", value1, value2, "verifyRemark");
             return (Criteria) this;
         }
 

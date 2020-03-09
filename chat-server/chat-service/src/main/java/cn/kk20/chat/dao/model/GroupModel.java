@@ -10,9 +10,9 @@ public class GroupModel implements Serializable {
 
     private String description;
 
-    private Long creator;
+    private Long creatorId;
 
-    private String manager;
+    private String managerList;
 
     private Boolean isDelete;
 
@@ -20,7 +20,7 @@ public class GroupModel implements Serializable {
 
     private Date modifyDate;
 
-    private String members;
+    private String memberList;
 
     private static final long serialVersionUID = 1L;
 
@@ -63,30 +63,30 @@ public class GroupModel implements Serializable {
         this.description = description;
     }
 
-    public Long getCreator() {
-        return creator;
+    public Long getCreatorId() {
+        return creatorId;
     }
 
-    public GroupModel withCreator(Long creator) {
-        this.setCreator(creator);
+    public GroupModel withCreatorId(Long creatorId) {
+        this.setCreatorId(creatorId);
         return this;
     }
 
-    public void setCreator(Long creator) {
-        this.creator = creator;
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
     }
 
-    public String getManager() {
-        return manager;
+    public String getManagerList() {
+        return managerList;
     }
 
-    public GroupModel withManager(String manager) {
-        this.setManager(manager);
+    public GroupModel withManagerList(String managerList) {
+        this.setManagerList(managerList);
         return this;
     }
 
-    public void setManager(String manager) {
-        this.manager = manager;
+    public void setManagerList(String managerList) {
+        this.managerList = managerList;
     }
 
     public Boolean getIsDelete() {
@@ -128,17 +128,17 @@ public class GroupModel implements Serializable {
         this.modifyDate = modifyDate;
     }
 
-    public String getMembers() {
-        return members;
+    public String getMemberList() {
+        return memberList;
     }
 
-    public GroupModel withMembers(String members) {
-        this.setMembers(members);
+    public GroupModel withMemberList(String memberList) {
+        this.setMemberList(memberList);
         return this;
     }
 
-    public void setMembers(String members) {
-        this.members = members;
+    public void setMemberList(String memberList) {
+        this.memberList = memberList;
     }
 
     @Override
@@ -150,12 +150,12 @@ public class GroupModel implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
         sb.append(", description=").append(description);
-        sb.append(", creator=").append(creator);
-        sb.append(", manager=").append(manager);
+        sb.append(", creatorId=").append(creatorId);
+        sb.append(", managerList=").append(managerList);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);
-        sb.append(", members=").append(members);
+        sb.append(", memberList=").append(memberList);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

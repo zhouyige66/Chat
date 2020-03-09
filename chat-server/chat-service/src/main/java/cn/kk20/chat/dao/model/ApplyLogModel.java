@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class ApplyLogModel implements Serializable {
+    public static final int APPLY_TYPE_ADD_FRIEND = 0;
+    public static final int APPLY_TYPE_ADD_GROUP = 1;
+
     private Long id;
 
     private Integer type;
@@ -16,7 +19,9 @@ public class ApplyLogModel implements Serializable {
 
     private Boolean isAgree;
 
-    private String remark;
+    private String applyRemark;
+
+    private String verifyRemark;
 
     private Boolean isDelete;
 
@@ -104,17 +109,30 @@ public class ApplyLogModel implements Serializable {
         this.isAgree = isAgree;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getApplyRemark() {
+        return applyRemark;
     }
 
-    public ApplyLogModel withRemark(String remark) {
-        this.setRemark(remark);
+    public ApplyLogModel withApplyRemark(String applyRemark) {
+        this.setApplyRemark(applyRemark);
         return this;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setApplyRemark(String applyRemark) {
+        this.applyRemark = applyRemark;
+    }
+
+    public String getVerifyRemark() {
+        return verifyRemark;
+    }
+
+    public ApplyLogModel withVerifyRemark(String verifyRemark) {
+        this.setVerifyRemark(verifyRemark);
+        return this;
+    }
+
+    public void setVerifyRemark(String verifyRemark) {
+        this.verifyRemark = verifyRemark;
     }
 
     public Boolean getIsDelete() {
@@ -168,7 +186,8 @@ public class ApplyLogModel implements Serializable {
         sb.append(", targetUserId=").append(targetUserId);
         sb.append(", verifyUserId=").append(verifyUserId);
         sb.append(", isAgree=").append(isAgree);
-        sb.append(", remark=").append(remark);
+        sb.append(", applyRemark=").append(applyRemark);
+        sb.append(", verifyRemark=").append(verifyRemark);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);

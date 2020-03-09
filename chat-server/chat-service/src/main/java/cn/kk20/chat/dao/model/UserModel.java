@@ -22,7 +22,7 @@ public class UserModel implements Serializable {
 
     private Date modifyDate;
 
-    private String friends;
+    private String friendList;
 
     private String groupList;
 
@@ -145,17 +145,17 @@ public class UserModel implements Serializable {
         this.modifyDate = modifyDate;
     }
 
-    public String getFriends() {
-        return friends;
+    public String getFriendList() {
+        return friendList;
     }
 
-    public UserModel withFriends(String friends) {
-        this.setFriends(friends);
+    public UserModel withFriendList(String friendList) {
+        this.setFriendList(friendList);
         return this;
     }
 
-    public void setFriends(String friends) {
-        this.friends = friends;
+    public void setFriendList(String friendList) {
+        this.friendList = friendList;
     }
 
     public String getGroupList() {
@@ -186,7 +186,7 @@ public class UserModel implements Serializable {
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);
-        sb.append(", friends=").append(friends);
+        sb.append(", friendList=").append(friendList);
         sb.append(", groupList=").append(groupList);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

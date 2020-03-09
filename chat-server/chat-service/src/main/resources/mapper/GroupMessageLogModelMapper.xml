@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="cn.kk20.chat.dao.model.GroupMessageLogModel">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="msg_id" jdbcType="BIGINT" property="msgId" />
-    <result column="operator" jdbcType="BIGINT" property="operator" />
+    <result column="operator_id" jdbcType="BIGINT" property="operatorId" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, msg_id, `operator`, is_delete, create_date, modify_date
+    id, msg_id, operator_id, is_delete, create_date, modify_date
   </sql>
   <select id="selectByCondition" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModelQuery" resultMap="BaseResultMap">
     select
@@ -104,9 +104,9 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_group_message_log (msg_id, `operator`, is_delete, 
+    insert into c_group_message_log (msg_id, operator_id, is_delete, 
       create_date, modify_date)
-    values (#{msgId,jdbcType=BIGINT}, #{operator,jdbcType=BIGINT}, #{isDelete,jdbcType=BIT}, 
+    values (#{msgId,jdbcType=BIGINT}, #{operatorId,jdbcType=BIGINT}, #{isDelete,jdbcType=BIT}, 
       #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModel">
@@ -118,8 +118,8 @@
       <if test="msgId != null">
         msg_id,
       </if>
-      <if test="operator != null">
-        `operator`,
+      <if test="operatorId != null">
+        operator_id,
       </if>
       <if test="isDelete != null">
         is_delete,
@@ -135,8 +135,8 @@
       <if test="msgId != null">
         #{msgId,jdbcType=BIGINT},
       </if>
-      <if test="operator != null">
-        #{operator,jdbcType=BIGINT},
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=BIGINT},
       </if>
       <if test="isDelete != null">
         #{isDelete,jdbcType=BIT},
@@ -164,8 +164,8 @@
       <if test="record.msgId != null">
         msg_id = #{record.msgId,jdbcType=BIGINT},
       </if>
-      <if test="record.operator != null">
-        `operator` = #{record.operator,jdbcType=BIGINT},
+      <if test="record.operatorId != null">
+        operator_id = #{record.operatorId,jdbcType=BIGINT},
       </if>
       <if test="record.isDelete != null">
         is_delete = #{record.isDelete,jdbcType=BIT},
@@ -185,7 +185,7 @@
     update c_group_message_log
     set id = #{record.id,jdbcType=BIGINT},
       msg_id = #{record.msgId,jdbcType=BIGINT},
-      `operator` = #{record.operator,jdbcType=BIGINT},
+      operator_id = #{record.operatorId,jdbcType=BIGINT},
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP}
@@ -199,8 +199,8 @@
       <if test="msgId != null">
         msg_id = #{msgId,jdbcType=BIGINT},
       </if>
-      <if test="operator != null">
-        `operator` = #{operator,jdbcType=BIGINT},
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=BIGINT},
       </if>
       <if test="isDelete != null">
         is_delete = #{isDelete,jdbcType=BIT},
@@ -217,7 +217,7 @@
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.GroupMessageLogModel">
     update c_group_message_log
     set msg_id = #{msgId,jdbcType=BIGINT},
-      `operator` = #{operator,jdbcType=BIGINT},
+      operator_id = #{operatorId,jdbcType=BIGINT},
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP}

@@ -1,5 +1,6 @@
 package cn.kk20.chat.service.impl;
 
+import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.dao.mapper.UserModelMapper;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.dao.model.UserModelQuery;
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
         query.createCriteria().andNameEqualTo(model.getName());
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
         if (!CollectionUtils.isEmpty(userModelList)) {
-            throw new Exception("该用户名已经被占用，请使用其他用户名");
+            throw new RequestParamException("该用户名已经被占用，请使用其他用户名");
         }
         // 检查电话是否被注册
         if(!StringUtils.isEmpty(model.getPhone())){
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
             query.createCriteria().andPhoneEqualTo(model.getPhone());
             List<UserModel> userModelList2 = userModelMapper.selectByCondition(query);
             if (!CollectionUtils.isEmpty(userModelList2)) {
-                throw new Exception("该手机已被注册，请检查后重试");
+                throw new RequestParamException("该手机已被注册，请检查后重试");
             }
         }
         // 检查邮箱是否被注册
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
             query.createCriteria().andEmailEqualTo(model.getEmail());
             List<UserModel> userModelList3 = userModelMapper.selectByCondition(query);
             if (!CollectionUtils.isEmpty(userModelList3)) {
-                throw new Exception("该邮箱已被注册，请检查后重试");
+                throw new RequestParamException("该邮箱已被注册，请检查后重试");
             }
         }
 
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
         criteria3.andEmailEqualTo(name);
         List<UserModel> userModels = userModelMapper.selectByCondition(query);
         if (CollectionUtils.isEmpty(userModels)) {
-            throw new Exception("登录用户不存在，请先注册");
+            throw new RequestParamException("登录用户不存在，请先注册");
         }
 
         return userModels.get(0);
@@ -115,7 +116,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserModel> getFriendList(Long userId) {
         UserModel userModel = userModelMapper.selectByPrimaryKey(userId);
-        String friend = userModel.getFriends();
+        String friend = userModel.getFriendList();
         Set<Long> friendSet = JSON.parseObject(friend, new TypeReference<Set<Long>>() {
         });
         if (CollectionUtils.isEmpty(friendSet)) {
@@ -129,7 +130,7 @@ public class UserServiceImpl implements UserService {
             // 去除不必要属性
             e.setPassword(null);
             e.setGroupList(null);
-            e.setFriends(null);
+            e.setFriendList(null);
             e.setCreateDate(null);
             e.setModifyDate(null);
             return e;

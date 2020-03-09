@@ -29,24 +29,19 @@ public class FriendController {
     @PostMapping("/add")
     @ApiOperation(value = "添加好友", notes = "功能：添加好友申请")
     @ApiImplicitParam(name = "applyBean", value = "申请参数", dataType = "ApplyBean")
-    public ResultData addFriend(@RequestBody ApplyBean applyBean) {
-        if (applyBean == null || applyBean.getType() != 0 || applyBean.getApplyUserId() == null
-                || applyBean.getTargetUserId() == null) {
+    public ResultData addFriend(@RequestBody ApplyBean applyBean) throws Exception {
+        if (applyBean == null || applyBean.getApplyUserId() == null || applyBean.getTargetUserId() == null) {
             return ResultData.requestError();
         }
 
-        try {
-            ApplyLogModel applyLogModel = new ApplyLogModel();
-            applyLogModel.setType(0);
-            applyLogModel.setApplyUserId(applyBean.getApplyUserId());
-            applyLogModel.setTargetUserId(applyBean.getTargetUserId());
-            applyLogModel.setRemark(applyBean.getRemark());
-            applyLogService.addApply(applyLogModel);
-            return ResultData.success(new SimpleDto("申请已提交"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultData.fail(500, e.getMessage());
-        }
+        ApplyLogModel applyLogModel = new ApplyLogModel();
+        applyLogModel.setType(ApplyLogModel.APPLY_TYPE_ADD_FRIEND);
+        applyLogModel.setApplyUserId(applyBean.getApplyUserId());
+        applyLogModel.setTargetUserId(applyBean.getTargetUserId());
+        applyLogModel.setApplyRemark(applyBean.getRemark());
+        applyLogService.addApply(applyLogModel);
+
+        return ResultData.success("申请已提交");
     }
 
     @PostMapping("/verify")
@@ -59,16 +54,16 @@ public class FriendController {
 
         try {
             ApplyLogModel applyLogModel = new ApplyLogModel();
-            applyLogModel.setType(0);
+            applyLogModel.setType(ApplyLogModel.APPLY_TYPE_ADD_FRIEND);
             applyLogModel.setId(verifyBean.getApplyId());
             applyLogModel.setVerifyUserId(verifyBean.getVerifyUserId());
             applyLogModel.setIsAgree(verifyBean.getAgree());
-            applyLogModel.setRemark(verifyBean.getRemark());
+            applyLogModel.setVerifyRemark(verifyBean.getRemark());
             applyLogService.verifyApply(applyLogModel);
-            return ResultData.success(new SimpleDto("操作成功"));
+            return ResultData.success("操作成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResultData.fail(500, e.getMessage());
+            return ResultData.requestError(e.getMessage());
         }
     }
 

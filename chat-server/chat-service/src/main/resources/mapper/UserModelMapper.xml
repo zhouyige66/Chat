@@ -13,7 +13,7 @@
     <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cn.kk20.chat.dao.model.UserModel">
-    <result column="friends" jdbcType="LONGVARCHAR" property="friends" />
+    <result column="friend_list" jdbcType="LONGVARCHAR" property="friendList" />
     <result column="group_list" jdbcType="LONGVARCHAR" property="groupList" />
   </resultMap>
   <sql id="Condition_Where_Clause">
@@ -78,7 +78,7 @@
     id, `name`, phone, email, `password`, head, is_delete, create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
-    friends, group_list
+    friend_list, group_list
   </sql>
   <select id="selectByConditionWithBLOBs" parameterType="cn.kk20.chat.dao.model.UserModelQuery" resultMap="ResultMapWithBLOBs">
     select
@@ -134,11 +134,11 @@
     </selectKey>
     insert into c_user (`name`, phone, email, 
       `password`, head, is_delete, 
-      create_date, modify_date, friends, 
+      create_date, modify_date, friend_list, 
       group_list)
     values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{password,jdbcType=VARCHAR}, #{head,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{friends,jdbcType=LONGVARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{friendList,jdbcType=LONGVARCHAR}, 
       #{groupList,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.UserModel">
@@ -171,8 +171,8 @@
       <if test="modifyDate != null">
         modify_date,
       </if>
-      <if test="friends != null">
-        friends,
+      <if test="friendList != null">
+        friend_list,
       </if>
       <if test="groupList != null">
         group_list,
@@ -203,8 +203,8 @@
       <if test="modifyDate != null">
         #{modifyDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="friends != null">
-        #{friends,jdbcType=LONGVARCHAR},
+      <if test="friendList != null">
+        #{friendList,jdbcType=LONGVARCHAR},
       </if>
       <if test="groupList != null">
         #{groupList,jdbcType=LONGVARCHAR},
@@ -247,8 +247,8 @@
       <if test="record.modifyDate != null">
         modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.friends != null">
-        friends = #{record.friends,jdbcType=LONGVARCHAR},
+      <if test="record.friendList != null">
+        friend_list = #{record.friendList,jdbcType=LONGVARCHAR},
       </if>
       <if test="record.groupList != null">
         group_list = #{record.groupList,jdbcType=LONGVARCHAR},
@@ -269,7 +269,7 @@
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
-      friends = #{record.friends,jdbcType=LONGVARCHAR},
+      friend_list = #{record.friendList,jdbcType=LONGVARCHAR},
       group_list = #{record.groupList,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Condition_Where_Clause" />
@@ -317,8 +317,8 @@
       <if test="modifyDate != null">
         modify_date = #{modifyDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="friends != null">
-        friends = #{friends,jdbcType=LONGVARCHAR},
+      <if test="friendList != null">
+        friend_list = #{friendList,jdbcType=LONGVARCHAR},
       </if>
       <if test="groupList != null">
         group_list = #{groupList,jdbcType=LONGVARCHAR},
@@ -336,7 +336,7 @@
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP},
-      friends = #{friends,jdbcType=LONGVARCHAR},
+      friend_list = #{friendList,jdbcType=LONGVARCHAR},
       group_list = #{groupList,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

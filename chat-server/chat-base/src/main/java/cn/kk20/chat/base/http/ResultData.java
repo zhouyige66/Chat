@@ -1,6 +1,5 @@
 package cn.kk20.chat.base.http;
 
-import cn.kk20.chat.base.http.dto.BaseDto;
 import java.io.Serializable;
 
 /**
@@ -10,45 +9,62 @@ import java.io.Serializable;
  * @Version: v1.0
  */
 public class ResultData implements Serializable {
-    // 操作成功
-    public static int CODE_SUCCESS = 200;
-    // 请求错误
-    public static int CODE_REQUEST_ERROR = 400;
-    // 服务器内部错误
-    public static int CODE_SERVER_ERROR = 500;
-    // 查询数据为空
-    public static int CODE_DATA_NULL = 600;
+
+    public enum ResultCode {
+        SUCCESS(200, "操作成功"),
+        REDIRECT(300, "重定向"),
+        REQUEST_ERROR(400, "错误请求"),
+        CERTIFICATION_FAIL(401, "身份验证未通过"),
+        SERVER_ERROR(500, "服务器内部出错"),
+        CUSTOM_ERROR(600, "自定义错误信息");
+
+        private int code;
+        private String des;
+
+        ResultCode(int code, String des) {
+            this.code = code;
+            this.des = des;
+        }
+    }
 
     private int code;
     private String msg;
     // 该属性用于开发测试阶段，用于定位问题
     private String exception;
     // 返回实体必须是BaseDto及其子类
-    private BaseDto data;
+    private Serializable data;
 
-    public static ResultData success() {
-        return success(BaseDto.EMPTY);
+    public static ResultData success(String msg) {
+        return createResultData(ResultCode.SUCCESS, msg);
     }
 
-    public static ResultData success(BaseDto dto) {
-        ResultData resultData = new ResultData().setCode(CODE_SUCCESS).setData(dto).setMsg("操作成功");
+    public static ResultData success(Serializable data) {
+        ResultData resultData = new ResultData().setCode(ResultCode.SUCCESS.code).setMsg("操作成功")
+                .setData(data);
         return resultData;
     }
 
     public static ResultData requestError() {
-        return requestError("请求参数不符");
+        return createResultData(ResultCode.REQUEST_ERROR, null);
     }
 
     public static ResultData requestError(String msg) {
-        return fail(CODE_REQUEST_ERROR, msg);
+        return createResultData(ResultCode.REQUEST_ERROR, msg);
     }
 
     public static ResultData serverError() {
-        return serverError("服务器处理出错");
+        return createResultData(ResultCode.SERVER_ERROR, null);
     }
 
     public static ResultData serverError(String msg) {
-        return fail(CODE_SERVER_ERROR, msg);
+        return createResultData(ResultCode.SERVER_ERROR, msg);
+    }
+
+    public static ResultData createResultData(ResultCode resultCode, String msg) {
+        ResultData resultData = new ResultData();
+        resultData.setCode(resultCode.code);
+        resultData.setMsg(msg == null ? resultCode.des : msg);
+        return resultData;
     }
 
     public static ResultData fail(int code, String msg) {
@@ -87,11 +103,11 @@ public class ResultData implements Serializable {
         return this;
     }
 
-    public BaseDto getData() {
+    public Serializable getData() {
         return data;
     }
 
-    public ResultData setData(BaseDto data) {
+    public ResultData setData(Serializable data) {
         this.data = data;
         return this;
     }

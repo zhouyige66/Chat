@@ -8,7 +8,7 @@ public class GroupMessageLogModel implements Serializable {
 
     private Long msgId;
 
-    private Long operator;
+    private Long operatorId;
 
     private Boolean isDelete;
 
@@ -44,17 +44,17 @@ public class GroupMessageLogModel implements Serializable {
         this.msgId = msgId;
     }
 
-    public Long getOperator() {
-        return operator;
+    public Long getOperatorId() {
+        return operatorId;
     }
 
-    public GroupMessageLogModel withOperator(Long operator) {
-        this.setOperator(operator);
+    public GroupMessageLogModel withOperatorId(Long operatorId) {
+        this.setOperatorId(operatorId);
         return this;
     }
 
-    public void setOperator(Long operator) {
-        this.operator = operator;
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
     }
 
     public Boolean getIsDelete() {
@@ -104,7 +104,7 @@ public class GroupMessageLogModel implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", msgId=").append(msgId);
-        sb.append(", operator=").append(operator);
+        sb.append(", operatorId=").append(operatorId);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);
