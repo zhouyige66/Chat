@@ -21,8 +21,10 @@ public class User {
 
     private String email;
 
-    @JSONField(name = "createDate", format = "yyyy-MM-dd HH:mm:ss")
-    private Date registerTime;
+    @JSONField(name = "createDate")
+    private Long registerTime;
+
+    private Date modifyDate;
 
     public String getId() {
         return id;
@@ -89,11 +91,20 @@ public class User {
         this.email = email;
     }
 
-    public Date getRegisterTime() {
+    public Long getRegisterTime() {
         return registerTime;
     }
 
-    public void setRegisterTime(Date registerTime) {
+    public User setRegisterTime(Long registerTime) {
         this.registerTime = registerTime;
+        return this;
+    }
+
+    public Date getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(Date modifyDate) {
+        this.modifyDate = modifyDate;
     }
 }

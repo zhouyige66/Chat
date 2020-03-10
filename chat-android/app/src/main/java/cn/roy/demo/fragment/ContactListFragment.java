@@ -19,6 +19,7 @@ import java.util.Map;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.ContactListAdapter;
+import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -60,6 +61,12 @@ public class ContactListFragment extends BaseFragment {
     protected void lazyLoadData() {
         super.lazyLoadData();
 
+        getVerifies();
+        getGroups();
+        getFriends();
+    }
+
+    private void getVerifies() {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", 1L);
         Observer<JSONObject> observer = new Observer<JSONObject>() {
@@ -70,7 +77,59 @@ public class ContactListFragment extends BaseFragment {
 
             @Override
             public void onNext(JSONObject jsonObject) {
+                LogUtil.d(ContactListFragment.this, "审批列表：" + jsonObject.toJSONString());
+            }
 
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        };
+        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_VERIFY_LIST,
+                params, observer);
+    }
+
+    private void getGroups() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", 1L);
+        Observer<JSONObject> observer = new Observer<JSONObject>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(JSONObject jsonObject) {
+                LogUtil.d(ContactListFragment.this, "群组列表：" + jsonObject.toJSONString());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        };
+        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_GROUP_LIST,
+                params, observer);
+    }
+
+    private void getFriends() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", 1L);
+        Observer<JSONObject> observer = new Observer<JSONObject>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(JSONObject jsonObject) {
+                LogUtil.d(ContactListFragment.this, "好友列表：" + jsonObject.toJSONString());
             }
 
             @Override

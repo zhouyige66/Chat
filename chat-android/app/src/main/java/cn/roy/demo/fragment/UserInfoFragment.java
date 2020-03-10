@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import cn.roy.demo.R;
 import cn.roy.demo.model.User;
@@ -44,8 +45,8 @@ public class UserInfoFragment extends BaseFragment {
 
         User user = CacheManager.getInstance().getCurrentUser();
         tv_user_name.setText(user.getName());
-        tv_user_phone.setText(TextUtils.isEmpty(user.getPassword())?"未绑定":user.getPhone());
-        tv_user_email.setText(TextUtils.isEmpty(user.getEmail())?"未绑定":user.getEmail());
+        tv_user_phone.setText(TextUtils.isEmpty(user.getPhone()) ? "未绑定" : user.getPhone());
+        tv_user_email.setText(TextUtils.isEmpty(user.getEmail()) ? "未绑定" : user.getEmail());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         tv_user_register_time.setText(simpleDateFormat.format(user.getRegisterTime()));
 

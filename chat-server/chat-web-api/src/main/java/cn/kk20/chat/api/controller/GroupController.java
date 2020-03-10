@@ -13,7 +13,6 @@ import cn.kk20.chat.service.GroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,8 @@ import java.util.List;
  * @Date: 2020/3/5 14:25
  * @Version: v1.0
  */
-@RestController("group")
+@RestController
+@RequestMapping("group")
 @Api(tags = "群组Controller")
 public class GroupController {
     @Autowired

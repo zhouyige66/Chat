@@ -39,7 +39,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     @Override
     public List<ApplyLogModel> getApplyLogList(Long verifyUserId) throws Exception {
         UserModel userModel = userModelMapper.selectByPrimaryKey(verifyUserId);
-        if(userModel == null|| userModel.getIsDelete()){
+        if (userModel == null || userModel.getIsDelete()) {
             throw new RequestParamException("审批人不存在或已删除");
         }
 
@@ -143,11 +143,15 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     public void verifyApply(ApplyLogModel model) throws Exception {
         ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
         if (existModel == null) {
-            String msg = String.format("申请记录数据：记录id=%d的申请记录不存在", model.getId());
+            String msg = String.format("审批申请：id=%d的申请申请记录不存在", model.getId());
+            throw new RequestParamException(msg);
+        }
+        if (existModel.getIsDelete()) {
+            String msg = String.format("审批申请：id=%d的申请申请记录已经审批过，无需重复审批", model.getId());
             throw new RequestParamException(msg);
         }
         if (!existModel.getVerifyUserId().equals(model.getVerifyUserId())) {
-            String msg = String.format("申请记录数据：记录id=%d的申请的审批人不符", model.getId());
+            String msg = String.format("审批申请：id=%d的申请记录的审批人不符", model.getId());
             throw new RequestParamException(msg);
         }
 
@@ -158,6 +162,8 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         existModel.setIsAgree(isAgree);
         existModel.setModifyDate(new Date());
         existModel.setVerifyRemark(model.getVerifyRemark());
+        existModel.setIsDelete(true);// 审批后，直接置删除标志为1
+        existModel.setModifyDate(null);// mysql自动更新时间
         applyLogModelMapper.updateByPrimaryKeySelective(existModel);
 
         // 同意添加好友或加入群
@@ -215,6 +221,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
             friendSet.remove(friendId);
         }
         userModel.setFriendList(JSON.toJSONString(friendSet));
+        userModel.setModifyDate(null);
         userModelMapper.updateByPrimaryKeySelective(userModel);
     }
 

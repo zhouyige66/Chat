@@ -71,20 +71,6 @@ public class RetrofitUtil {
 
                         ResponseBody newResponseBody = ResponseBody.create(responseBody.contentType(),
                                 content);
-                        // 数据预处理
-//                        JSONObject jsonObject = JSONObject.parseObject(content);
-//                        int code = jsonObject.getIntValue("code");
-//                        switch (code) {
-//                            case 200:
-//                                newResponseBody = ResponseBody.create(responseBody.contentType(),
-//                                        jsonObject.get("data").toString());
-//                                break;
-//                            default:
-//                                newResponseBody = ResponseBody.create(responseBody.contentType(),
-//                                        jsonObject.getString("msg"));
-//                                break;
-//                        }
-
                         return response.newBuilder().body(newResponseBody).build();
                     }
                 });
