@@ -1,6 +1,7 @@
 package cn.kk20.chat.service.impl;
 
 import cn.kk20.chat.base.exception.RequestParamException;
+import cn.kk20.chat.base.util.ListUtil;
 import cn.kk20.chat.dao.mapper.UserModelMapper;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.dao.model.UserModelQuery;
@@ -120,7 +121,7 @@ public class UserServiceImpl implements UserService {
         Set<Long> friendSet = JSON.parseObject(friend, new TypeReference<Set<Long>>() {
         });
         if (CollectionUtils.isEmpty(friendSet)) {
-            return null;
+            return ListUtil.emptyList();
         }
         UserModelQuery query = new UserModelQuery();
         UserModelQuery.Criteria criteria = query.createCriteria();

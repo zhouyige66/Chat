@@ -1,6 +1,7 @@
 package cn.kk20.chat.service.impl;
 
 import cn.kk20.chat.base.exception.RequestParamException;
+import cn.kk20.chat.base.util.ListUtil;
 import cn.kk20.chat.dao.mapper.GroupModelMapper;
 import cn.kk20.chat.dao.mapper.UserModelMapper;
 import cn.kk20.chat.dao.model.GroupModel;
@@ -98,7 +99,7 @@ public class GroupServiceImpl implements GroupService {
 
         String memberList = groupModel.getMemberList();
         if (StringUtils.isEmpty(memberList)) {
-            return new ArrayList<>(0);
+            return ListUtil.emptyList();
         }
         Set<Long> memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
         });
