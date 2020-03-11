@@ -1,12 +1,14 @@
 package cn.roy.demo.model;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @Author: Roy Z
  * @Date: 2020/3/10 16:25
  * @Version: v1.0
  */
-public class Group {
+public class Group implements Serializable {
     /**
      * id : 1
      * name : 研发一组
@@ -19,7 +21,7 @@ public class Group {
      * memberList : null
      */
 
-    private int id;
+    private Long id;
     private String name;
     private String description;
     private int creatorId;
@@ -29,11 +31,11 @@ public class Group {
     private String modifyDate;
     private Object memberList;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

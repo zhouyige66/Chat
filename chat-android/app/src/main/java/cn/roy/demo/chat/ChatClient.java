@@ -116,7 +116,6 @@ public class ChatClient {
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                //TODO 伪代码
                 /**
                  * 1.判断是否有缓存的服务器地址
                  *  1.1 无服务器地址，则进入第3步

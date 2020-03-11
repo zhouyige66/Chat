@@ -1,5 +1,11 @@
 package cn.roy.demo.util;
 
+import androidx.collection.LruCache;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.kk20.chat.base.message.ChatMessage;
 import cn.roy.demo.model.User;
 
 /**
@@ -12,7 +18,8 @@ public class CacheManager {
     private static CacheManager instance = null;
 
     private CacheManager() {
-
+        // 最多缓存50个聊天记录
+        messageCache = new LruCache<>(50);
     }
 
     public static CacheManager getInstance() {
@@ -28,7 +35,7 @@ public class CacheManager {
 
     /**********功能：缓存用户信息**********/
     private User currentUser;
-    private String currentUserId;
+    private Long currentUserId;
     private String currentUserName;
 
     public void cacheCurrentUser(User currentUser) {
@@ -41,12 +48,36 @@ public class CacheManager {
         return currentUser;
     }
 
-    public String getCurrentUserId() {
+    public Long getCurrentUserId() {
         return currentUserId;
     }
 
     public String getCurrentUserName() {
         return currentUserName;
+    }
+
+    /**********功能：缓存聊天信息**********/
+    private LruCache<Long, List<ChatMessage>> messageCache;
+
+    public void cacheMessage(ChatMessage message) {
+        Long fromUserId = message.getFromUserId();
+        Long toUserId = message.getToUserId();
+        Long cacheKey = currentUserId == fromUserId ? toUserId : fromUserId;
+        List<ChatMessage> chatMessages = messageCache.get(cacheKey);
+        if (chatMessages == null) {
+            chatMessages = new ArrayList<>();
+            messageCache.put(cacheKey, chatMessages);
+        }
+        chatMessages.add(message);
+    }
+
+    public List<ChatMessage> getCacheMessageList(Long chatUserId) {
+        List<ChatMessage> chatMessages = messageCache.get(chatUserId);
+        if (chatMessages == null) {
+            chatMessages = new ArrayList<>();
+            messageCache.put(chatUserId, chatMessages);
+        }
+        return chatMessages;
     }
 
 }

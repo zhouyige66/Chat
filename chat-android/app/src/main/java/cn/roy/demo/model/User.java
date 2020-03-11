@@ -2,6 +2,7 @@ package cn.roy.demo.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -10,8 +11,8 @@ import java.util.Date;
  * @Date: 2019/2/12 16:55
  * @Version: v1.0
  */
-public class User {
-    private String id;
+public class User implements Serializable {
+    private Long id;
 
     private String name;
 
@@ -26,16 +27,16 @@ public class User {
 
     private Date modifyDate;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public User withId(String id) {
+    public User withId(Long id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

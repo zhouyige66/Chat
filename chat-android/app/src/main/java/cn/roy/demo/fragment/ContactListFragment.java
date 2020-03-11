@@ -1,5 +1,6 @@
 package cn.roy.demo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Map;
 
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
+import cn.roy.demo.activity.ChatActivity;
 import cn.roy.demo.adapter.ContactListAdapter;
 import cn.roy.demo.model.Apply;
 import cn.roy.demo.model.Group;
@@ -72,6 +75,22 @@ public class ContactListFragment extends BaseFragment {
 //        int width = getActivity().getWindowManager().getDefaultDisplay().getWidth();
 //        elv.setIndicatorBounds(width - 90, width - 10);
         elv.setVisibility(View.GONE);
+        elv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+                                        int childPosition, long id) {
+                if (groupPosition > 0) {
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+                    intent.putExtra("chatType", groupPosition);
+                    String key = groupPosition == 1 ? "group" : "friend";
+                    intent.putExtra("data", (Serializable) dataMap.get(key).get(childPosition));
+                    startActivity(intent);
+                } else {
+                    LogUtil.d(ContactListFragment.this, "点击了审批子项");
+                }
+                return true;
+            }
+        });
 
         return view;
     }

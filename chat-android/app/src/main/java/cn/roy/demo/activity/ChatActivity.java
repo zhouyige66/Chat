@@ -1,10 +1,5 @@
 package cn.roy.demo.activity;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,34 +9,32 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.NotificationCompat;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.chat.ChatClient;
+import cn.roy.demo.model.Group;
+import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class ChatActivity extends BaseActivity implements View.OnClickListener {
-    private String toUserId;
-    private Disposable disposable;
-    private List<ChatMessage> messageList = new ArrayList<>();
-    private CommonAdapter<ChatMessage> adapter;
-
     private TextView tv_left, tv_title, tv_right;
     private ListView lv;
     private EditText et_input;
     private Button btn_send;
+
+    private Long toUserId;
+    private List<ChatMessage> messageList = new ArrayList<>();
+    private CommonAdapter<ChatMessage> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,38 +56,45 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 overridePendingTransition(R.anim.anim_left_enter, R.anim.anim_right_exit);
             }
         });
-        Bundle bundle = getData();
-        if (bundle != null) {
-            toUserId = bundle.getString("userId", "");
-            tv_title.setText(bundle.getString("userName", ""));
+
+        int chatType = getIntent().getIntExtra("chatType", 1);
+        Serializable data = getIntent().getSerializableExtra("data");
+        if (chatType == 1) {
+            Group group = (Group) data;
+            toUserId = group.getId();
+            tv_title.setText(group.getName());
+        } else {
+            User user = (User) data;
+            toUserId = user.getId();
+            tv_title.setText(user.getName());
         }
         tv_right.setVisibility(View.GONE);
 
-//        messageList = MessageManager.getInstance().getMessageList(toUserId);
-//        adapter = new CommonAdapter<ChatMessage>(this, R.layout.item_message_list, messageList) {
-//            @Override
-//            public void convert(AdapterViewHolder holder, ChatMessage message) {
-//                View v_left = holder.getView(R.id.rl_left);
-//                View v_right = holder.getView(R.id.rl_right);
-//                String fromUserId = message.getFromUserId();
-//                JSONObject bodyJson = JSON.parseObject(JSON.toJSONString(message.getBody()));
-//                if (fromUserId.equals(CacheManager.getInstance().getCurrentUserId())) {
-//                    v_left.setVisibility(View.GONE);
-//                    v_right.setVisibility(View.VISIBLE);
-//
-//                    TextView tv_msg_right = holder.getView(R.id.tv_msg_right);
-//                    tv_msg_right.setText(bodyJson.getString("text"));
-//
-//                } else {
-//                    v_left.setVisibility(View.VISIBLE);
-//                    v_right.setVisibility(View.GONE);
-//
-//                    TextView tv_msg_left = holder.getView(R.id.tv_msg_left);
-//                    tv_msg_left.setText(bodyJson.getString("text"));
-//                }
-//            }
-//        };
-//        lv.setAdapter(adapter);
+        messageList = CacheManager.getInstance().getCacheMessageList(toUserId);
+        adapter = new CommonAdapter<ChatMessage>(this, R.layout.item_message_list,
+                messageList) {
+            @Override
+            public void convert(AdapterViewHolder holder, ChatMessage message) {
+                View v_left = holder.getView(R.id.rl_left);
+                View v_right = holder.getView(R.id.rl_right);
+                Long fromUserId = message.getFromUserId();
+                JSONObject bodyJson = JSON.parseObject(JSON.toJSONString(message.getBody()));
+                if (fromUserId == CacheManager.getInstance().getCurrentUserId()) {
+                    v_left.setVisibility(View.GONE);
+                    v_right.setVisibility(View.VISIBLE);
+
+                    TextView tv_msg_right = holder.getView(R.id.tv_msg_right);
+                    tv_msg_right.setText(bodyJson.getString("text"));
+                } else {
+                    v_left.setVisibility(View.VISIBLE);
+                    v_right.setVisibility(View.GONE);
+
+                    TextView tv_msg_left = holder.getView(R.id.tv_msg_left);
+                    tv_msg_left.setText(bodyJson.getString("text"));
+                }
+            }
+        };
+        lv.setAdapter(adapter);
         btn_send.setOnClickListener(this);
 
         // 添加观察者
@@ -132,13 +132,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 //                        }
 //                    }
 //                });
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        // TODO 获取历史聊天记录（分页查询）
 
-        disposable.dispose();
     }
 
     @Override
@@ -151,26 +147,21 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                             .show();
                     return;
                 }
-
-                if (!ChatClient.getInstance().isConnectSuccess()) {
+                // 构建发送实体
+                Long currentUserId = CacheManager.getInstance().getCurrentUserId();
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.setMessageType(ChatMessageType.SINGLE);
+                chatMessage.setFromUserId(currentUserId);
+                chatMessage.setToUserId(toUserId);
+                // 发送消息
+                if (ChatClient.getInstance().isConnectSuccess()) {
+                    ChatClient.getInstance().sendMessage(chatMessage);
+                } else {
+                    // TODO 即时通讯未连接，通过http方式请求接口发送
                     Toast.makeText(ChatActivity.this, "服务已中断，请重新连接server",
                             Toast.LENGTH_SHORT).show();
-                    return;
                 }
-
                 et_input.setText("");
-
-//                String userId = CacheManager.getInstance().getCurrentUser().getId();
-//                ChatMessage chatMessage = new ChatMessage();
-//                chatMessage.setFromUserId(userId);
-//                chatMessage.setToUserId(toUserId);
-//                chatMessage.setId(UUID.randomUUID().toString());
-//                chatMessage.setType(ChatMessage.ChatType.SINGLE);
-//                TextBody textBody = new TextBody(msg);
-//                chatMessage.setBody(textBody);
-//
-//                MessageManager.getInstance().receiveSingleMessage(chatMessage);
-//                ChatClient.getInstance().sendMessage(chatMessage);
                 break;
             default:
                 break;
