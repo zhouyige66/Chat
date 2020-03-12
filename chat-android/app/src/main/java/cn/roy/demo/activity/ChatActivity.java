@@ -18,13 +18,21 @@ import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.MessageBodyType;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.chat.ChatClient;
+import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.model.Group;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
+import cn.roy.demo.util.LogUtil;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private TextView tv_left, tv_title, tv_right;
@@ -78,24 +86,54 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 View v_left = holder.getView(R.id.rl_left);
                 View v_right = holder.getView(R.id.rl_right);
                 Long fromUserId = message.getFromUserId();
-                JSONObject bodyJson = JSON.parseObject(JSON.toJSONString(message.getBody()));
+                MessageBodyType bodyType = message.getBody().getBodyType();
+                String msg = null;
+                if (bodyType == MessageBodyType.TEXT) {
+                    String dataStr = message.getBody().getData().toString();
+                }
                 if (fromUserId == CacheManager.getInstance().getCurrentUserId()) {
+                    // 我发送的消息
                     v_left.setVisibility(View.GONE);
                     v_right.setVisibility(View.VISIBLE);
-
                     TextView tv_msg_right = holder.getView(R.id.tv_msg_right);
-                    tv_msg_right.setText(bodyJson.getString("text"));
+                    tv_msg_right.setText(msg);
                 } else {
+                    // 其他人发送的消息
                     v_left.setVisibility(View.VISIBLE);
                     v_right.setVisibility(View.GONE);
-
                     TextView tv_msg_left = holder.getView(R.id.tv_msg_left);
-                    tv_msg_left.setText(bodyJson.getString("text"));
+                    tv_msg_left.setText(msg);
                 }
             }
         };
         lv.setAdapter(adapter);
         btn_send.setOnClickListener(this);
+
+        Observable<ChatMessage> observable = CacheManager.getInstance().getObservable();
+        observable.subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ChatMessage>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ChatMessage message) {
+                        updateUI();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
         // 添加观察者
 //        disposable = MessageManager.getInstance().getMessageListObservable()
@@ -153,6 +191,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 chatMessage.setMessageType(ChatMessageType.SINGLE);
                 chatMessage.setFromUserId(currentUserId);
                 chatMessage.setToUserId(toUserId);
+                messageList.add(chatMessage);
                 // 发送消息
                 if (ChatClient.getInstance().isConnectSuccess()) {
                     ChatClient.getInstance().sendMessage(chatMessage);
@@ -162,9 +201,15 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                             Toast.LENGTH_SHORT).show();
                 }
                 et_input.setText("");
+                updateUI();
                 break;
             default:
                 break;
         }
+    }
+
+    private void updateUI() {
+        LogUtil.d(this, "消息目前长度：" + messageList.size());
+        adapter.notifyDataSetChanged();
     }
 }

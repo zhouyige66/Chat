@@ -4,6 +4,9 @@ server:
 spring:
   profiles:
     active: service
+  redis:
+    host: localhost
+    port: 6379
 
 logging:
   file:

@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         UserModelQuery query = new UserModelQuery();
         UserModelQuery.Criteria criteria = query.createCriteria();
         criteria.andIdIsNotNull();
-        return userModelMapper.selectByCondition(query);
+        return userModelMapper.selectByConditionWithBLOBs(query);
     }
 
     @Override

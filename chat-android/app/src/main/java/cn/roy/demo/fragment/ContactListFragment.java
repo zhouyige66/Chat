@@ -31,6 +31,7 @@ import cn.roy.demo.adapter.ContactListAdapter;
 import cn.roy.demo.model.Apply;
 import cn.roy.demo.model.Group;
 import cn.roy.demo.model.User;
+import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observer;
@@ -109,7 +110,7 @@ public class ContactListFragment extends BaseFragment {
 
     private void getVerifies() {
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", 1L);
+        params.put("userId", CacheManager.getInstance().getCurrentUserId());
         Observer<JSONObject> observer = new Observer<JSONObject>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -145,7 +146,7 @@ public class ContactListFragment extends BaseFragment {
 
     private void getGroups() {
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", 1L);
+        params.put("userId", CacheManager.getInstance().getCurrentUserId());
         Observer<JSONObject> observer = new Observer<JSONObject>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -181,7 +182,7 @@ public class ContactListFragment extends BaseFragment {
 
     private void getFriends() {
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", 1L);
+        params.put("userId", CacheManager.getInstance().getCurrentUserId());
         Observer<JSONObject> observer = new Observer<JSONObject>() {
             @Override
             public void onSubscribe(Disposable d) {

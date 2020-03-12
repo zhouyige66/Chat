@@ -7,6 +7,9 @@ import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.roy.demo.model.User;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * @Description:
@@ -20,6 +23,14 @@ public class CacheManager {
     private CacheManager() {
         // 最多缓存50个聊天记录
         messageCache = new LruCache<>(50);
+
+        observableEmitterList = new ArrayList<>();
+        observable = Observable.create(new ObservableOnSubscribe<ChatMessage>() {
+            @Override
+            public void subscribe(ObservableEmitter<ChatMessage> emitter) throws Exception {
+                observableEmitterList.add(emitter);
+            }
+        });
     }
 
     public static CacheManager getInstance() {
@@ -69,6 +80,24 @@ public class CacheManager {
             messageCache.put(cacheKey, chatMessages);
         }
         chatMessages.add(message);
+
+        if (observableEmitterList.size() == 0) {
+            return;
+        }
+        List<ObservableEmitter> disposedList = null;
+        for (ObservableEmitter emitter : observableEmitterList) {
+            if (emitter.isDisposed()) {
+                if (disposedList == null) {
+                    disposedList = new ArrayList<>();
+                }
+                disposedList.add(emitter);
+                continue;
+            }
+            emitter.onNext(message);
+        }
+        if (!disposedList.isEmpty()) {
+            observableEmitterList.removeAll(disposedList);
+        }
     }
 
     public List<ChatMessage> getCacheMessageList(Long chatUserId) {
@@ -78,6 +107,14 @@ public class CacheManager {
             messageCache.put(chatUserId, chatMessages);
         }
         return chatMessages;
+    }
+
+    /**********功能：观察者**********/
+    private Observable<ChatMessage> observable;
+    private List<ObservableEmitter<ChatMessage>> observableEmitterList;
+
+    public Observable<ChatMessage> getObservable() {
+        return observable;
     }
 
 }

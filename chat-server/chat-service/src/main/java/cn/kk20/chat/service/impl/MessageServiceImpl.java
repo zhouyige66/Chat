@@ -22,7 +22,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public int save(MessageModel model) {
-        return messageModelMapper.insert(model);
+        return messageModelMapper.insertSelective(model);
     }
 
     @Override

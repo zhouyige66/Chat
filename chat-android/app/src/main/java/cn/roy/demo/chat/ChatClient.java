@@ -11,12 +11,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.data.LoginData;
+import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.chat.coder.custom.MessageDecoder;
 import cn.roy.demo.chat.coder.custom.MessageEncoder;
 import cn.roy.demo.chat.coder.delimiter.DelimiterBasedFrameEncoder;
 import cn.roy.demo.chat.handler.HeartbeatHandler;
 import cn.roy.demo.chat.handler.MessageHandler;
+import cn.roy.demo.model.ChatServerStatus;
+import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -37,6 +42,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -58,8 +65,9 @@ public class ChatClient {
     private boolean connectSuccess = false;
     private int failCount = 0;
     // 被观察者
-    private Observable<Boolean> observable;
-    private List<ObservableEmitter<Boolean>> observableEmitterList;
+    private Observable<ChatServerStatus> observable;
+    private List<ObservableEmitter<ChatServerStatus>> observableEmitterList;
+    private ChatServerStatus status;
 
     public static ChatClient getInstance() {
         if (instance == null) {
@@ -74,26 +82,13 @@ public class ChatClient {
 
     private ChatClient() {
         observableEmitterList = new ArrayList<>();
-        observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
+        observable = Observable.create(new ObservableOnSubscribe<ChatServerStatus>() {
             @Override
-            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
+            public void subscribe(ObservableEmitter<ChatServerStatus> emitter) throws Exception {
                 observableEmitterList.add(emitter);
             }
         });
-    }
-
-    private void login(boolean isLogin) {
-//        LoginData loginData = new LoginData();
-//        loginData.setLogin(isLogin);
-//        loginData.setUserId("id");
-//        loginData.setUserName("name");
-//
-//        ChatMessage message = new ChatMessage();
-//        message.setMessageType(ChatMessageType.LOGIN);
-//        message.setFromUserId(CacheManager.getInstance().getCurrentUserId());
-//        message.setBodyData(loginData);
-//        // 发送消息
-//        sendMessage(message);
+        status = ChatServerStatus.INIT;
     }
 
     /**
@@ -112,6 +107,7 @@ public class ChatClient {
         if (executorService != null) {
             executorService.shutdown();
         }
+        notifyStatus(ChatServerStatus.CONNECTING);
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
@@ -147,7 +143,8 @@ public class ChatClient {
             e.printStackTrace();
         }
         failCount = 0;
-        config.setHost("192.168.43.133");
+        config.setHost(ApplicationConfig.NettyConfig.CHAT_SERVER_HOST);
+        reconnect();
     }
 
     private void reconnect() {
@@ -195,17 +192,29 @@ public class ChatClient {
         LogUtil.d(ChatClient.this, "连接server：执行一次");
         try {
             ChannelFuture future = bootstrap.connect(config.getHost(), config.getPort());
-            if (future.isSuccess()) {
-                connectSuccess = true;
-                // 重置失败次数
-                failCount = 0;
-            }
+            future.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    LogUtil.d(ChatClient.this, "监听回调：" + future.isSuccess() + "/" + future.isDone());
+                    if (future.isSuccess()) {// 连接成功
+                        connectSuccess = true;
+                        // 重置失败次数
+                        failCount = 0;
+                        // 登录一次
+                        login(true);
+                        notifyStatus(ChatServerStatus.CONNECTED);
+                    }
+                }
+            });
             channel = future.channel();
+            LogUtil.d(ChatClient.this, "连接server：等待通道关闭");
             // 服务器同步连接断开时,这句代码才会往下执行
             channel.closeFuture().sync();
+            notifyStatus(ChatServerStatus.INIT);
         } catch (InterruptedException e) {
             LogUtil.d(ChatClient.this, "连接server：出现异常");
             e.printStackTrace();
+            notifyStatus(ChatServerStatus.SERVER_ERROR);
         } finally {
             LogUtil.d(ChatClient.this, "连接server：执行finally");
             connectSuccess = false;
@@ -215,6 +224,34 @@ public class ChatClient {
             eventLoopGroup = null;
             failCount++;
             LogUtil.d(ChatClient.this, "失败次数：" + failCount);
+        }
+    }
+
+    private void login(boolean isLogin) {
+        LogUtil.d(this, "执行登录：" + isLogin);
+        LoginData loginData = new LoginData();
+        loginData.setLogin(isLogin);
+        loginData.setUserId(CacheManager.getInstance().getCurrentUserId());
+        loginData.setUserName(CacheManager.getInstance().getCurrentUserName());
+
+        ChatMessage message = new ChatMessage();
+        message.setMessageType(ChatMessageType.LOGIN);
+        message.setFromUserId(CacheManager.getInstance().getCurrentUserId());
+        message.setToUserId(ConstantValue.SERVER_ID);
+        message.setBodyData(loginData);
+        // 发送消息
+        sendMessage(message);
+    }
+
+    private void notifyStatus(ChatServerStatus status) {
+        this.status = status;
+        if (observableEmitterList.size() == 0) {
+            return;
+        }
+        for (ObservableEmitter emitter : observableEmitterList) {
+            if (!emitter.isDisposed()) {
+                emitter.onNext(this.status);
+            }
         }
     }
 
@@ -239,8 +276,12 @@ public class ChatClient {
         return connectSuccess;
     }
 
-    public Observable<Boolean> getObservable() {
+    public Observable<ChatServerStatus> getObservable() {
         return observable;
+    }
+
+    public ChatServerStatus getStatus() {
+        return status;
     }
 
     /**

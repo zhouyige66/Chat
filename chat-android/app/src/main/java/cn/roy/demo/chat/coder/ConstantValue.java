@@ -19,4 +19,6 @@ final public class ConstantValue {
     public static final String DELIMITER = "*&v_secretary&*";
     // 编码方式
     public static final int CODER_TYPE = 1;//0-字符串，1-分隔符，2-自定义协议
+    // Server Id
+    public static final Long SERVER_ID = 0L;
 }

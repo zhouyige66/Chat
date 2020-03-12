@@ -24,7 +24,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @SpringBootApplication
 @EnableConfigurationProperties({ChatConfigBean.class})
 @ComponentScan("cn.kk20.chat")
-@MapperScan(basePackages = "cn.kk20.chat")
+@MapperScan(value = "cn.kk20.chat.dao.mapper")
 public class ServerApplication implements ApplicationListener<ApplicationContextEvent> {
     private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 

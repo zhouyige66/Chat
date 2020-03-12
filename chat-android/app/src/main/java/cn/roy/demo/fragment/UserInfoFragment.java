@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import cn.roy.demo.R;
 import cn.roy.demo.model.User;
@@ -29,7 +28,6 @@ public class UserInfoFragment extends BaseFragment {
     private ImageView iv_user_head;
     private TextView tv_user_name, tv_user_phone, tv_user_email, tv_user_register_time;
     private Button btn_logout;
-
 
     @Nullable
     @Override

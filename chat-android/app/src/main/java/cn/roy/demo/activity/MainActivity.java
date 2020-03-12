@@ -17,11 +17,19 @@ import java.util.List;
 
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.HomePagePagerAdapter;
+import cn.roy.demo.chat.ChatClient;
 import cn.roy.demo.fragment.ChatListFragment;
 import cn.roy.demo.fragment.ContactListFragment;
 import cn.roy.demo.fragment.UserInfoFragment;
+import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.service.ChatService;
 import cn.roy.demo.util.CacheManager;
+import cn.roy.demo.util.http.HttpUtil;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
     private View v_title;
@@ -118,6 +126,34 @@ public class MainActivity extends BaseActivity {
                 vp_content.setCurrentItem(index);
             }
         });
+
+        ChatServerStatus status = ChatClient.getInstance().getStatus();
+        tv_chat_status.setText(status.getDes());
+        Observable<ChatServerStatus> observable = ChatClient.getInstance().getObservable();
+        observable.subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ChatServerStatus>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ChatServerStatus status) {
+                        tv_chat_status.setText(status.getDes());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
         // 启动聊天服务器
         Intent intent = new Intent(MainActivity.this, ChatService.class);

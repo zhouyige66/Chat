@@ -1,6 +1,14 @@
 package cn.roy.demo.chat.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+
+import java.util.Map;
+import java.util.Set;
+
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.data.TextData;
+import cn.roy.demo.util.CacheManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -15,37 +23,31 @@ public class MessageHandler extends SimpleChannelInboundHandler<ChatMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext,
                                 ChatMessage chatMessage) throws Exception {
-//        switch (chatMessage.getMessageType()) {
-//            case ChatMessageType.LOGIN:
-//                LoginBody loginBody = JSON.parseObject(chatMessage.getBody().toString(),
-//                        LoginBody.class);
-//                String userId = loginBody.getUserId();
-//                boolean login = loginBody.isLogin();
-//                User user = new User();
-//                user.setId(userId);
-//                user.setName(loginBody.getUserName());
-//                MessageManager.getInstance().receiveLoginMessage(user, login);
-//                break;
-//            case ChatMessageType.SINGLE:
-//                MessageManager.getInstance().receiveSingleMessage(chatMessage);
-//                break;
-//            case ChatMessageType.GROUP:
-//                break;
-//            case ChatMessageType.LOGIN_REPLY:
-//                JSONArray array = JSON.parseArray(chatMessage.getBody().toString());
-//                if (array != null && array.size() > 0) {
-//                    for (int i = 0; i < array.size(); i++) {
-//                        JSONObject jsonObject = array.getJSONObject(i);
-//                        User u = new User();
-//                        u.setId(jsonObject.getString("id"));
-//                        u.setName(jsonObject.getString("name"));
-//                        MessageManager.getInstance().receiveLoginMessage(u, true);
-//                    }
-//                }
-//                break;
-//            default:
-//                break;
-//        }
+        switch (chatMessage.getMessageType()) {
+            case LOGIN:
+                TextData textData = JSON.parseObject(chatMessage.getBody().getData().toString(),
+                        TextData.class);
+                Set<Long> onlineFriendSet = JSON.parseObject(textData.getText(),
+                        new TypeReference<Set<Long>>() {
+                        });
+                // TODO 更新在线好友列表
+                break;
+            case LOGIN_NOTIFY:
+                // TODO 更新好友列表
+                TextData textData2 = JSON.parseObject(chatMessage.getBody().getData().toString(),
+                        TextData.class);
+                Map<String, Object> map = JSON.parseObject(textData2.getText(),
+                        new TypeReference<Map<String, Object>>() {
+                        });
+                Long id = (Long) map.get("id");
+                Boolean login = (Boolean) map.get("login");
+                break;
+            case NOTIFY:
+                break;
+            default:
+                CacheManager.getInstance().cacheMessage(chatMessage);
+                break;
+        }
     }
 
 }
