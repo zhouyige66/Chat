@@ -36,6 +36,14 @@ public class GroupServiceImpl implements GroupService {
     GroupModelMapper groupModelMapper;
 
     @Override
+    public List<GroupModel> selectAll() throws Exception {
+        GroupModelQuery query = new GroupModelQuery();
+        query.createCriteria().andIdIsNotNull().andIsDeleteEqualTo(false);
+        List<GroupModel> groupModelList = groupModelMapper.selectByConditionWithBLOBs(query);
+        return groupModelList;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(GroupModel model) throws Exception {
         if (model == null) {

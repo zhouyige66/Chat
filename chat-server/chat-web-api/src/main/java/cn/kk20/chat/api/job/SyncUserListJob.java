@@ -1,7 +1,9 @@
 package cn.kk20.chat.api.job;
 
 import cn.kk20.chat.api.ConstantValue;
+import cn.kk20.chat.dao.model.GroupModel;
 import cn.kk20.chat.dao.model.UserModel;
+import cn.kk20.chat.service.GroupService;
 import cn.kk20.chat.service.UserService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -26,6 +28,8 @@ public class SyncUserListJob {
     @Autowired
     UserService userService;
     @Autowired
+    GroupService groupService;
+    @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
     @Scheduled(initialDelay = 5000, fixedRate = 60 * 60 * 1000)
@@ -46,6 +50,29 @@ public class SyncUserListJob {
             String key = ConstantValue.FRIEND_OF_USER + userId;
             redisTemplate.delete(key);
             for (Long id : friendSet) {
+                redisTemplate.opsForSet().add(key, id);
+            }
+        }
+    }
+
+    @Scheduled(initialDelay = 5000, fixedRate = 60 * 60 * 1000)
+    public void syncGroupMember() throws Exception {
+        List<GroupModel> groupModelList = groupService.selectAll();
+        for (GroupModel model : groupModelList) {
+            String memberList = model.getMemberList();
+            if (StringUtils.isEmpty(memberList)) {
+                continue;
+            }
+            Set<Long> memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
+            });
+            if (CollectionUtils.isEmpty(memberSet)) {
+                continue;
+            }
+
+            Long groupId = model.getId();
+            String key = ConstantValue.MEMBER_OF_GROUP + groupId;
+            redisTemplate.delete(key);
+            for (Long id : memberSet) {
                 redisTemplate.opsForSet().add(key, id);
             }
         }

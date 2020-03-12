@@ -1,6 +1,7 @@
 package cn.kk20.chat.core.main.client;
 
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.kk20.chat.core.coder.CoderType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.config.ChatConfigBean;
@@ -38,8 +39,8 @@ public class MessageSender {
         UserWrapper userWrapper = userChannelManager.getClient(targetId);
         if (null == userWrapper) {
             String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetId);
-            if(StringUtils.isEmpty(host)){
-                logger.debug("该消息接受者未登陆，无法发送");
+            if (StringUtils.isEmpty(host)) {
+                logger.info("该消息接受者未登陆，无法发送");
                 return;
             }
             // 发送给中心主机，由中心主机转发
@@ -58,26 +59,9 @@ public class MessageSender {
         sendMessage(channel, chatMessage);
     }
 
-    public void sendMessage(Long toUserId, String toClientId, ChatMessage chatMessage) {
-        // 实时发给目标客户
-        UserWrapper userWrapper = userChannelManager.getClient(toUserId);
-        if (null == userWrapper) {
-
-            return;
-        }
-
-        Channel channel = userWrapper.getChannel();
-        if (userWrapper.isWebUser()) {
-            TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(chatMessage));
-            channel.writeAndFlush(textWebSocketFrame);
-            return;
-        }
-        sendMessage(channel, chatMessage);
-    }
-
     public void sendMessage(Channel channel, ChatMessage chatMessage) {
         if (channel == null || !channel.isActive()) {
-            logger.debug("指定的消息接收者已断开连接");
+            logger.info("指定的消息接收者已断开连接");
             return;
         }
 
@@ -89,8 +73,14 @@ public class MessageSender {
             // 方式二或三：发送数据经过自定义编码器
             channelFuture = channel.writeAndFlush(chatMessage);
         }
-        logger.debug("发送消息，消息id：{},类型为：{}，发送{}", chatMessage.getId(), chatMessage.getMessageType(),
-                channelFuture.isSuccess() ? "成功" : "失败");
+        if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
+            logger.debug("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), chatMessage.getMessageType(),
+                    channelFuture.isSuccess() ? "成功" : "失败");
+        } else {
+            logger.info("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), chatMessage.getMessageType(),
+                    channelFuture.isSuccess() ? "成功" : "失败");
+        }
+
     }
 
 }

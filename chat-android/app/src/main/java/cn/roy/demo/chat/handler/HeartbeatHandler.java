@@ -34,7 +34,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
             }
 
             if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
-                LogUtil.d(this, "收到消息：" + chatMessage.toString());
+                LogUtil.d(this, "收到消息：" + JSON.toJSONString(chatMessage));
                 ctx.fireChannelRead(chatMessage);
             }
         } else {

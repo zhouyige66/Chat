@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.model.User;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -23,6 +24,7 @@ public class CacheManager {
     private CacheManager() {
         // 最多缓存50个聊天记录
         messageCache = new LruCache<>(50);
+        groupMessageCache = new LruCache<>(50);
 
         observableEmitterList = new ArrayList<>();
         observable = Observable.create(new ObservableOnSubscribe<ChatMessage>() {
@@ -69,18 +71,31 @@ public class CacheManager {
 
     /**********功能：缓存聊天信息**********/
     private LruCache<Long, List<ChatMessage>> messageCache;
+    private LruCache<Long, List<ChatMessage>> groupMessageCache;
 
     public void cacheMessage(ChatMessage message) {
         Long fromUserId = message.getFromUserId();
         Long toUserId = message.getToUserId();
-        Long cacheKey = currentUserId == fromUserId ? toUserId : fromUserId;
-        List<ChatMessage> chatMessages = messageCache.get(cacheKey);
+        Long cacheKey;
+        List<ChatMessage> chatMessages;
+        if (message.getMessageType() == ChatMessageType.GROUP) {
+            // 群消息
+            cacheKey = toUserId;
+            chatMessages = groupMessageCache.get(cacheKey);
+        } else {
+            cacheKey = currentUserId == fromUserId ? toUserId : fromUserId;
+            chatMessages = messageCache.get(cacheKey);
+        }
         if (chatMessages == null) {
             chatMessages = new ArrayList<>();
-            messageCache.put(cacheKey, chatMessages);
+            if (message.getMessageType() == ChatMessageType.GROUP) {
+                groupMessageCache.put(cacheKey, chatMessages);
+            } else {
+                messageCache.put(cacheKey, chatMessages);
+            }
         }
         chatMessages.add(message);
-
+        LogUtil.d(CacheManager.this, "消息条数：" + chatMessages.size());
         if (observableEmitterList.size() == 0) {
             return;
         }
@@ -100,11 +115,20 @@ public class CacheManager {
         }
     }
 
-    public List<ChatMessage> getCacheMessageList(Long chatUserId) {
-        List<ChatMessage> chatMessages = messageCache.get(chatUserId);
+    public List<ChatMessage> getCacheMessageList(ChatMessageType type, Long chatUserId) {
+        List<ChatMessage> chatMessages;
+        if (type == ChatMessageType.GROUP) {
+            chatMessages = groupMessageCache.get(chatUserId);
+        } else {
+            chatMessages = messageCache.get(chatUserId);
+        }
         if (chatMessages == null) {
             chatMessages = new ArrayList<>();
-            messageCache.put(chatUserId, chatMessages);
+            if (type == ChatMessageType.GROUP) {
+                groupMessageCache.put(chatUserId, chatMessages);
+            } else {
+                messageCache.put(chatUserId, chatMessages);
+            }
         }
         return chatMessages;
     }

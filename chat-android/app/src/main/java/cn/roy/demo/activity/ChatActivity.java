@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,12 +17,13 @@ import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.MessageBody;
 import cn.kk20.chat.base.message.MessageBodyType;
+import cn.kk20.chat.base.message.data.TextData;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.chat.ChatClient;
-import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.model.Group;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
@@ -40,6 +40,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private EditText et_input;
     private Button btn_send;
 
+    private ChatMessageType chatMessageType;
     private Long toUserId;
     private List<ChatMessage> messageList = new ArrayList<>();
     private CommonAdapter<ChatMessage> adapter;
@@ -66,8 +67,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         });
 
         int chatType = getIntent().getIntExtra("chatType", 1);
+        chatMessageType = ChatMessageType.convertCode2ChatMessageTypeEnum(chatType);
         Serializable data = getIntent().getSerializableExtra("data");
-        if (chatType == 1) {
+        if (chatType == ChatMessageType.GROUP.getCode()) {
             Group group = (Group) data;
             toUserId = group.getId();
             tv_title.setText(group.getName());
@@ -78,7 +80,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         }
         tv_right.setVisibility(View.GONE);
 
-        messageList = CacheManager.getInstance().getCacheMessageList(toUserId);
+        messageList = CacheManager.getInstance().getCacheMessageList(chatMessageType, toUserId);
         adapter = new CommonAdapter<ChatMessage>(this, R.layout.item_message_list,
                 messageList) {
             @Override
@@ -87,22 +89,31 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 View v_right = holder.getView(R.id.rl_right);
                 Long fromUserId = message.getFromUserId();
                 MessageBodyType bodyType = message.getBody().getBodyType();
-                String msg = null;
                 if (bodyType == MessageBodyType.TEXT) {
-                    String dataStr = message.getBody().getData().toString();
-                }
-                if (fromUserId == CacheManager.getInstance().getCurrentUserId()) {
-                    // 我发送的消息
-                    v_left.setVisibility(View.GONE);
-                    v_right.setVisibility(View.VISIBLE);
-                    TextView tv_msg_right = holder.getView(R.id.tv_msg_right);
-                    tv_msg_right.setText(msg);
-                } else {
-                    // 其他人发送的消息
-                    v_left.setVisibility(View.VISIBLE);
-                    v_right.setVisibility(View.GONE);
-                    TextView tv_msg_left = holder.getView(R.id.tv_msg_left);
-                    tv_msg_left.setText(msg);
+                    TextView tv;
+                    if (fromUserId == CacheManager.getInstance().getCurrentUserId()) {
+                        // 我发送的消息
+                        v_left.setVisibility(View.GONE);
+                        v_right.setVisibility(View.VISIBLE);
+                        tv = holder.getView(R.id.tv_msg_right);
+                    } else {
+                        // 其他人发送的消息
+                        v_left.setVisibility(View.VISIBLE);
+                        v_right.setVisibility(View.GONE);
+                        tv = holder.getView(R.id.tv_msg_left);
+                    }
+                    MessageBody body = message.getBody();
+                    if (body != null) {
+                        Serializable data = body.getData();
+                        TextData textData;
+                        if (data instanceof TextData) {
+                            textData = (TextData) data;
+                        } else {
+                            textData = JSON.parseObject(message.getBody().getData().toString(),
+                                    TextData.class);
+                        }
+                        tv.setText(textData.getText());
+                    }
                 }
             }
         };
@@ -186,11 +197,14 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     return;
                 }
                 // 构建发送实体
+                TextData textData = new TextData();
+                textData.setText(msg);
                 Long currentUserId = CacheManager.getInstance().getCurrentUserId();
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setMessageType(ChatMessageType.SINGLE);
+                chatMessage.setMessageType(chatMessageType);
                 chatMessage.setFromUserId(currentUserId);
                 chatMessage.setToUserId(toUserId);
+                chatMessage.setBodyData(textData);
                 messageList.add(chatMessage);
                 // 发送消息
                 if (ChatClient.getInstance().isConnectSuccess()) {
@@ -211,5 +225,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private void updateUI() {
         LogUtil.d(this, "消息目前长度：" + messageList.size());
         adapter.notifyDataSetChanged();
+        lv.smoothScrollToPosition(messageList.size());
     }
 }

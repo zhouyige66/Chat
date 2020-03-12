@@ -26,10 +26,20 @@ public class GroupMsgProcessor implements MessageProcessor {
 
     @Override
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, boolean isFromWeb) {
+        Long fromUserId = chatMessage.getFromUserId();
         Long toUserId = chatMessage.getToUserId();
-        Set<Long> groupMemberSet = redisUtil.getSetValue(ConstantValue.MEMBER_OF_GROUP + toUserId);
-        for (Long id : groupMemberSet) {
-            messageSender.sendMessage(id, chatMessage);
+        Set groupMemberSet = redisUtil.getSetValue(ConstantValue.MEMBER_OF_GROUP + toUserId);
+        for (Object object : groupMemberSet) {
+            Long targetId;
+            if (object instanceof Integer) {
+                targetId = ((Integer) object).longValue();
+            } else {
+                targetId = (Long) object;
+            }
+            if (targetId == fromUserId) {
+                continue;
+            }
+            messageSender.sendMessage(targetId, chatMessage);
         }
     }
 

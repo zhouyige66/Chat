@@ -59,8 +59,8 @@ public class ClientChannelManager {
     private void log() {
         // 更新当前可服务主机地址列表
         redisUtil.saveParam(ConstantValue.LIST_OF_HOST,JSON.toJSONString(clientMap.keys()));
-        logger.debug("客户端：{}", JSON.toJSONString(clientMap));
-        logger.debug("通道：{}", JSON.toJSONString(channelMap));
+        logger.info("客户端：{}", JSON.toJSONString(clientMap));
+        logger.info("通道：{}", JSON.toJSONString(channelMap));
     }
 
 }

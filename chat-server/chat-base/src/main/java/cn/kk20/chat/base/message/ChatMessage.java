@@ -72,8 +72,8 @@ public class ChatMessage implements Serializable {
      *
      * @param bodyData
      */
-    @JSONField(serialize = false,deserialize = false)
-    public void setBodyData(BodyData bodyData){
+    @JSONField(serialize = false, deserialize = false)
+    public void setBodyData(BodyData bodyData) {
         MessageBody body = new MessageBody();
         body.setData(bodyData);
         body.setBodyType(bodyData.getMessageBodyType());

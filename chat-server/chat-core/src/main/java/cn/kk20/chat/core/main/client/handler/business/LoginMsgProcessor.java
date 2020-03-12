@@ -92,7 +92,8 @@ public class LoginMsgProcessor implements MessageProcessor {
         }
         if (login) {
             // 回复当前登录用户，好友在线名单
-            TextData textData = new TextData(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
+            TextData textData = new TextData();
+            textData.setText(JSON.toJSONString(onlineFriendConnectHostMap.keySet()));
             ChatMessage replyMessage = new ChatMessage();
             replyMessage.setMessageType(ChatMessageType.LOGIN);
             replyMessage.setFromUserId(ConstantValue.SERVER_ID);
@@ -105,15 +106,16 @@ public class LoginMsgProcessor implements MessageProcessor {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", fromUserId);
         map.put("login", login);
-        TextData textData = new TextData(JSON.toJSONString(map));
+        TextData textData = new TextData();
+        textData.setText(JSON.toJSONString(map));
 
         ChatMessage notifyMsg = new ChatMessage();
         BeanUtils.copyProperties(chatMessage, notifyMsg);
         notifyMsg.setMessageType(ChatMessageType.LOGIN_NOTIFY);
         notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
         notifyMsg.setBodyData(textData);
-        for (Long id : onlineFriendConnectHostMap.keySet()) {
-            messageSender.sendMessage(id, notifyMsg);
+        for (Long targetId : onlineFriendConnectHostMap.keySet()) {
+            messageSender.sendMessage(targetId, notifyMsg);
         }
     }
 

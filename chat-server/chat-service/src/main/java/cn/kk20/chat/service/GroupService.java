@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface GroupService {
 
+    List<GroupModel> selectAll() throws Exception;
+
     void create(GroupModel model) throws Exception;
 
     List<GroupModel> getGroupList(Long userId) throws Exception;

@@ -126,13 +126,14 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", userId);
         map.put("login", false);
-        TextData textData = new TextData(JSON.toJSONString(map));
+        TextData textData = new TextData();
+        textData.setText(JSON.toJSONString(map));
         ChatMessage notifyMsg = new ChatMessage();
         notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
         notifyMsg.setMessageType(ChatMessageType.LOGIN_NOTIFY);
         notifyMsg.setBodyData(textData);
-        for (Long id : userIdSet) {
-            messageSender.sendMessage(id, notifyMsg);
+        for (Long targetId : userIdSet) {
+            messageSender.sendMessage(targetId, notifyMsg);
         }
     }
 

@@ -87,7 +87,8 @@ public class CenterClientHeartbeatHandler extends SimpleChannelInboundHandler<Ob
         String clientId = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
                 chatConfigBean.getClient().getCommonServer().getPort(),
                 chatConfigBean.getClient().getWebServer().getPort());
-        TextData textData = new TextData(clientId);
+        TextData textData = new TextData();
+        textData.setText(clientId);
         ChatMessage heartbeatMessage = new ChatMessage();
         heartbeatMessage.setMessageType(ChatMessageType.HEARTBEAT);
         heartbeatMessage.setBodyData(textData);

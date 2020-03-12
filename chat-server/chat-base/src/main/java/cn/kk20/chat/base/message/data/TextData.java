@@ -11,10 +11,6 @@ import cn.kk20.chat.base.message.MessageBodyType;
 public class TextData extends BodyData {
     private String text;
 
-    public TextData(String text) {
-        this.text = text;
-    }
-
     public String getText() {
         return text;
     }

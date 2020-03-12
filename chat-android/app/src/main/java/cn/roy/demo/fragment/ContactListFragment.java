@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.kk20.chat.base.message.ChatMessageType;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.activity.ChatActivity;
@@ -73,8 +74,6 @@ public class ContactListFragment extends BaseFragment {
         }
         contactListAdapter = new ContactListAdapter(groupList, dataMap);
         elv.setAdapter(contactListAdapter);
-//        int width = getActivity().getWindowManager().getDefaultDisplay().getWidth();
-//        elv.setIndicatorBounds(width - 90, width - 10);
         elv.setVisibility(View.GONE);
         elv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -82,7 +81,9 @@ public class ContactListFragment extends BaseFragment {
                                         int childPosition, long id) {
                 if (groupPosition > 0) {
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
-                    intent.putExtra("chatType", groupPosition);
+                    intent.putExtra("chatType",
+                            groupPosition == 1 ? ChatMessageType.GROUP.getCode()
+                                    : ChatMessageType.SINGLE.getCode());
                     String key = groupPosition == 1 ? "group" : "friend";
                     intent.putExtra("data", (Serializable) dataMap.get(key).get(childPosition));
                     startActivity(intent);
