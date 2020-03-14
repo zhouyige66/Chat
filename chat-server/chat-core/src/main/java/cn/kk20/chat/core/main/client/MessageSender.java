@@ -1,9 +1,8 @@
 package cn.kk20.chat.core.main.client;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.core.coder.CoderType;
-import cn.kk20.chat.core.common.ConstantValue;
+import cn.kk20.chat.base.message.ForwardMessage;
+import cn.kk20.chat.base.message.Message;
+import cn.kk20.chat.base.message.MessageType;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
@@ -15,7 +14,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 /**
  * @Description:
@@ -34,53 +32,44 @@ public class MessageSender {
     @Autowired
     ChatConfigBean chatConfigBean;
 
-    public void sendMessage(Long targetId, ChatMessage chatMessage) {
+    public void sendMessage(Long targetUserId, Message message) {
         // 实时发给目标客户
-        UserWrapper userWrapper = userChannelManager.getClient(targetId);
+        UserWrapper userWrapper = userChannelManager.getClient(targetUserId);
         if (null == userWrapper) {
-            String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetId);
-            if (StringUtils.isEmpty(host)) {
-                logger.info("该消息接受者未登陆，无法发送");
-                return;
-            }
             // 发送给中心主机，由中心主机转发
             Channel centerChannel = userChannelManager.getCenterChannel();
-            chatMessage.setTargetHost(host);
-            sendMessage(centerChannel, chatMessage);
+            ForwardMessage forwardMessage = new ForwardMessage();
+            forwardMessage.setTargetUserId(targetUserId);
+            forwardMessage.setMessage(message);
+            sendMessage(centerChannel, forwardMessage);
             return;
         }
 
         Channel channel = userWrapper.getChannel();
         if (userWrapper.isWebUser()) {
-            TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(chatMessage));
+            TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(message));
             channel.writeAndFlush(textWebSocketFrame);
             return;
         }
-        sendMessage(channel, chatMessage);
+
+        sendMessage(channel, message);
     }
 
-    public void sendMessage(Channel channel, ChatMessage chatMessage) {
+    public void sendMessage(Channel channel, Message message) {
         if (channel == null || !channel.isActive()) {
             logger.info("指定的消息接收者已断开连接");
             return;
         }
 
-        ChannelFuture channelFuture;
-        if (chatConfigBean.getCoderType() == CoderType.STRING) {
-            // 方式一：发送字符串
-            channelFuture = channel.writeAndFlush(JSON.toJSONString(chatMessage));
-        } else {
-            // 方式二或三：发送数据经过自定义编码器
-            channelFuture = channel.writeAndFlush(chatMessage);
-        }
-        if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
-            logger.debug("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), chatMessage.getMessageType(),
+        ChannelFuture channelFuture = channel.writeAndFlush(message);
+        MessageType messageType = message.getMessageType();
+        if (messageType == MessageType.HEARTBEAT) {
+            logger.debug("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), messageType.getDes(),
                     channelFuture.isSuccess() ? "成功" : "失败");
         } else {
-            logger.info("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), chatMessage.getMessageType(),
+            logger.info("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), messageType.getDes(),
                     channelFuture.isSuccess() ? "成功" : "失败");
         }
-
     }
 
 }

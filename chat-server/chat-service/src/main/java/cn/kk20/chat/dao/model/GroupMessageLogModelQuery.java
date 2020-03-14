@@ -165,123 +165,183 @@ public class GroupMessageLogModelQuery {
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdIsNull() {
-            addCriterion("msg_id is null");
+        public Criteria andGroupMsgIdIsNull() {
+            addCriterion("group_msg_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdIsNotNull() {
-            addCriterion("msg_id is not null");
+        public Criteria andGroupMsgIdIsNotNull() {
+            addCriterion("group_msg_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdEqualTo(Long value) {
-            addCriterion("msg_id =", value, "msgId");
+        public Criteria andGroupMsgIdEqualTo(Long value) {
+            addCriterion("group_msg_id =", value, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdNotEqualTo(Long value) {
-            addCriterion("msg_id <>", value, "msgId");
+        public Criteria andGroupMsgIdNotEqualTo(Long value) {
+            addCriterion("group_msg_id <>", value, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdGreaterThan(Long value) {
-            addCriterion("msg_id >", value, "msgId");
+        public Criteria andGroupMsgIdGreaterThan(Long value) {
+            addCriterion("group_msg_id >", value, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("msg_id >=", value, "msgId");
+        public Criteria andGroupMsgIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("group_msg_id >=", value, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdLessThan(Long value) {
-            addCriterion("msg_id <", value, "msgId");
+        public Criteria andGroupMsgIdLessThan(Long value) {
+            addCriterion("group_msg_id <", value, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdLessThanOrEqualTo(Long value) {
-            addCriterion("msg_id <=", value, "msgId");
+        public Criteria andGroupMsgIdLessThanOrEqualTo(Long value) {
+            addCriterion("group_msg_id <=", value, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdIn(List<Long> values) {
-            addCriterion("msg_id in", values, "msgId");
+        public Criteria andGroupMsgIdIn(List<Long> values) {
+            addCriterion("group_msg_id in", values, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdNotIn(List<Long> values) {
-            addCriterion("msg_id not in", values, "msgId");
+        public Criteria andGroupMsgIdNotIn(List<Long> values) {
+            addCriterion("group_msg_id not in", values, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdBetween(Long value1, Long value2) {
-            addCriterion("msg_id between", value1, value2, "msgId");
+        public Criteria andGroupMsgIdBetween(Long value1, Long value2) {
+            addCriterion("group_msg_id between", value1, value2, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andMsgIdNotBetween(Long value1, Long value2) {
-            addCriterion("msg_id not between", value1, value2, "msgId");
+        public Criteria andGroupMsgIdNotBetween(Long value1, Long value2) {
+            addCriterion("group_msg_id not between", value1, value2, "groupMsgId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdIsNull() {
-            addCriterion("operator_id is null");
+        public Criteria andUserIdIsNull() {
+            addCriterion("user_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdIsNotNull() {
-            addCriterion("operator_id is not null");
+        public Criteria andUserIdIsNotNull() {
+            addCriterion("user_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdEqualTo(Long value) {
-            addCriterion("operator_id =", value, "operatorId");
+        public Criteria andUserIdEqualTo(Long value) {
+            addCriterion("user_id =", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdNotEqualTo(Long value) {
-            addCriterion("operator_id <>", value, "operatorId");
+        public Criteria andUserIdNotEqualTo(Long value) {
+            addCriterion("user_id <>", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdGreaterThan(Long value) {
-            addCriterion("operator_id >", value, "operatorId");
+        public Criteria andUserIdGreaterThan(Long value) {
+            addCriterion("user_id >", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("operator_id >=", value, "operatorId");
+        public Criteria andUserIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("user_id >=", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdLessThan(Long value) {
-            addCriterion("operator_id <", value, "operatorId");
+        public Criteria andUserIdLessThan(Long value) {
+            addCriterion("user_id <", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdLessThanOrEqualTo(Long value) {
-            addCriterion("operator_id <=", value, "operatorId");
+        public Criteria andUserIdLessThanOrEqualTo(Long value) {
+            addCriterion("user_id <=", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdIn(List<Long> values) {
-            addCriterion("operator_id in", values, "operatorId");
+        public Criteria andUserIdIn(List<Long> values) {
+            addCriterion("user_id in", values, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdNotIn(List<Long> values) {
-            addCriterion("operator_id not in", values, "operatorId");
+        public Criteria andUserIdNotIn(List<Long> values) {
+            addCriterion("user_id not in", values, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdBetween(Long value1, Long value2) {
-            addCriterion("operator_id between", value1, value2, "operatorId");
+        public Criteria andUserIdBetween(Long value1, Long value2) {
+            addCriterion("user_id between", value1, value2, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andOperatorIdNotBetween(Long value1, Long value2) {
-            addCriterion("operator_id not between", value1, value2, "operatorId");
+        public Criteria andUserIdNotBetween(Long value1, Long value2) {
+            addCriterion("user_id not between", value1, value2, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedIsNull() {
+            addCriterion("received is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedIsNotNull() {
+            addCriterion("received is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedEqualTo(Boolean value) {
+            addCriterion("received =", value, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedNotEqualTo(Boolean value) {
+            addCriterion("received <>", value, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedGreaterThan(Boolean value) {
+            addCriterion("received >", value, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("received >=", value, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedLessThan(Boolean value) {
+            addCriterion("received <", value, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedLessThanOrEqualTo(Boolean value) {
+            addCriterion("received <=", value, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedIn(List<Boolean> values) {
+            addCriterion("received in", values, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedNotIn(List<Boolean> values) {
+            addCriterion("received not in", values, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedBetween(Boolean value1, Boolean value2) {
+            addCriterion("received between", value1, value2, "received");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivedNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("received not between", value1, value2, "received");
             return (Criteria) this;
         }
 

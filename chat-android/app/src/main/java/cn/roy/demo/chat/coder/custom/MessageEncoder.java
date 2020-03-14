@@ -2,8 +2,8 @@ package cn.roy.demo.chat.coder.custom;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.Message;
+import cn.kk20.chat.base.message.MessageType;
 import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.util.LogUtil;
 import io.netty.buffer.ByteBuf;
@@ -16,16 +16,15 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * @Date: 2019/1/21 10:21
  * @Version: v1.0
  */
-public class MessageEncoder extends MessageToByteEncoder<ChatMessage> {
+public class MessageEncoder extends MessageToByteEncoder<Message> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage, ByteBuf byteBuf)
+    protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf byteBuf)
             throws Exception {
-        if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
-            LogUtil.d(this, "发送消息：" + chatMessage.toString());
+        String msgStr = JSON.toJSONString(message);
+        if (message.getMessageType() != MessageType.HEARTBEAT.HEARTBEAT) {
+            LogUtil.d(this, "发送消息：" + msgStr);
         }
-
-        String msgStr = JSON.toJSONString(chatMessage);
         byte[] data = msgStr.getBytes(ConstantValue.CHARSET);
         // 1.写入头部标志信息
         byteBuf.writeInt(ConstantValue.HEAD_DATA);

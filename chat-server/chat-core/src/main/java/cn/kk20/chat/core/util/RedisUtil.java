@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @Description: Redis操作工具
@@ -56,11 +57,20 @@ public class RedisUtil {
         return members;
     }
 
-    public void saveParam(String key,Object value){
-        redisTemplate.opsForValue().set(key,value);
+    public Set<Long> getLongSetValue(String key) {
+        Set<Object> members = redisTemplate.opsForSet().members(key);
+        Set<Long> longSet = members.stream()
+                .filter(e -> (e instanceof Number))// 过滤
+                .map(e -> ((Number) e).longValue())// 装换
+                .collect(Collectors.toSet());
+        return longSet;
     }
 
-    public void getParam(String key){
+    public void saveParam(String key, Object value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
+
+    public void getParam(String key) {
         redisTemplate.opsForValue().get(key);
     }
 

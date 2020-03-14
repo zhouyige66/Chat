@@ -5,8 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="from_user_id" jdbcType="BIGINT" property="fromUserId" />
     <result column="to_user_id" jdbcType="BIGINT" property="toUserId" />
-    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
-    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="received" jdbcType="BIT" property="received" />
     <result column="from_user_delete" jdbcType="BIT" property="fromUserDelete" />
     <result column="to_user_delete" jdbcType="BIT" property="toUserDelete" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
@@ -75,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, from_user_id, to_user_id, send_time, `status`, from_user_delete, to_user_delete, 
-    is_delete, create_date, modify_date
+    id, from_user_id, to_user_id, received, from_user_delete, to_user_delete, is_delete, 
+    create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -133,14 +132,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_message (from_user_id, to_user_id, send_time, 
-      `status`, from_user_delete, to_user_delete, 
-      is_delete, create_date, modify_date, 
-      content)
-    values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{sendTime,jdbcType=TIMESTAMP}, 
-      #{status,jdbcType=TINYINT}, #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT}, 
-      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
-      #{content,jdbcType=LONGVARCHAR})
+    insert into c_message (from_user_id, to_user_id, received, 
+      from_user_delete, to_user_delete, is_delete, 
+      create_date, modify_date, content
+      )
+    values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{received,jdbcType=BIT}, 
+      #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT}, #{isDelete,jdbcType=BIT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.MessageModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -154,11 +153,8 @@
       <if test="toUserId != null">
         to_user_id,
       </if>
-      <if test="sendTime != null">
-        send_time,
-      </if>
-      <if test="status != null">
-        `status`,
+      <if test="received != null">
+        received,
       </if>
       <if test="fromUserDelete != null">
         from_user_delete,
@@ -186,11 +182,8 @@
       <if test="toUserId != null">
         #{toUserId,jdbcType=BIGINT},
       </if>
-      <if test="sendTime != null">
-        #{sendTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=TINYINT},
+      <if test="received != null">
+        #{received,jdbcType=BIT},
       </if>
       <if test="fromUserDelete != null">
         #{fromUserDelete,jdbcType=BIT},
@@ -230,11 +223,8 @@
       <if test="record.toUserId != null">
         to_user_id = #{record.toUserId,jdbcType=BIGINT},
       </if>
-      <if test="record.sendTime != null">
-        send_time = #{record.sendTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.status != null">
-        `status` = #{record.status,jdbcType=TINYINT},
+      <if test="record.received != null">
+        received = #{record.received,jdbcType=BIT},
       </if>
       <if test="record.fromUserDelete != null">
         from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
@@ -264,8 +254,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       from_user_id = #{record.fromUserId,jdbcType=BIGINT},
       to_user_id = #{record.toUserId,jdbcType=BIGINT},
-      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
-      `status` = #{record.status,jdbcType=TINYINT},
+      received = #{record.received,jdbcType=BIT},
       from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
       to_user_delete = #{record.toUserDelete,jdbcType=BIT},
       is_delete = #{record.isDelete,jdbcType=BIT},
@@ -281,8 +270,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       from_user_id = #{record.fromUserId,jdbcType=BIGINT},
       to_user_id = #{record.toUserId,jdbcType=BIGINT},
-      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
-      `status` = #{record.status,jdbcType=TINYINT},
+      received = #{record.received,jdbcType=BIT},
       from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
       to_user_delete = #{record.toUserDelete,jdbcType=BIT},
       is_delete = #{record.isDelete,jdbcType=BIT},
@@ -301,11 +289,8 @@
       <if test="toUserId != null">
         to_user_id = #{toUserId,jdbcType=BIGINT},
       </if>
-      <if test="sendTime != null">
-        send_time = #{sendTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null">
-        `status` = #{status,jdbcType=TINYINT},
+      <if test="received != null">
+        received = #{received,jdbcType=BIT},
       </if>
       <if test="fromUserDelete != null">
         from_user_delete = #{fromUserDelete,jdbcType=BIT},
@@ -332,8 +317,7 @@
     update c_message
     set from_user_id = #{fromUserId,jdbcType=BIGINT},
       to_user_id = #{toUserId,jdbcType=BIGINT},
-      send_time = #{sendTime,jdbcType=TIMESTAMP},
-      `status` = #{status,jdbcType=TINYINT},
+      received = #{received,jdbcType=BIT},
       from_user_delete = #{fromUserDelete,jdbcType=BIT},
       to_user_delete = #{toUserDelete,jdbcType=BIT},
       is_delete = #{isDelete,jdbcType=BIT},
@@ -346,8 +330,7 @@
     update c_message
     set from_user_id = #{fromUserId,jdbcType=BIGINT},
       to_user_id = #{toUserId,jdbcType=BIGINT},
-      send_time = #{sendTime,jdbcType=TIMESTAMP},
-      `status` = #{status,jdbcType=TINYINT},
+      received = #{received,jdbcType=BIT},
       from_user_delete = #{fromUserDelete,jdbcType=BIT},
       to_user_delete = #{toUserDelete,jdbcType=BIT},
       is_delete = #{isDelete,jdbcType=BIT},

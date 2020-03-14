@@ -1,4 +1,4 @@
-package cn.kk20.chat.core.main.client.handler.business;
+package cn.kk20.chat.core.main.client.processor;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import io.netty.channel.ChannelHandlerContext;

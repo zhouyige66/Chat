@@ -1,6 +1,6 @@
-package cn.kk20.chat.base.message.data;
+package cn.kk20.chat.base.message.chat.body;
 
-import cn.kk20.chat.base.message.MessageBodyType;
+import cn.kk20.chat.base.message.chat.BodyType;
 
 /**
  * @Description:
@@ -20,8 +20,8 @@ public class TextData extends BodyData {
     }
 
     @Override
-    public MessageBodyType getMessageBodyType() {
-        return MessageBodyType.TEXT;
+    public BodyType getMessageBodyType() {
+        return BodyType.TEXT;
     }
 
 }

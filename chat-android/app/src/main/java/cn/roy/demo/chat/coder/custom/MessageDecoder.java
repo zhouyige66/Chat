@@ -1,8 +1,5 @@
 package cn.roy.demo.chat.coder.custom;
 
-import com.alibaba.fastjson.JSON;
-
-import cn.kk20.chat.base.message.ChatMessage;
 import cn.roy.demo.chat.coder.ConstantValue;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,7 +19,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf,
                           List<Object> list) throws Exception {
-        // 可读数据需大学基本长度
+        // 可读数据需大于基本长度
         int readableBytes = byteBuf.readableBytes();
         if (readableBytes >= BASE_LENGTH) {
             // 防止socket流攻击，防止客户端传递数据过大
@@ -64,8 +61,8 @@ public class MessageDecoder extends ByteToMessageDecoder {
 
             // 数据格式转换（可直接转换成Model）
             String body = new String(data, ConstantValue.CHARSET);
-            ChatMessage chatMessage = JSON.parseObject(body, ChatMessage.class);
-            list.add(chatMessage);
+            list.add(body);
         }
     }
+
 }

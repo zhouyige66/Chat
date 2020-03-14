@@ -2,7 +2,9 @@ package cn.kk20.chat.core.main.client.initializer;
 
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.CommonInitializer;
-import cn.kk20.chat.core.main.client.handler.common.CenterClientHeartbeatHandler;
+import cn.kk20.chat.core.main.client.handler.ForwardMessageHandler;
+import cn.kk20.chat.core.main.client.handler.heartbeat.WriteHeartbeatMessageHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -16,18 +18,23 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Version: v1.0
  */
 @ClientComponent
+@ChannelHandler.Sharable
 public class CenterClientChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     @Autowired
     CommonInitializer commonInitializer;
     @Autowired
-    CenterClientHeartbeatHandler centerClientHeartbeatHandler;
+    WriteHeartbeatMessageHandler writeHeartbeatMessageHandler;
+    @Autowired
+    ForwardMessageHandler forwardMessageHandler;
 
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
         commonInitializer.initCommon(pipeline);
         pipeline.addLast(new IdleStateHandler(0, 5, 0));
-        pipeline.addLast(centerClientHeartbeatHandler);
+        pipeline.addLast(writeHeartbeatMessageHandler);
+        pipeline.addLast(forwardMessageHandler);
     }
+
 }

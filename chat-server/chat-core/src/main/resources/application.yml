@@ -10,7 +10,7 @@ spring:
 
 logging:
   level:
-    root: info
+    root: debug
 
 chat:
   registerAsServer: false

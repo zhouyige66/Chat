@@ -1,6 +1,6 @@
-package cn.kk20.chat.base.message.data;
+package cn.kk20.chat.base.message.chat.body;
 
-import cn.kk20.chat.base.message.MessageBodyType;
+import cn.kk20.chat.base.message.chat.BodyType;
 
 /**
  * @Description: 图片消息体
@@ -56,7 +56,8 @@ public class ImgData extends BodyData {
     }
 
     @Override
-    public MessageBodyType getMessageBodyType() {
-        return MessageBodyType.IMG;
+    public BodyType getMessageBodyType() {
+        return BodyType.IMG;
     }
+
 }

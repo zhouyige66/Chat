@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.chat.ChatMessageType;
 import cn.roy.demo.model.User;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -78,7 +78,7 @@ public class CacheManager {
         Long toUserId = message.getToUserId();
         Long cacheKey;
         List<ChatMessage> chatMessages;
-        if (message.getMessageType() == ChatMessageType.GROUP) {
+        if (message.getChatMessageType() == ChatMessageType.GROUP) {
             // 群消息
             cacheKey = toUserId;
             chatMessages = groupMessageCache.get(cacheKey);
@@ -88,7 +88,7 @@ public class CacheManager {
         }
         if (chatMessages == null) {
             chatMessages = new ArrayList<>();
-            if (message.getMessageType() == ChatMessageType.GROUP) {
+            if (message.getChatMessageType() == ChatMessageType.GROUP) {
                 groupMessageCache.put(cacheKey, chatMessages);
             } else {
                 messageCache.put(cacheKey, chatMessages);

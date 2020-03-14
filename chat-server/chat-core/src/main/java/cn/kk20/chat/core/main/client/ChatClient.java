@@ -17,6 +17,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,11 +118,17 @@ public class ChatClient implements Launcher {
             try {
                 ChannelFuture channelFuture = bootstrap.connect(chatConfigBean.getClient().getCenter().getHost(),
                         chatConfigBean.getClient().getCenter().getPort());
-                connectSuccess = true;
+                channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+                    @Override
+                    public void operationComplete(Future<? super Void> future) throws Exception {
+                        if (future.isSuccess()) {
+                            ChannelFuture cf = (ChannelFuture) future;
+                            connectSuccess = true;
+                            userChannelManager.setCenterChannel(cf.channel());
+                        }
+                    }
+                });
                 Channel channel = channelFuture.channel();
-                if(channelFuture.isSuccess()){
-                    userChannelManager.setCenterChannel(channel);
-                }
                 // 服务器同步连接断开时,这句代码才会往下执行
                 channel.closeFuture().sync();
                 logger.debug("连接中心服务器：正常关闭");

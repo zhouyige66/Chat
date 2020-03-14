@@ -1,8 +1,7 @@
-package cn.kk20.chat.core.main.client.handler.common;
+package cn.kk20.chat.core.main.client.handler;
 
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.core.main.ClientComponent;
-import cn.kk20.chat.core.main.client.handler.HandlerManager;
+import cn.kk20.chat.core.main.client.processor.ProcessorManager;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,16 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Date: 2019/1/21 15:55
  * @Version: v1.0
  */
-@ClientComponent
+@MsgHandler
 @ChannelHandler.Sharable
-public class ClientMessageHandler extends SimpleChannelInboundHandler<ChatMessage> {
+public class ChatMessageHandler extends SimpleChannelInboundHandler<ChatMessage> {
 
     @Autowired
-    HandlerManager handlerManager;
+    ProcessorManager processorManager;
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage) throws Exception {
-        handlerManager.handleMessage(channelHandlerContext, chatMessage,false);
+        processorManager.handleMessage(channelHandlerContext, chatMessage,false);
     }
 
 }

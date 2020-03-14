@@ -7,9 +7,9 @@ SET NAMES utf8;
 # 取消外键约束
 SET FOREIGN_KEY_CHECKS = 0;
 
--- ----------------------------
---  Table structure for `user`
--- ----------------------------
+-- -----------------------------
+--  Table structure for `c_user`
+-- -----------------------------
 DROP TABLE
     IF EXISTS `c_user`;
 CREATE TABLE `c_user`
@@ -29,9 +29,9 @@ CREATE TABLE `c_user`
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8 COMMENT '用户表';
 
--- ----------------------------
---  Table structure for `group`
--- ----------------------------
+-- --------------------------------
+--  Table structure for `c_group`
+-- --------------------------------
 DROP TABLE
     IF EXISTS `c_group`;
 CREATE TABLE `c_group`
@@ -47,60 +47,103 @@ CREATE TABLE `c_group`
     `modify_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE = INNODB
-  DEFAULT CHARSET = utf8 COMMENT '群分组表';
+  DEFAULT CHARSET = utf8 COMMENT '群组表';
 
--- ----------------------------
---  Table structure for `message`
--- ----------------------------
+-- --------------------------------
+--  Table structure for `c_message`
+-- --------------------------------
 DROP TABLE
     IF EXISTS `c_message`;
 CREATE TABLE `c_message`
 (
     `id`               BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `from_user_id`     BIGINT    NOT NULL COMMENT '发送者',
-    `to_user_id`       BIGINT    NOT NULL COMMENT '接收者',
+    `from_user_id`     BIGINT    NOT NULL COMMENT '发送者ID',
+    `to_user_id`       BIGINT    NOT NULL COMMENT '接收者ID',
     `content`          TEXT               DEFAULT NULL COMMENT '消息内容',
-    `send_time`        TIMESTAMP NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '发送时间',
-    `status`           TINYINT(4)         DEFAULT '0' COMMENT '消息状态',
+    `received`         BIT(1)             DEFAULT FALSE COMMENT '是否已接收',
     `from_user_delete` BIT(1)             DEFAULT FALSE COMMENT '发送者删除',
     `to_user_delete`   BIT(1)             DEFAULT FALSE COMMENT '接收者删除',
     `is_delete`        BIT(1)             DEFAULT FALSE COMMENT '是否删除',
     `create_date`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modify_date`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `index_from_user_id` (`from_user_id`),
+    KEY `index_to_user_id` (`to_user_id`)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8 COMMENT '消息表';
 
--- ----------------------------
---  Table structure for `message_log`
--- ----------------------------
+-- --------------------------------------
+--  Table structure for `c_group_message`
+-- --------------------------------------
 DROP TABLE
-    IF EXISTS `c_group_message_log`;
-CREATE TABLE `c_group_message_log`
+    IF EXISTS `c_group_message`;
+CREATE TABLE `c_group_message`
 (
     `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `msg_id`      BIGINT    NOT NULL COMMENT '消息ID',
-    `operator_id` BIGINT    NOT NULL COMMENT '操作者',
+    `user_id`     BIGINT    NOT NULL COMMENT '发送者ID',
+    `group_id`    BIGINT    NOT NULL COMMENT '群ID',
+    `content`     TEXT               DEFAULT NULL COMMENT '消息内容',
     `is_delete`   BIT(1)             DEFAULT FALSE COMMENT '是否删除',
     `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modify_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `index_msg_id` (`msg_id`)
+    KEY `index_user_id` (`user_id`),
+    KEY `index_group_id` (`group_id`)
 ) ENGINE = INNODB
-  DEFAULT CHARSET = utf8 COMMENT '群消息删除记录表';
+  DEFAULT CHARSET = utf8 COMMENT '群消息表';
 
--- ----------------------------
---  Table structure for `add_friend_log`
--- ----------------------------
+-- -------------------------------------
+--  Table structure for `c_login_log`
+-- -------------------------------------
+DROP TABLE
+    IF EXISTS `c_login_log`;
+CREATE TABLE `c_login_log`
+(
+    `id`          BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`     BIGINT    NOT NULL COMMENT '用户ID',
+    `ip`          VARCHAR(255)       DEFAULT NULL COMMENT '主机IP',
+    `location`    VARCHAR(255)       DEFAULT NULL COMMENT '登录地址',
+    `device`      VARCHAR(255)       DEFAULT NULL COMMENT '登录设备',
+    `is_delete`   BIT(1)             DEFAULT FALSE COMMENT '是否删除',
+    `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `index_user_id` (`user_id`)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8 COMMENT '登录日志表';
+
+-- ------------------------------------------
+--  Table structure for `c_group_message_log`
+-- ------------------------------------------
+DROP TABLE
+    IF EXISTS `c_group_message_log`;
+CREATE TABLE `c_group_message_log`
+(
+    `id`           BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `group_msg_id` BIGINT    NOT NULL COMMENT '消息ID',
+    `user_id`      BIGINT    NOT NULL COMMENT '接收者ID',
+    `received`     BIT(1)             DEFAULT FALSE COMMENT '是否已接收',
+    `is_delete`    BIT(1)             DEFAULT FALSE COMMENT '是否删除',
+    `create_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modify_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `index_group_msg_id` (`group_msg_id`),
+    KEY `index_user_id` (`user_id`)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8 COMMENT '群消息日志表';
+
+-- ---------------------------------
+--  Table structure for c_apply_log`
+-- ---------------------------------
 DROP TABLE
     IF EXISTS `c_apply_log`;
 CREATE TABLE `c_apply_log`
 (
     `id`             BIGINT    NOT NULL AUTO_INCREMENT COMMENT '主键',
     `type`           INTEGER   NOT NULL COMMENT '申请类型：0-加人，1-加群',
-    `apply_user_id`  BIGINT    NOT NULL COMMENT '申请人',
-    `target_user_id` BIGINT    NOT NULL COMMENT '目标：好友或群组',
-    `verify_user_id` BIGINT    NOT NULL COMMENT '审批人',
+    `apply_user_id`  BIGINT    NOT NULL COMMENT '申请人ID',
+    `target_user_id` BIGINT    NOT NULL COMMENT '目标ID：好友或群组',
+    `verify_user_id` BIGINT    NOT NULL COMMENT '审批人ID',
     `is_agree`       BIT(1)             DEFAULT NULL COMMENT '是否同意',
     `apply_remark`   VARCHAR(255)       DEFAULT NULL COMMENT '申请备注',
     `verify_remark`  VARCHAR(255)       DEFAULT NULL COMMENT '审批备注',
@@ -111,7 +154,7 @@ CREATE TABLE `c_apply_log`
     KEY `index_apply_user_id` (`apply_user_id`),
     KEY `index_target_user_id` (`target_user_id`)
 ) ENGINE = INNODB
-  DEFAULT CHARSET = utf8 COMMENT '添加好友申请记录表';
+  DEFAULT CHARSET = utf8 COMMENT '申请日志表';
 
 # 重置外键约束
 SET FOREIGN_KEY_CHECKS = 1;

@@ -2,13 +2,17 @@ package cn.kk20.chat.core.main.client.initializer;
 
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.CommonInitializer;
-import cn.kk20.chat.core.main.client.handler.common.ClientMessageHandler;
-import cn.kk20.chat.core.main.client.handler.common.ClientHeartbeatHandler;
+import cn.kk20.chat.core.main.client.handler.MsgHandler;
+import cn.kk20.chat.core.main.client.handler.heartbeat.ReadHeartbeatMessageHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import java.util.Map;
 
 /**
  * @Description: 初始化通用Server
@@ -18,20 +22,27 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ClientComponent
 public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> {
-
+    @Autowired
+    ApplicationContext applicationContext;
     @Autowired
     CommonInitializer commonInitializer;
     @Autowired
-    ClientHeartbeatHandler clientHeartbeatHandler;
-    @Autowired
-    ClientMessageHandler clientMessageHandler;
+    ReadHeartbeatMessageHandler readHeartbeatMessageHandler;
 
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
         commonInitializer.initCommon(pipeline);
         pipeline.addLast(new IdleStateHandler(5, 0, 0));
-        pipeline.addLast(clientHeartbeatHandler);
-        pipeline.addLast(clientMessageHandler);
+        pipeline.addLast(readHeartbeatMessageHandler);
+
+        // 获取所有消息处理器
+        Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(MsgHandler.class);
+        for (Object object : beansWithAnnotation.values()) {
+            MsgHandler msgHandler = object.getClass().getAnnotation(MsgHandler.class);
+            if (object instanceof SimpleChannelInboundHandler) {
+                pipeline.addLast((SimpleChannelInboundHandler) object);
+            }
+        }
     }
 }

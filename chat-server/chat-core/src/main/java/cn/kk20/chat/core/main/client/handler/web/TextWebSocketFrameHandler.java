@@ -2,7 +2,7 @@ package cn.kk20.chat.core.main.client.handler.web;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.main.ClientComponent;
-import cn.kk20.chat.core.main.client.handler.HandlerManager;
+import cn.kk20.chat.core.main.client.processor.ProcessorManager;
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,14 +24,14 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     private static final Logger logger = LoggerFactory.getLogger(TextWebSocketFrameHandler.class);
 
     @Autowired
-    HandlerManager handlerManager;
+    ProcessorManager processorManager;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
         String msg = textWebSocketFrame.text();
         logger.debug("收到消息：{}",msg);
         ChatMessage chatMessage = JSON.parseObject(msg, ChatMessage.class);
-        handlerManager.handleMessage(ctx, chatMessage, true);
+        processorManager.handleMessage(ctx, chatMessage, true);
     }
 
 }

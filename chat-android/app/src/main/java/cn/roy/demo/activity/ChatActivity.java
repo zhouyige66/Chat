@@ -16,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.MessageBody;
-import cn.kk20.chat.base.message.MessageBodyType;
-import cn.kk20.chat.base.message.data.TextData;
+import cn.kk20.chat.base.message.chat.BodyType;
+import cn.kk20.chat.base.message.chat.ChatMessageType;
+import cn.kk20.chat.base.message.chat.body.TextData;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
@@ -67,7 +66,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         });
 
         int chatType = getIntent().getIntExtra("chatType", 1);
-        chatMessageType = ChatMessageType.convertCode2ChatMessageTypeEnum(chatType);
+        chatMessageType = chatType == 0 ? ChatMessageType.SINGLE : ChatMessageType.GROUP;
         Serializable data = getIntent().getSerializableExtra("data");
         if (chatType == ChatMessageType.GROUP.getCode()) {
             Group group = (Group) data;
@@ -88,8 +87,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 View v_left = holder.getView(R.id.rl_left);
                 View v_right = holder.getView(R.id.rl_right);
                 Long fromUserId = message.getFromUserId();
-                MessageBodyType bodyType = message.getBody().getBodyType();
-                if (bodyType == MessageBodyType.TEXT) {
+                BodyType bodyType = message.getBodyType();
+                if (bodyType == BodyType.TEXT) {
                     TextView tv;
                     if (fromUserId == CacheManager.getInstance().getCurrentUserId()) {
                         // 我发送的消息
@@ -102,18 +101,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                         v_right.setVisibility(View.GONE);
                         tv = holder.getView(R.id.tv_msg_left);
                     }
-                    MessageBody body = message.getBody();
-                    if (body != null) {
-                        Serializable data = body.getData();
-                        TextData textData;
-                        if (data instanceof TextData) {
-                            textData = (TextData) data;
-                        } else {
-                            textData = JSON.parseObject(message.getBody().getData().toString(),
-                                    TextData.class);
-                        }
-                        tv.setText(textData.getText());
-                    }
+                    TextData textData = JSON.parseObject(message.getBody(), TextData.class);
+                    tv.setText(textData.getText());
                 }
             }
         };
@@ -201,10 +190,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 textData.setText(msg);
                 Long currentUserId = CacheManager.getInstance().getCurrentUserId();
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setMessageType(chatMessageType);
+                chatMessage.setChatMessageType(chatMessageType);
                 chatMessage.setFromUserId(currentUserId);
                 chatMessage.setToUserId(toUserId);
-                chatMessage.setBodyData(textData);
+                chatMessage.setBody(textData);
                 messageList.add(chatMessage);
                 // 发送消息
                 if (ChatClient.getInstance().isConnectSuccess()) {

@@ -2,7 +2,7 @@ package cn.kk20.chat.core.main.client.handler.web;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.core.main.ClientComponent;
-import cn.kk20.chat.core.main.client.handler.HandlerManager;
+import cn.kk20.chat.core.main.client.processor.ProcessorManager;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -30,7 +30,7 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
 
     @Autowired
-    HandlerManager handlerManager;
+    ProcessorManager processorManager;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -51,7 +51,7 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
             } else {
                 chatMessage = JSON.parseObject(msg.toString(), ChatMessage.class);
             }
-            handlerManager.handleMessage(ctx, chatMessage, true);
+            processorManager.handleMessage(ctx, chatMessage, true);
         }
     }
 

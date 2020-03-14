@@ -2,8 +2,8 @@ package cn.roy.demo.chat.coder.delimiter;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.Message;
+import cn.kk20.chat.base.message.MessageType;
 import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.util.LogUtil;
 import io.netty.buffer.ByteBuf;
@@ -16,16 +16,17 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * @Date: 2019/1/21 15:08
  * @Version: v1.0
  */
-public class DelimiterBasedFrameEncoder extends MessageToByteEncoder<ChatMessage> {
+public class DelimiterBasedFrameEncoder extends MessageToByteEncoder<Message> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage,
-                          ByteBuf byteBuf) throws Exception {
-        if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
-            LogUtil.d(this, "发送消息：" + JSON.toJSONString(chatMessage));
-        }
+    protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf byteBuf)
+            throws Exception {
         // 写入内容
-        String data = JSON.toJSONString(chatMessage) + ConstantValue.DELIMITER;
+        String msgStr = JSON.toJSONString(message);
+        if (message.getMessageType() != MessageType.HEARTBEAT) {
+            LogUtil.d(this, "发送消息：" + msgStr);
+        }
+        String data = msgStr + ConstantValue.DELIMITER;
         byteBuf.writeBytes(data.getBytes(ConstantValue.CHARSET));
     }
 

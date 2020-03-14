@@ -1,9 +1,6 @@
 package cn.roy.demo.chat.handler;
 
-import com.alibaba.fastjson.JSON;
-
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.HeartbeatMessage;
 import cn.roy.demo.chat.ChatClient;
 import cn.roy.demo.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,30 +14,15 @@ import io.netty.handler.timeout.IdleStateEvent;
  * @Date: 2019/1/17 15:13
  * @Version: v1.0
  */
-public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
+public class HeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
     // 发送心跳未收到回复的指令次数
     private int heartFailCount = 0;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage)
+            throws Exception {
         // 如果是心跳消息重连失败次数置零
         heartFailCount = 0;
-        if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage;
-            if (obj instanceof ChatMessage) {
-                chatMessage = (ChatMessage) obj;
-            } else {
-                chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
-            }
-
-            if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
-                LogUtil.d(this, "收到消息：" + JSON.toJSONString(chatMessage));
-                ctx.fireChannelRead(chatMessage);
-            }
-        } else {
-            LogUtil.e(this, "收到消息类型未知");
-            ctx.fireChannelRead(obj);
-        }
     }
 
     @Override
@@ -56,9 +38,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
                     return;
                 }
 
-                ChatMessage heartbeatMessage = new ChatMessage();
-                heartbeatMessage.setToUserId(0L);
-                heartbeatMessage.setMessageType(ChatMessageType.HEARTBEAT);
+                HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
                 ChatClient.getInstance().sendMessage(heartbeatMessage);
             } else {
                 super.userEventTriggered(ctx, evt);

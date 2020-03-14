@@ -1,6 +1,6 @@
-package cn.kk20.chat.core.main.client.handler.business;
+package cn.kk20.chat.core.main.client.processor;
 
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.chat.ChatMessageType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 @Documented
 @Component
 @ConditionalOnProperty(name = "chat.registerAsServer",havingValue = "false")
-public @interface MsgProcessor {
+public @interface ChatMsgProcessor {
 
     /**
      * 返回处理器处理的消息类型

@@ -6,9 +6,11 @@ import java.util.Date;
 public class GroupMessageLogModel implements Serializable {
     private Long id;
 
-    private Long msgId;
+    private Long groupMsgId;
 
-    private Long operatorId;
+    private Long userId;
+
+    private Boolean received;
 
     private Boolean isDelete;
 
@@ -31,30 +33,43 @@ public class GroupMessageLogModel implements Serializable {
         this.id = id;
     }
 
-    public Long getMsgId() {
-        return msgId;
+    public Long getGroupMsgId() {
+        return groupMsgId;
     }
 
-    public GroupMessageLogModel withMsgId(Long msgId) {
-        this.setMsgId(msgId);
+    public GroupMessageLogModel withGroupMsgId(Long groupMsgId) {
+        this.setGroupMsgId(groupMsgId);
         return this;
     }
 
-    public void setMsgId(Long msgId) {
-        this.msgId = msgId;
+    public void setGroupMsgId(Long groupMsgId) {
+        this.groupMsgId = groupMsgId;
     }
 
-    public Long getOperatorId() {
-        return operatorId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public GroupMessageLogModel withOperatorId(Long operatorId) {
-        this.setOperatorId(operatorId);
+    public GroupMessageLogModel withUserId(Long userId) {
+        this.setUserId(userId);
         return this;
     }
 
-    public void setOperatorId(Long operatorId) {
-        this.operatorId = operatorId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Boolean getReceived() {
+        return received;
+    }
+
+    public GroupMessageLogModel withReceived(Boolean received) {
+        this.setReceived(received);
+        return this;
+    }
+
+    public void setReceived(Boolean received) {
+        this.received = received;
     }
 
     public Boolean getIsDelete() {
@@ -103,8 +118,9 @@ public class GroupMessageLogModel implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", msgId=").append(msgId);
-        sb.append(", operatorId=").append(operatorId);
+        sb.append(", groupMsgId=").append(groupMsgId);
+        sb.append(", userId=").append(userId);
+        sb.append(", received=").append(received);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);

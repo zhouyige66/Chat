@@ -2,19 +2,18 @@ package cn.roy.demo.chat;
 
 import android.text.TextUtils;
 
-import com.alibaba.fastjson.JSON;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.data.LoginData;
+import cn.kk20.chat.base.message.LoginMessage;
+import cn.kk20.chat.base.message.Message;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.chat.coder.ConstantValue;
+import cn.roy.demo.chat.coder.ObjectToStringEncoder;
+import cn.roy.demo.chat.coder.StringToObjectDecoder;
 import cn.roy.demo.chat.coder.custom.MessageDecoder;
 import cn.roy.demo.chat.coder.custom.MessageEncoder;
 import cn.roy.demo.chat.coder.delimiter.DelimiterBasedFrameEncoder;
@@ -162,8 +161,10 @@ public class ChatClient {
                         switch (ConstantValue.CODER_TYPE) {
                             case 0:// 方式一：字符串方式
                                 pipeline.addLast(
+                                        new ObjectToStringEncoder(),
                                         new StringEncoder(CharsetUtil.UTF_8),
-                                        new StringDecoder(CharsetUtil.UTF_8));
+                                        new StringDecoder(CharsetUtil.UTF_8),
+                                        new StringToObjectDecoder());
                                 break;
                             case 1:// 方式二：分隔符方式
                                 ByteBuf delimiterByteBuf =
@@ -171,12 +172,14 @@ public class ChatClient {
                                 pipeline.addLast(
                                         new DelimiterBasedFrameEncoder(),
                                         new DelimiterBasedFrameDecoder(2048, delimiterByteBuf),
-                                        new StringDecoder(CharsetUtil.UTF_8));
+                                        new StringDecoder(CharsetUtil.UTF_8),
+                                        new StringToObjectDecoder());
                                 break;
                             case 2:// 方式三：自定义编解码器方式
                                 pipeline.addLast(
                                         new MessageEncoder(),
-                                        new MessageDecoder());
+                                        new MessageDecoder(),
+                                        new StringToObjectDecoder());
                                 break;
                             default:
                                 LogUtil.d(this, "暂无实现该种编码方式");
@@ -229,18 +232,14 @@ public class ChatClient {
 
     private void login(boolean isLogin) {
         LogUtil.d(this, "执行登录：" + isLogin);
-        LoginData loginData = new LoginData();
-        loginData.setLogin(isLogin);
-        loginData.setUserId(CacheManager.getInstance().getCurrentUserId());
-        loginData.setUserName(CacheManager.getInstance().getCurrentUserName());
-
-        ChatMessage message = new ChatMessage();
-        message.setMessageType(ChatMessageType.LOGIN);
-        message.setFromUserId(CacheManager.getInstance().getCurrentUserId());
-        message.setToUserId(ConstantValue.SERVER_ID);
-        message.setBodyData(loginData);
+        LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setUserId(CacheManager.getInstance().getCurrentUserId());
+        loginMessage.setUserName(CacheManager.getInstance().getCurrentUserName());
+        loginMessage.setDevice("android");
+        loginMessage.setLocation("暂无");
+        loginMessage.setLogin(isLogin);
         // 发送消息
-        sendMessage(message);
+        sendMessage(loginMessage);
     }
 
     private void notifyStatus(ChatServerStatus status) {
@@ -287,21 +286,13 @@ public class ChatClient {
     /**
      * 发送消息
      *
-     * @param chatMessage
+     * @param message
      */
-    public void sendMessage(ChatMessage chatMessage) {
+    public void sendMessage(Message message) {
         if (channel != null && channel.isActive()) {
-            ChannelFuture channelFuture;
-            if (ConstantValue.CODER_TYPE == 0) {
-                // 方式一：字符串方式
-                channelFuture = channel.writeAndFlush(JSON.toJSONString(chatMessage));
-            } else {
-                // 方式二：分隔符方式或自定义编解码器方式
-                channelFuture = channel.writeAndFlush(chatMessage);
-            }
-
+            ChannelFuture channelFuture = channel.writeAndFlush(message);
             String str = String.format("发送消息，类型-%s，发送-%s",
-                    chatMessage.getMessageType().getDes(),
+                    message.getMessageType().getDes(),
                     channelFuture.isSuccess() ? "成功" : "失败");
             LogUtil.d(this, str);
         } else {

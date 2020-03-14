@@ -1,8 +1,8 @@
-package cn.kk20.chat.core.main.client.handler.business;
+package cn.kk20.chat.core.main.client.processor;
 
-import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.core.main.client.MessageSender;
+import cn.kk20.chat.base.message.chat.ChatMessageType;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Date: 2020/2/17 16:34
  * @Version: v1.0
  */
-@MsgProcessor(messageType = ChatMessageType.SINGLE)
+@ChatMsgProcessor(messageType = ChatMessageType.SINGLE)
 public class SingleMsgProcessor implements MessageProcessor {
     @Autowired
     MessageSender messageSender;

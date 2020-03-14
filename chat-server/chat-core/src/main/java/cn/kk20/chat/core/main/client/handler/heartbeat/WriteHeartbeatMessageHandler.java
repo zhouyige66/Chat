@@ -1,13 +1,10 @@
-package cn.kk20.chat.core.main.client.handler.common;
+package cn.kk20.chat.core.main.client.handler.heartbeat;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.data.TextData;
+import cn.kk20.chat.base.message.HeartbeatMessage;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.util.CommonUtil;
-import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -25,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ClientComponent
 @ChannelHandler.Sharable
-public class CenterClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> {
-    private Logger logger = LoggerFactory.getLogger(CenterClientHeartbeatHandler.class);
+public class WriteHeartbeatMessageHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
+    private Logger logger = LoggerFactory.getLogger(WriteHeartbeatMessageHandler.class);
     private final int heartFailMax = 5;
     private int heartFailCount = 0;
 
@@ -36,30 +33,10 @@ public class CenterClientHeartbeatHandler extends SimpleChannelInboundHandler<Ob
     MessageSender messageSender;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
-        // 收到任何消息，均把心跳失败数置零
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, HeartbeatMessage heartbeatMessage)
+            throws Exception {
+        // 重置心跳失败次数
         heartFailCount = 0;
-
-        if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage = null;
-            if (obj instanceof ChatMessage) {
-                chatMessage = (ChatMessage) obj;
-            } else {
-                try {
-                    chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
-                } catch (Exception e) {
-                    logger.error("数据转换出错");
-                    return;
-                }
-            }
-
-            logger.debug("收到消息：{}", JSON.toJSONString(chatMessage));
-            if (chatMessage.getMessageType() != ChatMessageType.HEARTBEAT) {
-                ctx.fireChannelRead(chatMessage);
-            }
-        } else {
-            ctx.fireChannelRead(obj);
-        }
     }
 
     @Override
@@ -87,16 +64,14 @@ public class CenterClientHeartbeatHandler extends SimpleChannelInboundHandler<Ob
         String clientId = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
                 chatConfigBean.getClient().getCommonServer().getPort(),
                 chatConfigBean.getClient().getWebServer().getPort());
-        TextData textData = new TextData();
-        textData.setText(clientId);
-        ChatMessage heartbeatMessage = new ChatMessage();
-        heartbeatMessage.setMessageType(ChatMessageType.HEARTBEAT);
-        heartbeatMessage.setBodyData(textData);
+
+        HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
+        heartbeatMessage.setData(clientId);
         messageSender.sendMessage(ctx.channel(), heartbeatMessage);
     }
 
     private void heartbeatFail(ChannelHandlerContext ctx) {
-        logger.debug("心跳失败，中心服务器无法连接");
+        logger.debug("心跳失败，中心服务器无法连接，通道为：{}", ctx.channel());
         ctx.close();
     }
 

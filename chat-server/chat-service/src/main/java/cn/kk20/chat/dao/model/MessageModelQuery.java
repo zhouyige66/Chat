@@ -285,123 +285,63 @@ public class MessageModelQuery {
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeIsNull() {
-            addCriterion("send_time is null");
+        public Criteria andReceivedIsNull() {
+            addCriterion("received is null");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeIsNotNull() {
-            addCriterion("send_time is not null");
+        public Criteria andReceivedIsNotNull() {
+            addCriterion("received is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeEqualTo(Date value) {
-            addCriterion("send_time =", value, "sendTime");
+        public Criteria andReceivedEqualTo(Boolean value) {
+            addCriterion("received =", value, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotEqualTo(Date value) {
-            addCriterion("send_time <>", value, "sendTime");
+        public Criteria andReceivedNotEqualTo(Boolean value) {
+            addCriterion("received <>", value, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeGreaterThan(Date value) {
-            addCriterion("send_time >", value, "sendTime");
+        public Criteria andReceivedGreaterThan(Boolean value) {
+            addCriterion("received >", value, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("send_time >=", value, "sendTime");
+        public Criteria andReceivedGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("received >=", value, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeLessThan(Date value) {
-            addCriterion("send_time <", value, "sendTime");
+        public Criteria andReceivedLessThan(Boolean value) {
+            addCriterion("received <", value, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeLessThanOrEqualTo(Date value) {
-            addCriterion("send_time <=", value, "sendTime");
+        public Criteria andReceivedLessThanOrEqualTo(Boolean value) {
+            addCriterion("received <=", value, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeIn(List<Date> values) {
-            addCriterion("send_time in", values, "sendTime");
+        public Criteria andReceivedIn(List<Boolean> values) {
+            addCriterion("received in", values, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotIn(List<Date> values) {
-            addCriterion("send_time not in", values, "sendTime");
+        public Criteria andReceivedNotIn(List<Boolean> values) {
+            addCriterion("received not in", values, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeBetween(Date value1, Date value2) {
-            addCriterion("send_time between", value1, value2, "sendTime");
+        public Criteria andReceivedBetween(Boolean value1, Boolean value2) {
+            addCriterion("received between", value1, value2, "received");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotBetween(Date value1, Date value2) {
-            addCriterion("send_time not between", value1, value2, "sendTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIsNull() {
-            addCriterion("`status` is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIsNotNull() {
-            addCriterion("`status` is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusEqualTo(Byte value) {
-            addCriterion("`status` =", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotEqualTo(Byte value) {
-            addCriterion("`status` <>", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusGreaterThan(Byte value) {
-            addCriterion("`status` >", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusGreaterThanOrEqualTo(Byte value) {
-            addCriterion("`status` >=", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusLessThan(Byte value) {
-            addCriterion("`status` <", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusLessThanOrEqualTo(Byte value) {
-            addCriterion("`status` <=", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIn(List<Byte> values) {
-            addCriterion("`status` in", values, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotIn(List<Byte> values) {
-            addCriterion("`status` not in", values, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusBetween(Byte value1, Byte value2) {
-            addCriterion("`status` between", value1, value2, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotBetween(Byte value1, Byte value2) {
-            addCriterion("`status` not between", value1, value2, "status");
+        public Criteria andReceivedNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("received not between", value1, value2, "received");
             return (Criteria) this;
         }
 

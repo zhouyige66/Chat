@@ -1,6 +1,6 @@
-package cn.kk20.chat.base.message.data;
+package cn.kk20.chat.base.message.chat.body;
 
-import cn.kk20.chat.base.message.MessageBodyType;
+import cn.kk20.chat.base.message.chat.BodyType;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
@@ -14,6 +14,6 @@ import java.io.Serializable;
 public abstract class BodyData implements Serializable {
 
     @JSONField(serialize = false,deserialize = false)
-    public abstract MessageBodyType getMessageBodyType();
+    public abstract BodyType getMessageBodyType();
 
 }

@@ -10,9 +10,7 @@ public class MessageModel implements Serializable {
 
     private Long toUserId;
 
-    private Date sendTime;
-
-    private Byte status;
+    private Boolean received;
 
     private Boolean fromUserDelete;
 
@@ -67,30 +65,17 @@ public class MessageModel implements Serializable {
         this.toUserId = toUserId;
     }
 
-    public Date getSendTime() {
-        return sendTime;
+    public Boolean getReceived() {
+        return received;
     }
 
-    public MessageModel withSendTime(Date sendTime) {
-        this.setSendTime(sendTime);
+    public MessageModel withReceived(Boolean received) {
+        this.setReceived(received);
         return this;
     }
 
-    public void setSendTime(Date sendTime) {
-        this.sendTime = sendTime;
-    }
-
-    public Byte getStatus() {
-        return status;
-    }
-
-    public MessageModel withStatus(Byte status) {
-        this.setStatus(status);
-        return this;
-    }
-
-    public void setStatus(Byte status) {
-        this.status = status;
+    public void setReceived(Boolean received) {
+        this.received = received;
     }
 
     public Boolean getFromUserDelete() {
@@ -180,8 +165,7 @@ public class MessageModel implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", fromUserId=").append(fromUserId);
         sb.append(", toUserId=").append(toUserId);
-        sb.append(", sendTime=").append(sendTime);
-        sb.append(", status=").append(status);
+        sb.append(", received=").append(received);
         sb.append(", fromUserDelete=").append(fromUserDelete);
         sb.append(", toUserDelete=").append(toUserDelete);
         sb.append(", isDelete=").append(isDelete);

@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.kk20.chat.base.message.ChatMessageType;
+import cn.kk20.chat.base.message.chat.ChatMessageType;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.activity.ChatActivity;

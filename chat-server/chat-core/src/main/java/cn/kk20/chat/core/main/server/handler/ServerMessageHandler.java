@@ -1,10 +1,11 @@
 package cn.kk20.chat.core.main.server.handler;
 
-import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.ForwardMessage;
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ServerComponent;
 import cn.kk20.chat.core.main.server.ClientChannelManager;
 import cn.kk20.chat.core.main.server.MessageSender;
-import com.alibaba.fastjson.JSON;
+import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,20 +22,22 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ServerComponent
 @ChannelHandler.Sharable
-public class ServerMessageHandler extends SimpleChannelInboundHandler<ChatMessage> {
+public class ServerMessageHandler extends SimpleChannelInboundHandler<ForwardMessage> {
     private final Logger logger = LoggerFactory.getLogger(ServerMessageHandler.class);
 
+    @Autowired
+    RedisUtil redisUtil;
     @Autowired
     MessageSender messageSender;
     @Autowired
     ClientChannelManager clientChannelManager;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage) throws Exception {
-        logger.debug("收到消息：{}", JSON.toJSONString(chatMessage));
-        String targetHost = chatMessage.getTargetHost();
-        Channel client = clientChannelManager.getClient(targetHost);
-        messageSender.sendMessage(client, chatMessage);
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ForwardMessage message) throws Exception {
+        Long targetUserId = message.getTargetUserId();
+        String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetUserId);
+        Channel client = clientChannelManager.getClient(host);
+        messageSender.sendMessage(client, message);
     }
 
 }

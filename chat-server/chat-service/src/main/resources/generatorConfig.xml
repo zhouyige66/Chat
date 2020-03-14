@@ -84,7 +84,14 @@
             <domainObjectRenamingRule searchString="^c_" replaceString=""/>
         </table>
         <table tableName="c_message" domainObjectName="MessageModel">
-            <property name="mapperName" value="MessageModelMapper"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
+        </table>
+        <table tableName="c_group_message" domainObjectName="GroupMessageModel">
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
+            <domainObjectRenamingRule searchString="^c_" replaceString=""/>
+        </table>
+        <table tableName="c_login_log" domainObjectName="LoginLogModel">
             <generatedKey column="id" sqlStatement="MySql" identity="true" type="post"/>
             <domainObjectRenamingRule searchString="^c_" replaceString=""/>
         </table>

@@ -1,14 +1,9 @@
 package cn.kk20.chat.core.main.server.handler;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.MessageBody;
-import cn.kk20.chat.base.message.data.TextData;
+import cn.kk20.chat.base.message.HeartbeatMessage;
 import cn.kk20.chat.core.main.ServerComponent;
 import cn.kk20.chat.core.main.server.ClientChannelManager;
 import cn.kk20.chat.core.main.server.MessageSender;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -19,15 +14,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @Description: 读心跳处理器
+ * @Description: 中央Server读心跳处理器
  * @Author: Roy
  * @Date: 2019/1/21 15:31
  * @Version: v1.0
  */
 @ServerComponent
 @ChannelHandler.Sharable
-public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
-    private Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
+public class ServerHeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
+    private Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
@@ -37,38 +32,13 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<Object> {
     MessageSender messageSender;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage) throws Exception {
         // 收到任何消息，均把心跳失败数置零
         heartFailCount = 0;
-
-        if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage;
-            if (obj instanceof ChatMessage) {
-                chatMessage = (ChatMessage) obj;
-            } else {
-                try {
-                    chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
-                } catch (Exception e) {
-                    logger.error("数据转换出错");
-                    return;
-                }
-            }
-
-            logger.debug("收到消息：{}", JSON.toJSONString(chatMessage));
-            if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
-                // 取出传递的参数
-                MessageBody body = chatMessage.getBody();
-                JSONObject data = (JSONObject) body.getData();
-                TextData textData = JSON.parseObject(data.toJSONString(),TextData.class);
-                String clientId = textData.getText();
-                clientChannelManager.addClient(clientId,ctx.channel());
-                messageSender.sendMessage(ctx.channel(), chatMessage);
-            } else {// 向下层传递
-                ctx.fireChannelRead(chatMessage);
-            }
-        } else {
-            ctx.fireChannelRead(obj);
-        }
+        // 取出传递的参数
+        String clientId = heartbeatMessage.getData();
+        clientChannelManager.addClient(clientId, ctx.channel());
+        messageSender.sendMessage(ctx.channel(), heartbeatMessage);
     }
 
     @Override

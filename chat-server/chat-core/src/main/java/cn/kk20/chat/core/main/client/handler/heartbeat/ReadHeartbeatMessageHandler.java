@@ -1,14 +1,12 @@
-package cn.kk20.chat.core.main.client.handler.common;
+package cn.kk20.chat.core.main.client.handler.heartbeat;
 
-import cn.kk20.chat.base.message.ChatMessage;
-import cn.kk20.chat.base.message.ChatMessageType;
-import cn.kk20.chat.base.message.data.TextData;
+import cn.kk20.chat.base.message.HeartbeatMessage;
+import cn.kk20.chat.base.message.NotifyMessage;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.main.client.UserChannelManager;
 import cn.kk20.chat.core.util.RedisUtil;
-import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,8 +31,8 @@ import java.util.Set;
  */
 @ClientComponent
 @ChannelHandler.Sharable
-public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> {
-    private Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
+public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
+    private Logger logger = LoggerFactory.getLogger(ReadHeartbeatMessageHandler.class);
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
@@ -45,31 +44,11 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
     RedisUtil redisUtil;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object obj) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage) throws Exception {
         // 收到任何消息，均把心跳失败数置零
         heartFailCount = 0;
-
-        if (obj instanceof ChatMessage || obj instanceof String) {
-            ChatMessage chatMessage;
-            if (obj instanceof ChatMessage) {
-                chatMessage = (ChatMessage) obj;
-            } else {
-                try {
-                    chatMessage = JSON.parseObject((String) obj, ChatMessage.class);
-                } catch (Exception e) {
-                    logger.error("客户端：{}，数据转换出错", ctx.channel().remoteAddress());
-                    return;
-                }
-            }
-
-            if (chatMessage.getMessageType() == ChatMessageType.HEARTBEAT) {
-                messageSender.sendMessage(ctx.channel(), chatMessage);
-            } else {// 向下层传递
-                ctx.fireChannelRead(chatMessage);
-            }
-        } else {
-            ctx.fireChannelRead(obj);
-        }
+        // 原样返回心跳信息
+        messageSender.sendMessage(ctx.channel(), heartbeatMessage);
     }
 
     @Override
@@ -94,8 +73,8 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     private void heartbeatFail(ChannelHandlerContext ctx) {
-        logger.debug("客户端：{}，读超时，关闭通道", ctx.channel().remoteAddress());
         Channel channel = ctx.channel();
+        logger.debug("客户端：{}，读超时，关闭通道", channel.remoteAddress());
         Long userId = userChannelManager.getUserId(channel.remoteAddress());
         userChannelManager.removeClient(userId);
         // 通知好友，该用户下线了
@@ -109,11 +88,11 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
             return;
         }
         // 查询好友列表
-        Set<Long> userIdSet = redisUtil.getSetValue(ConstantValue.FRIEND_OF_USER + userId);
+        Set<Long> userIdSet = redisUtil.getLongSetValue(ConstantValue.FRIEND_OF_USER + userId);
         if (CollectionUtils.isEmpty(userIdSet)) {
             return;
         }
-        HashMap<Long, String> onlineFriendMap = new HashMap<>(userIdSet.size());
+        Map<Long, String> onlineFriendMap = new HashMap<>(userIdSet.size());
         // 查询在线好友
         for (Long id : userIdSet) {
             String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + id);
@@ -121,19 +100,13 @@ public class ClientHeartbeatHandler extends SimpleChannelInboundHandler<Object> 
                 onlineFriendMap.put(id, host);
             }
         }
-
-        // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线的好友没必要通知
+        // 通知在线好友，用户掉线了
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", userId);
         map.put("login", false);
-        TextData textData = new TextData();
-        textData.setText(JSON.toJSONString(map));
-        ChatMessage notifyMsg = new ChatMessage();
-        notifyMsg.setFromUserId(ConstantValue.SERVER_ID);
-        notifyMsg.setMessageType(ChatMessageType.LOGIN_NOTIFY);
-        notifyMsg.setBodyData(textData);
-        for (Long targetId : userIdSet) {
-            messageSender.sendMessage(targetId, notifyMsg);
+        NotifyMessage notifyMessage = new NotifyMessage();
+        for (Long friendId : onlineFriendMap.keySet()) {
+            messageSender.sendMessage(friendId, notifyMessage);
         }
     }
 
