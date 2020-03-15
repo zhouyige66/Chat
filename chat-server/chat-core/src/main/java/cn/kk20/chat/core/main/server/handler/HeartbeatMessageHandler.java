@@ -4,9 +4,7 @@ import cn.kk20.chat.base.message.HeartbeatMessage;
 import cn.kk20.chat.core.main.ServerComponent;
 import cn.kk20.chat.core.main.server.ClientChannelManager;
 import cn.kk20.chat.core.main.server.MessageSender;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
@@ -21,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ServerComponent
 @ChannelHandler.Sharable
-public class ServerHeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
-    private Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
+public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
+    private Logger logger = LoggerFactory.getLogger(HeartbeatMessageHandler.class);
     private final int heartFailMax = 5;
     private volatile int heartFailCount = 0;
 
@@ -37,8 +35,11 @@ public class ServerHeartbeatHandler extends SimpleChannelInboundHandler<Heartbea
         heartFailCount = 0;
         // 取出传递的参数
         String clientId = heartbeatMessage.getData();
-        clientChannelManager.addClient(clientId, ctx.channel());
-        messageSender.sendMessage(ctx.channel(), heartbeatMessage);
+        Channel channel = ctx.channel();
+        ChannelId id = channel.id();
+        logger.debug("ChannelId=={}", id.asShortText());
+        clientChannelManager.addClient(clientId, channel);
+        messageSender.sendMessage(channel, heartbeatMessage);
     }
 
     @Override

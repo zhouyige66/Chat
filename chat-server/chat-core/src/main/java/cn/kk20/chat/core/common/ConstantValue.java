@@ -28,6 +28,6 @@ final public class ConstantValue {
     public static final String FRIEND_OF_USER = "friend_of_user:";// 好友列表
     public static final String STATISTIC_OF_HOST = "statistic_of_host:";// 指定主机已连接数量
     // 中心主机维护
-    public static final String LIST_OF_HOST = "list_of_host";// 当前可服务主机列表
+    public static final String LIST_OF_SERVER = "list_of_server";// 当前可服务主机列表
 
 }

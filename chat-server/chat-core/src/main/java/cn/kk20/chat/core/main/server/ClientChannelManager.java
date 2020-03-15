@@ -22,14 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientChannelManager {
     private final Logger logger = LoggerFactory.getLogger(ClientChannelManager.class);
     private ConcurrentHashMap<String, Channel> clientMap = new ConcurrentHashMap<>(12);
-    private ConcurrentHashMap<Channel, String> channelMap = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<String, String> channelMap = new ConcurrentHashMap<>(12);
 
     @Autowired
     RedisUtil redisUtil;
 
     public void addClient(String clientId, Channel channel) {
         Channel existChannel = clientMap.get(clientId);
-        if (channel == existChannel) {
+        if (existChannel == channel) {
             return;
         }
         // 通道不一致，关闭原通道
@@ -38,27 +38,28 @@ public class ClientChannelManager {
         }
         // 添加到通道容器
         clientMap.put(clientId, channel);
-        channelMap.put(channel, clientId);
+        channelMap.put(channel.id().asShortText(), clientId);
 
-        log();
+        cacheServer();
     }
 
     public void removeClient(Channel channel) {
-        String clientId = channelMap.get(channel);
+        String channelId = channel.id().asShortText();
+        String clientId = channelMap.get(channelId);
         if (!StringUtils.isEmpty(clientId)) {
             clientMap.remove(clientId);
         }
-        channelMap.remove(channel);
-        log();
+        channelMap.remove(channelId);
+        cacheServer();
     }
 
     public Channel getClient(String clientId) {
         return clientMap.get(clientId);
     }
 
-    private void log() {
+    private void cacheServer() {
         // 更新当前可服务主机地址列表
-        redisUtil.saveParam(ConstantValue.LIST_OF_HOST,JSON.toJSONString(clientMap.keys()));
+        redisUtil.saveParam(ConstantValue.LIST_OF_SERVER, JSON.toJSONString(clientMap.keys()));
         logger.info("客户端：{}", JSON.toJSONString(clientMap));
         logger.info("通道：{}", JSON.toJSONString(channelMap));
     }

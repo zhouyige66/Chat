@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ServerComponent
 @ChannelHandler.Sharable
-public class ServerMessageHandler extends SimpleChannelInboundHandler<ForwardMessage> {
-    private final Logger logger = LoggerFactory.getLogger(ServerMessageHandler.class);
+public class ForwardMessageHandler extends SimpleChannelInboundHandler<ForwardMessage> {
+    private final Logger logger = LoggerFactory.getLogger(ForwardMessageHandler.class);
 
     @Autowired
     RedisUtil redisUtil;
@@ -36,8 +36,8 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<ForwardMes
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ForwardMessage message) throws Exception {
         Long targetUserId = message.getTargetUserId();
         String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetUserId);
-        Channel client = clientChannelManager.getClient(host);
-        messageSender.sendMessage(client, message);
+        Channel channel = clientChannelManager.getClient(host);
+        messageSender.sendMessage(channel, message);
     }
 
 }

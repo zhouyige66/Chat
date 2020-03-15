@@ -213,6 +213,7 @@ public class ChatClient {
             LogUtil.d(ChatClient.this, "连接server：等待通道关闭");
             // 服务器同步连接断开时,这句代码才会往下执行
             channel.closeFuture().sync();
+            LogUtil.d(ChatClient.this, "连接server：通道正常关闭");
             notifyStatus(ChatServerStatus.INIT);
         } catch (InterruptedException e) {
             LogUtil.d(ChatClient.this, "连接server：出现异常");

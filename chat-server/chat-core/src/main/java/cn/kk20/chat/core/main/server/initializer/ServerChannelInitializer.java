@@ -2,8 +2,8 @@ package cn.kk20.chat.core.main.server.initializer;
 
 import cn.kk20.chat.core.main.CommonInitializer;
 import cn.kk20.chat.core.main.ServerComponent;
-import cn.kk20.chat.core.main.server.handler.ServerHeartbeatHandler;
-import cn.kk20.chat.core.main.server.handler.ServerMessageHandler;
+import cn.kk20.chat.core.main.server.handler.HeartbeatMessageHandler;
+import cn.kk20.chat.core.main.server.handler.ForwardMessageHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -21,16 +21,16 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Autowired
     CommonInitializer commonInitializer;
     @Autowired
-    ServerHeartbeatHandler serverHeartbeatHandler;
+    HeartbeatMessageHandler heartbeatMessageHandler;
     @Autowired
-    ServerMessageHandler serverMessageHandler;
+    ForwardMessageHandler forwardMessageHandler;
 
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
         commonInitializer.initCommon(pipeline);
         pipeline.addLast(new IdleStateHandler(5, 0, 0));
-        pipeline.addLast(serverHeartbeatHandler);
-        pipeline.addLast(serverMessageHandler);
+        pipeline.addLast(heartbeatMessageHandler);
+        pipeline.addLast(forwardMessageHandler);
     }
 }

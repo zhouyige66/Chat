@@ -83,6 +83,9 @@ public class StringToObjectDecoder extends MessageToMessageDecoder<String> {
             case CHAT:
                 message = JSON.parseObject(jsonStr, ChatMessage.class);
                 break;
+            case REGISTER:
+                message = JSON.parseObject(jsonStr, RegisterMessage.class);
+                break;
             default:
                 break;
         }
