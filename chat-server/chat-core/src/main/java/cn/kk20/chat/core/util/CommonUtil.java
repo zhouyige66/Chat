@@ -1,7 +1,10 @@
 package cn.kk20.chat.core.util;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 /**
  * @Description: 通用工具类
@@ -15,7 +18,7 @@ public class CommonUtil {
 
     }
 
-    public static String getHostIp() {
+    public static String getHostIp2() {
         String hostAddress = null;
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
@@ -23,6 +26,30 @@ public class CommonUtil {
             e.printStackTrace();
         }
         return hostAddress;
+    }
+
+    public static String getHostIp() {
+        try {
+            Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+            InetAddress ip = null;
+            while (allNetInterfaces.hasMoreElements()) {
+                NetworkInterface netInterface = allNetInterfaces.nextElement();
+                if (netInterface.isLoopback() || netInterface.isVirtual() || !netInterface.isUp()) {
+                    continue;
+                } else {
+                    Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        ip = addresses.nextElement();
+                        if (ip != null && ip instanceof Inet4Address) {
+                            return ip.getHostAddress();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("IP地址获取失败" + e.toString());
+        }
+        return null;
     }
 
     public static String getTargetAddress(String host, int port, int webPort) {

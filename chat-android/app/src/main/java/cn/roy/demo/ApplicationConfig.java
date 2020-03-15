@@ -9,7 +9,8 @@ package cn.roy.demo;
 public final class ApplicationConfig {
     public static final class NettyConfig {
         // public static final String CHAT_SERVER_HOST="10.0.2.2";
-        public static final String CHAT_SERVER_HOST = "192.168.43.133";
+//        public static final String CHAT_SERVER_HOST = "192.168.43.133";
+        public static final String CHAT_SERVER_HOST = "192.168.1.10";
     }
 
     public static final class HttpConfig {
