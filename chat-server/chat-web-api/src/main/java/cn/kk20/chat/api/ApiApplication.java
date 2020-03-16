@@ -6,11 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = "cn.kk20.chat")
 @MapperScan(value = "cn.kk20.chat.dao.mapper")
 @EnableScheduling
+@EnableFeignClients
 public class ApiApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
     public static void main(String[] args) {

@@ -31,18 +31,6 @@
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
-        <dependency>
-            <groupId>cn.kk20</groupId>
-            <artifactId>chat-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.kk20</groupId>
-            <artifactId>chat-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
         <!--swagger-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -59,6 +47,32 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.1.2.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+            <version>10.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.kk20</groupId>
+            <artifactId>chat-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.kk20</groupId>
+            <artifactId>chat-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

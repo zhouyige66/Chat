@@ -13,3 +13,7 @@ logging:
     max-history: 10
     max-size: 10MB
   path: log/log.log
+
+feign:
+  okhttp:
+    enabled: true

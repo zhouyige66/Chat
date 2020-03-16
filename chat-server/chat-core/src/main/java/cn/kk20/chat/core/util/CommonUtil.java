@@ -18,16 +18,6 @@ public class CommonUtil {
 
     }
 
-    public static String getHostIp2() {
-        String hostAddress = null;
-        try {
-            hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return hostAddress;
-    }
-
     public static String getHostIp() {
         try {
             Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -50,6 +40,16 @@ public class CommonUtil {
             System.err.println("IP地址获取失败" + e.toString());
         }
         return null;
+    }
+
+    public static String getHostIp2() {
+        String hostAddress = null;
+        try {
+            hostAddress = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return hostAddress;
     }
 
     public static String getTargetAddress(String host, int port, int webPort) {

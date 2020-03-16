@@ -25,6 +25,14 @@ public class ResultData implements Serializable {
             this.code = code;
             this.des = des;
         }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getDes() {
+            return des;
+        }
     }
 
     private int code;

@@ -26,7 +26,7 @@ public class ChatService extends Service {
         chatClient = ChatClient.getInstance();
         ChatConfig chatConfig = new ChatConfig();
         chatConfig.setHost(ApplicationConfig.NettyConfig.CHAT_SERVER_HOST);
-        chatConfig.setPort(10001);
+        chatConfig.setPort(ApplicationConfig.NettyConfig.CHAT_SERVER_PORT);
         chatConfig.setAutoReconnectTime(10);
         chatConfig.setHeartbeatFailCount(5);
         chatClient.setConfig(chatConfig);

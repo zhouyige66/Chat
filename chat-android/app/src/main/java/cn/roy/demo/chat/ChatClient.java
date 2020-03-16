@@ -143,6 +143,7 @@ public class ChatClient {
         }
         failCount = 0;
         config.setHost(ApplicationConfig.NettyConfig.CHAT_SERVER_HOST);
+        config.setPort(ApplicationConfig.NettyConfig.CHAT_SERVER_PORT);
         reconnect();
     }
 
