@@ -3,7 +3,7 @@
 <mapper namespace="cn.kk20.chat.dao.mapper.ApplyLogModelMapper">
   <resultMap id="BaseResultMap" type="cn.kk20.chat.dao.model.ApplyLogModel">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="type" jdbcType="TINYINT" property="type" />
     <result column="apply_user_id" jdbcType="BIGINT" property="applyUserId" />
     <result column="target_user_id" jdbcType="BIGINT" property="targetUserId" />
     <result column="verify_user_id" jdbcType="BIGINT" property="verifyUserId" />
@@ -114,7 +114,7 @@
       verify_user_id, is_agree, apply_remark, 
       verify_remark, is_delete, create_date, 
       modify_date)
-    values (#{type,jdbcType=INTEGER}, #{applyUserId,jdbcType=BIGINT}, #{targetUserId,jdbcType=BIGINT}, 
+    values (#{type,jdbcType=TINYINT}, #{applyUserId,jdbcType=BIGINT}, #{targetUserId,jdbcType=BIGINT}, 
       #{verifyUserId,jdbcType=BIGINT}, #{isAgree,jdbcType=BIT}, #{applyRemark,jdbcType=VARCHAR}, 
       #{verifyRemark,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
       #{modifyDate,jdbcType=TIMESTAMP})
@@ -158,7 +158,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="type != null">
-        #{type,jdbcType=INTEGER},
+        #{type,jdbcType=TINYINT},
       </if>
       <if test="applyUserId != null">
         #{applyUserId,jdbcType=BIGINT},
@@ -202,7 +202,7 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=INTEGER},
+        `type` = #{record.type,jdbcType=TINYINT},
       </if>
       <if test="record.applyUserId != null">
         apply_user_id = #{record.applyUserId,jdbcType=BIGINT},
@@ -239,7 +239,7 @@
   <update id="updateByCondition" parameterType="map">
     update c_apply_log
     set id = #{record.id,jdbcType=BIGINT},
-      `type` = #{record.type,jdbcType=INTEGER},
+      `type` = #{record.type,jdbcType=TINYINT},
       apply_user_id = #{record.applyUserId,jdbcType=BIGINT},
       target_user_id = #{record.targetUserId,jdbcType=BIGINT},
       verify_user_id = #{record.verifyUserId,jdbcType=BIGINT},
@@ -257,7 +257,7 @@
     update c_apply_log
     <set>
       <if test="type != null">
-        `type` = #{type,jdbcType=INTEGER},
+        `type` = #{type,jdbcType=TINYINT},
       </if>
       <if test="applyUserId != null">
         apply_user_id = #{applyUserId,jdbcType=BIGINT},
@@ -291,7 +291,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.kk20.chat.dao.model.ApplyLogModel">
     update c_apply_log
-    set `type` = #{type,jdbcType=INTEGER},
+    set `type` = #{type,jdbcType=TINYINT},
       apply_user_id = #{applyUserId,jdbcType=BIGINT},
       target_user_id = #{targetUserId,jdbcType=BIGINT},
       verify_user_id = #{verifyUserId,jdbcType=BIGINT},

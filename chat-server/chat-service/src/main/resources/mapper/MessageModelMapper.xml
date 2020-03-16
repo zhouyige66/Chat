@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="from_user_id" jdbcType="BIGINT" property="fromUserId" />
     <result column="to_user_id" jdbcType="BIGINT" property="toUserId" />
+    <result column="content_type" jdbcType="TINYINT" property="contentType" />
     <result column="received" jdbcType="BIT" property="received" />
     <result column="from_user_delete" jdbcType="BIT" property="fromUserDelete" />
     <result column="to_user_delete" jdbcType="BIT" property="toUserDelete" />
@@ -74,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, from_user_id, to_user_id, received, from_user_delete, to_user_delete, is_delete, 
-    create_date, modify_date
+    id, from_user_id, to_user_id, content_type, received, from_user_delete, to_user_delete, 
+    is_delete, create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -132,14 +133,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_message (from_user_id, to_user_id, received, 
-      from_user_delete, to_user_delete, is_delete, 
-      create_date, modify_date, content
-      )
-    values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{received,jdbcType=BIT}, 
-      #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT}, #{isDelete,jdbcType=BIT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR}
-      )
+    insert into c_message (from_user_id, to_user_id, content_type, 
+      received, from_user_delete, to_user_delete, 
+      is_delete, create_date, modify_date, 
+      content)
+    values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{contentType,jdbcType=TINYINT}, 
+      #{received,jdbcType=BIT}, #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT}, 
+      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
+      #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.MessageModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -152,6 +153,9 @@
       </if>
       <if test="toUserId != null">
         to_user_id,
+      </if>
+      <if test="contentType != null">
+        content_type,
       </if>
       <if test="received != null">
         received,
@@ -181,6 +185,9 @@
       </if>
       <if test="toUserId != null">
         #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=TINYINT},
       </if>
       <if test="received != null">
         #{received,jdbcType=BIT},
@@ -223,6 +230,9 @@
       <if test="record.toUserId != null">
         to_user_id = #{record.toUserId,jdbcType=BIGINT},
       </if>
+      <if test="record.contentType != null">
+        content_type = #{record.contentType,jdbcType=TINYINT},
+      </if>
       <if test="record.received != null">
         received = #{record.received,jdbcType=BIT},
       </if>
@@ -254,6 +264,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       from_user_id = #{record.fromUserId,jdbcType=BIGINT},
       to_user_id = #{record.toUserId,jdbcType=BIGINT},
+      content_type = #{record.contentType,jdbcType=TINYINT},
       received = #{record.received,jdbcType=BIT},
       from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
       to_user_delete = #{record.toUserDelete,jdbcType=BIT},
@@ -270,6 +281,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       from_user_id = #{record.fromUserId,jdbcType=BIGINT},
       to_user_id = #{record.toUserId,jdbcType=BIGINT},
+      content_type = #{record.contentType,jdbcType=TINYINT},
       received = #{record.received,jdbcType=BIT},
       from_user_delete = #{record.fromUserDelete,jdbcType=BIT},
       to_user_delete = #{record.toUserDelete,jdbcType=BIT},
@@ -288,6 +300,9 @@
       </if>
       <if test="toUserId != null">
         to_user_id = #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="contentType != null">
+        content_type = #{contentType,jdbcType=TINYINT},
       </if>
       <if test="received != null">
         received = #{received,jdbcType=BIT},
@@ -317,6 +332,7 @@
     update c_message
     set from_user_id = #{fromUserId,jdbcType=BIGINT},
       to_user_id = #{toUserId,jdbcType=BIGINT},
+      content_type = #{contentType,jdbcType=TINYINT},
       received = #{received,jdbcType=BIT},
       from_user_delete = #{fromUserDelete,jdbcType=BIT},
       to_user_delete = #{toUserDelete,jdbcType=BIT},
@@ -330,6 +346,7 @@
     update c_message
     set from_user_id = #{fromUserId,jdbcType=BIGINT},
       to_user_id = #{toUserId,jdbcType=BIGINT},
+      content_type = #{contentType,jdbcType=TINYINT},
       received = #{received,jdbcType=BIT},
       from_user_delete = #{fromUserDelete,jdbcType=BIT},
       to_user_delete = #{toUserDelete,jdbcType=BIT},

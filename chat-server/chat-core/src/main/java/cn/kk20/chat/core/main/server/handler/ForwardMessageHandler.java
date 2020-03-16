@@ -36,7 +36,7 @@ public class ForwardMessageHandler extends SimpleChannelInboundHandler<ForwardMe
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ForwardMessage message) throws Exception {
         Long targetUserId = message.getTargetUserId();
         String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetUserId);
-        Channel channel = clientChannelManager.getClient(host);
+        Channel channel = clientChannelManager.getChannel(host);
         messageSender.sendMessage(channel, message);
     }
 

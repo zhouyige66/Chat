@@ -4,6 +4,7 @@ import cn.kk20.chat.api.model.request.ApplyBean;
 import cn.kk20.chat.api.model.request.VerifyBean;
 import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.base.http.dto.ListDto;
+import cn.kk20.chat.dao.ApplyLogTypeEnum;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.ApplyLogService;
@@ -41,7 +42,7 @@ public class FriendController {
         }
 
         ApplyLogModel applyLogModel = new ApplyLogModel();
-        applyLogModel.setType(ApplyLogModel.APPLY_TYPE_ADD_FRIEND);
+        applyLogModel.setType(ApplyLogTypeEnum.ADD_FRIEND.getType());
         applyLogModel.setApplyUserId(applyBean.getApplyUserId());
         applyLogModel.setTargetUserId(applyBean.getTargetUserId());
         applyLogModel.setApplyRemark(applyBean.getRemark());
@@ -60,7 +61,7 @@ public class FriendController {
 
         try {
             ApplyLogModel applyLogModel = new ApplyLogModel();
-            applyLogModel.setType(ApplyLogModel.APPLY_TYPE_ADD_FRIEND);
+            applyLogModel.setType(ApplyLogTypeEnum.ADD_FRIEND.getType());
             applyLogModel.setId(verifyBean.getApplyId());
             applyLogModel.setVerifyUserId(verifyBean.getVerifyUserId());
             applyLogModel.setIsAgree(verifyBean.getAgree());

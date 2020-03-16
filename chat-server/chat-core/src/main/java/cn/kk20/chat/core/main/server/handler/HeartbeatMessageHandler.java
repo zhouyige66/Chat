@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Description: 中央Server读心跳处理器
  * @Author: Roy
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ChannelHandler.Sharable
 public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
     private Logger logger = LoggerFactory.getLogger(HeartbeatMessageHandler.class);
+    private Map<String, Integer> channelHeartbeatFailCountMap = new HashMap<>(12);
 
     @Autowired
     ClientChannelManager clientChannelManager;
@@ -29,28 +33,37 @@ public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<Heartbe
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage) throws Exception {
-        // 收到任何消息，均把心跳失败数置零
         Channel channel = ctx.channel();
-        clientChannelManager.channelHeartFailReset(channel);
+        // 收到任何消息，均把心跳失败数置零
+        String channelId = channel.id().asShortText();
+        channelHeartbeatFailCountMap.put(channelId, 0);
         // 取出传递的参数
         String clientId = heartbeatMessage.getData();
-        clientChannelManager.addClient(clientId, channel);
+        clientChannelManager.cacheChannel(clientId, channel);
         messageSender.sendMessage(channel, heartbeatMessage);
     }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        logger.info("当前线程为：{}", Thread.currentThread().getId());
         boolean hasDeal = false;
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-                int heartFail = clientChannelManager.channelHeartFail(ctx.channel());
-                logger.info("心跳消息读失败：{}次", heartFail);
+                Channel channel = ctx.channel();
+                String channelId = channel.id().asShortText();
+                Integer heartFailCount = channelHeartbeatFailCountMap.get(channelId);
+                if (heartFailCount == null) {
+                    heartFailCount = 0;
+                }
+                heartFailCount++;
+                logger.info("客户端通道：{}，心跳消息读失败：{}次", channelId, heartFailCount);
                 hasDeal = true;
-                if (heartFail > 5) {
-                    heartbeatFail(ctx);
+                if (heartFailCount > 5) {
+                    channelHeartbeatFailCountMap.remove(channelId);
+                    clientChannelManager.removeChannel(channelId);
                     ctx.close();
+                } else {
+                    channelHeartbeatFailCountMap.put(channelId, heartFailCount);
                 }
             }
         }
@@ -58,11 +71,6 @@ public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<Heartbe
         if (!hasDeal) {
             super.userEventTriggered(ctx, evt);
         }
-    }
-
-    private void heartbeatFail(ChannelHandlerContext ctx) {
-        clientChannelManager.channelHeartFailReset(ctx.channel());
-        clientChannelManager.removeClient(ctx.channel());
     }
 
 }

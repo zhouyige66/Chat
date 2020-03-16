@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="content_type" jdbcType="TINYINT" property="contentType" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
@@ -71,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, group_id, is_delete, create_date, modify_date
+    id, user_id, group_id, content_type, is_delete, create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -128,12 +129,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_group_message (user_id, group_id, is_delete, 
-      create_date, modify_date, content
-      )
-    values (#{userId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{isDelete,jdbcType=BIT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR}
-      )
+    insert into c_group_message (user_id, group_id, content_type, 
+      is_delete, create_date, modify_date, 
+      content)
+    values (#{userId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{contentType,jdbcType=TINYINT}, 
+      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
+      #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.GroupMessageModel">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -146,6 +147,9 @@
       </if>
       <if test="groupId != null">
         group_id,
+      </if>
+      <if test="contentType != null">
+        content_type,
       </if>
       <if test="isDelete != null">
         is_delete,
@@ -166,6 +170,9 @@
       </if>
       <if test="groupId != null">
         #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=TINYINT},
       </if>
       <if test="isDelete != null">
         #{isDelete,jdbcType=BIT},
@@ -199,6 +206,9 @@
       <if test="record.groupId != null">
         group_id = #{record.groupId,jdbcType=BIGINT},
       </if>
+      <if test="record.contentType != null">
+        content_type = #{record.contentType,jdbcType=TINYINT},
+      </if>
       <if test="record.isDelete != null">
         is_delete = #{record.isDelete,jdbcType=BIT},
       </if>
@@ -221,6 +231,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       user_id = #{record.userId,jdbcType=BIGINT},
       group_id = #{record.groupId,jdbcType=BIGINT},
+      content_type = #{record.contentType,jdbcType=TINYINT},
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
@@ -234,6 +245,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       user_id = #{record.userId,jdbcType=BIGINT},
       group_id = #{record.groupId,jdbcType=BIGINT},
+      content_type = #{record.contentType,jdbcType=TINYINT},
       is_delete = #{record.isDelete,jdbcType=BIT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP}
@@ -249,6 +261,9 @@
       </if>
       <if test="groupId != null">
         group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="contentType != null">
+        content_type = #{contentType,jdbcType=TINYINT},
       </if>
       <if test="isDelete != null">
         is_delete = #{isDelete,jdbcType=BIT},
@@ -269,6 +284,7 @@
     update c_group_message
     set user_id = #{userId,jdbcType=BIGINT},
       group_id = #{groupId,jdbcType=BIGINT},
+      content_type = #{contentType,jdbcType=TINYINT},
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP},
@@ -279,6 +295,7 @@
     update c_group_message
     set user_id = #{userId,jdbcType=BIGINT},
       group_id = #{groupId,jdbcType=BIGINT},
+      content_type = #{contentType,jdbcType=TINYINT},
       is_delete = #{isDelete,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP}

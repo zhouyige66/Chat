@@ -10,6 +10,8 @@ public class MessageModel implements Serializable {
 
     private Long toUserId;
 
+    private Integer contentType;
+
     private Boolean received;
 
     private Boolean fromUserDelete;
@@ -63,6 +65,19 @@ public class MessageModel implements Serializable {
 
     public void setToUserId(Long toUserId) {
         this.toUserId = toUserId;
+    }
+
+    public Integer getContentType() {
+        return contentType;
+    }
+
+    public MessageModel withContentType(Integer contentType) {
+        this.setContentType(contentType);
+        return this;
+    }
+
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
     }
 
     public Boolean getReceived() {
@@ -165,6 +180,7 @@ public class MessageModel implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", fromUserId=").append(fromUserId);
         sb.append(", toUserId=").append(toUserId);
+        sb.append(", contentType=").append(contentType);
         sb.append(", received=").append(received);
         sb.append(", fromUserDelete=").append(fromUserDelete);
         sb.append(", toUserDelete=").append(toUserDelete);

@@ -34,7 +34,7 @@ import java.util.Set;
 public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
     private Logger logger = LoggerFactory.getLogger(ReadHeartbeatMessageHandler.class);
     private final int heartFailMax = 5;
-    private volatile int heartFailCount = 0;
+    private Map<String, Integer> heartFailMap = new HashMap<>(12);
 
     @Autowired
     UserChannelManager userChannelManager;
@@ -45,10 +45,12 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage) throws Exception {
+        Channel channel = ctx.channel();
+        String channelId = channel.id().asShortText();
         // 收到任何消息，均把心跳失败数置零
-        heartFailCount = 0;
+        heartFailMap.put(channelId, 0);
         // 原样返回心跳信息
-        messageSender.sendMessage(ctx.channel(), heartbeatMessage);
+        messageSender.sendMessage(channel, heartbeatMessage);
     }
 
     @Override
@@ -57,12 +59,26 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-                heartFailCount++;
-                logger.debug("客户端：{}，心跳消息读失败：{}次", ctx.channel().remoteAddress(), heartFailCount);
+                Channel channel = ctx.channel();
+                String channelId = channel.id().asShortText();
+                Integer integer = heartFailMap.get(channelId);
+                if (integer == null) {
+                    integer = 0;
+                }
+                integer++;
+                logger.debug("客户端：{}，心跳消息读失败：{}次", channelId, integer);
                 hasDeal = true;
-                if (heartFailCount > heartFailMax) {
-                    heartFailCount = 0;
-                    heartbeatFail(ctx);
+                if (integer > heartFailMax) {
+                    logger.debug("客户端：{}，心跳失败，关闭通道", channelId);
+                    heartFailMap.remove(channelId);
+                    Long userId = userChannelManager.getUserId(channel);
+                    userChannelManager.remove(userId);
+                    // 通知好友，该用户下线了
+                    notifyFriend(userId);
+                    // 关闭通道
+                    channel.close();
+                } else {
+                    heartFailMap.put(channelId, integer);
                 }
             }
         }
@@ -70,17 +86,6 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
         if (!hasDeal) {
             super.userEventTriggered(ctx, evt);
         }
-    }
-
-    private void heartbeatFail(ChannelHandlerContext ctx) {
-        Channel channel = ctx.channel();
-        logger.debug("客户端读超时，关闭通道：{}", channel.id().asShortText());
-        Long userId = userChannelManager.getUserId(channel);
-        userChannelManager.remove(userId);
-        // 通知好友，该用户下线了
-        notifyFriend(userId);
-        // 关闭通道
-        ctx.close();
     }
 
     private void notifyFriend(Long userId) {

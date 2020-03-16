@@ -10,6 +10,8 @@ public class GroupMessageModel implements Serializable {
 
     private Long groupId;
 
+    private Integer contentType;
+
     private Boolean isDelete;
 
     private Date createDate;
@@ -57,6 +59,19 @@ public class GroupMessageModel implements Serializable {
 
     public void setGroupId(Long groupId) {
         this.groupId = groupId;
+    }
+
+    public Integer getContentType() {
+        return contentType;
+    }
+
+    public GroupMessageModel withContentType(Integer contentType) {
+        this.setContentType(contentType);
+        return this;
+    }
+
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
     }
 
     public Boolean getIsDelete() {
@@ -120,6 +135,7 @@ public class GroupMessageModel implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", userId=").append(userId);
         sb.append(", groupId=").append(groupId);
+        sb.append(", contentType=").append(contentType);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", createDate=").append(createDate);
         sb.append(", modifyDate=").append(modifyDate);

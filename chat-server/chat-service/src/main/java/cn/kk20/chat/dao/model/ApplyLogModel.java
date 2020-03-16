@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class ApplyLogModel implements Serializable {
-    public static final int APPLY_TYPE_ADD_FRIEND=0;
-    public static final int APPLY_TYPE_ADD_GROUP=1;
     private Long id;
 
     private Integer type;

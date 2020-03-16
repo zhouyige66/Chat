@@ -28,7 +28,7 @@ public class MessageSender {
     ClientChannelManager clientChannelManager;
 
     public void sendMessage(String clientId, Message message) {
-        Channel channel = clientChannelManager.getClient(clientId);
+        Channel channel = clientChannelManager.getChannel(clientId);
         sendMessage(channel, message);
     }
 
