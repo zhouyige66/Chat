@@ -23,6 +23,10 @@ public class RedisUtil {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+    public void delete(String key) {
+        redisTemplate.delete(key);
+    }
+
     public void setStringValue(String key, String value) {
         stringRedisTemplate.opsForValue().set(key, value);
     }

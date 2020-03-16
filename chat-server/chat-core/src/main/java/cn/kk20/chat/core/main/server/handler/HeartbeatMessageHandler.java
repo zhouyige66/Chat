@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ChannelHandler.Sharable
 public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<HeartbeatMessage> {
     private Logger logger = LoggerFactory.getLogger(HeartbeatMessageHandler.class);
-    private final int heartFailMax = 5;
-    private volatile int heartFailCount = 0;
 
     @Autowired
     ClientChannelManager clientChannelManager;
@@ -32,26 +30,25 @@ public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<Heartbe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage) throws Exception {
         // 收到任何消息，均把心跳失败数置零
-        heartFailCount = 0;
+        Channel channel = ctx.channel();
+        clientChannelManager.channelHeartFailReset(channel);
         // 取出传递的参数
         String clientId = heartbeatMessage.getData();
-        Channel channel = ctx.channel();
-        ChannelId id = channel.id();
-        logger.debug("ChannelId=={}", id.asShortText());
         clientChannelManager.addClient(clientId, channel);
         messageSender.sendMessage(channel, heartbeatMessage);
     }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        logger.info("当前线程为：{}", Thread.currentThread().getId());
         boolean hasDeal = false;
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-                heartFailCount++;
-                logger.debug("心跳消息读失败：{}次", heartFailCount);
+                int heartFail = clientChannelManager.channelHeartFail(ctx.channel());
+                logger.info("心跳消息读失败：{}次", heartFail);
                 hasDeal = true;
-                if (heartFailCount > heartFailMax) {
+                if (heartFail > 5) {
                     heartbeatFail(ctx);
                     ctx.close();
                 }
@@ -63,28 +60,8 @@ public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<Heartbe
         }
     }
 
-    @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        logger.debug("channelRegistered");
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        logger.debug("channelUnregistered");
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        logger.debug("channelActive");
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        logger.debug("channelInactive");
-        clientChannelManager.removeClient(ctx.channel());
-    }
-
     private void heartbeatFail(ChannelHandlerContext ctx) {
+        clientChannelManager.channelHeartFailReset(ctx.channel());
         clientChannelManager.removeClient(ctx.channel());
     }
 

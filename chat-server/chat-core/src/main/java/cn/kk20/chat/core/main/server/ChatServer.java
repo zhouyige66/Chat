@@ -1,9 +1,11 @@
 package cn.kk20.chat.core.main.server;
 
+import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.Launcher;
 import cn.kk20.chat.core.main.ServerComponent;
 import cn.kk20.chat.core.main.server.initializer.ServerChannelInitializer;
+import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -33,6 +35,8 @@ public class ChatServer implements Launcher {
     ChatConfigBean chatConfigBean;
     @Autowired
     ServerChannelInitializer serverChannelInitializer;
+    @Autowired
+    RedisUtil redisUtil;
 
     @Override
     public void launch() {
@@ -75,6 +79,9 @@ public class ChatServer implements Launcher {
         if (serverExecutor != null && !serverExecutor.isShutdown()) {
             serverExecutor.shutdown();
         }
+
+        // 回收操作
+        redisUtil.delete(ConstantValue.LIST_OF_SERVER);
     }
 
     @Override

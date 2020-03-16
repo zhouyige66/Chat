@@ -56,7 +56,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
             wrapper.setChannel(channel);
             wrapper.setUserModel(userModel);
             wrapper.setIsWebUser(false);
-            userChannelManager.addClient(wrapper);
+            userChannelManager.cache(wrapper);
 
             // TODO 保存登录日志
             LoginLogModel loginLogModel = new LoginLogModel();
@@ -65,7 +65,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
                     .withDevice("暂无")
                     .withLocation("暂无");
         } else {
-            userChannelManager.removeClient(userId);
+            userChannelManager.remove(userId);
         }
 
         // 查询好友列表，走数据库或redis

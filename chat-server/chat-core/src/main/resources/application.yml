@@ -1,5 +1,5 @@
 server:
-  port: 9001
+  port: 9000
 
 spring:
   redis:
@@ -13,14 +13,14 @@ logging:
     root: info
 
 chat:
-  registerAsServer: false
+  registerAsServer: true
   coderType: DELIMITER
   server:
     port: 10000
     autoRestartTimeInterval: 5
   client:
     center:
-      host: 192.168.1.10
+      host: localhost
       port: 10000
       autoRestartTimeInterval: 5
     commonServer:

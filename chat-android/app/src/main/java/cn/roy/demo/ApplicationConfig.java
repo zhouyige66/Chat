@@ -22,6 +22,7 @@ public final class ApplicationConfig {
         public static final String API_GET_VERIFY_LIST = "/verify/list";
         public static final String API_GET_GROUP_LIST = "/group/list";
         public static final String API_GET_FRIEND_LIST = "/friend/list";
+        public static final String API_GET_NETTY_HOST = "/netty/getHost";
     }
 
 }

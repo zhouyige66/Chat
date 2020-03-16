@@ -33,8 +33,9 @@ public class MessageSender {
     }
 
     public void sendMessage(Channel channel, Message message) {
+        final String channelId = channel.id().asShortText();
         if (channel == null || !channel.isActive()) {
-            logger.debug("指定的消息接收者已断开连接");
+            logger.info("发送消息，发送通道：{}，已断开连接", channelId);
             return;
         }
 
@@ -42,16 +43,17 @@ public class MessageSender {
         channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
             public void operationComplete(Future<? super Void> future) throws Exception {
-                logger.debug("发送消息，收到回调，发送：{}", channel.remoteAddress(),
+                logger.info("发送消息，发送通道：{}，收到回调，发送：{}", channelId,
                         channelFuture.isSuccess() ? "成功" : "失败");
             }
         });
         MessageType messageType = message.getMessageType();
         if (messageType == MessageType.HEARTBEAT) {
-            logger.debug("发送消息，心跳接收者：{}，发送：{}", channel.remoteAddress(),
+            logger.debug("发送消息，发送通道：{}，心跳接收者：{}，发送：{}", channelId, channel.remoteAddress(),
                     channelFuture.isSuccess() ? "成功" : "失败");
         } else {
-            logger.debug("发送消息，消息类型：{}，发送：{}", messageType, channelFuture.isSuccess() ? "成功" : "失败");
+            logger.info("发送消息，发送通道：{}，消息类型：{}，发送：{}", channelId, messageType,
+                    channelFuture.isSuccess() ? "成功" : "失败");
         }
     }
 

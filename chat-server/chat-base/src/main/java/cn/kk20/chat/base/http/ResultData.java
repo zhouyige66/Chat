@@ -75,12 +75,12 @@ public class ResultData implements Serializable {
         return resultData;
     }
 
-    public static ResultData fail(int code, String msg) {
-        return fail(code, msg, null);
+    public static ResultData fail(ResultCode resultCode, String msg) {
+        return fail(resultCode, msg, null);
     }
 
-    public static ResultData fail(int code, String msg, String exception) {
-        ResultData resultData = new ResultData().setCode(code).setMsg(msg).setException(exception);
+    public static ResultData fail(ResultCode resultCode, String msg, String exception) {
+        ResultData resultData = createResultData(resultCode, msg).setException(exception);
         return resultData;
     }
 

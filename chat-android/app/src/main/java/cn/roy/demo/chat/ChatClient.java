@@ -2,8 +2,12 @@ package cn.roy.demo.chat;
 
 import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +26,7 @@ import cn.roy.demo.chat.handler.MessageHandler;
 import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
+import cn.roy.demo.util.http.HttpUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -46,6 +51,8 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 /**
  * @Description:
@@ -123,6 +130,7 @@ public class ChatClient {
                  * 4.重连
                  * 5.重登录
                  */
+                LogUtil.d(ChatClient.this, "核心线程，重试一次");
                 if (TextUtils.isEmpty(config.getHost()) || failCount >= 5) {
                     // 调用接口获取服务器地址
                     getHostFromServer();
@@ -136,15 +144,32 @@ public class ChatClient {
 
     private void getHostFromServer() {
         LogUtil.d(this, "调用接口查询聊天服务器Host");
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        failCount = 0;
-        config.setHost(ApplicationConfig.NettyConfig.CHAT_SERVER_HOST);
-        config.setPort(ApplicationConfig.NettyConfig.CHAT_SERVER_PORT);
-        reconnect();
+        Observer<JSONObject> observer = new Observer<JSONObject>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+
+            @Override
+            public void onNext(JSONObject jsonObject) {
+                failCount = 0;
+                JSONObject map = jsonObject.getJSONObject("map");
+                config.setHost(map.getString("host"));
+                config.setPort(map.getIntValue("port"));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        };
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", CacheManager.getInstance().getCurrentUserId());
+        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_NETTY_HOST,
+                params, observer);
     }
 
     private void reconnect() {
@@ -199,7 +224,7 @@ public class ChatClient {
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    LogUtil.d(ChatClient.this, "监听回调：" + future.isSuccess() + "/" + future.isDone());
+                    LogUtil.d(ChatClient.this, "监听回调：" + future.isSuccess());
                     if (future.isSuccess()) {// 连接成功
                         connectSuccess = true;
                         // 重置失败次数
@@ -245,6 +270,7 @@ public class ChatClient {
     }
 
     private void notifyStatus(ChatServerStatus status) {
+        LogUtil.d(this, "广播状态：" + status.getDes());
         this.status = status;
         if (observableEmitterList.size() == 0) {
             return;

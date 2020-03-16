@@ -3,6 +3,7 @@ package cn.kk20.chat.api.controller;
 import cn.kk20.chat.api.ConstantValue;
 import cn.kk20.chat.api.call.CallCenterServerService;
 import cn.kk20.chat.base.http.ResultData;
+import cn.kk20.chat.base.http.dto.MapDto;
 import cn.kk20.chat.base.message.ChatMessage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -43,18 +45,34 @@ public class NettyRelateController {
         String str = (String) redisTemplate.opsForValue().get(ConstantValue.LIST_OF_SERVER);
         Set<String> hostSet = JSON.parseObject(str, new TypeReference<Set<String>>() {
         });
+        if (CollectionUtils.isEmpty(hostSet)) {
+            return ResultData.fail(ResultData.ResultCode.CUSTOM_ERROR, "无主机可用");
+        }
         // 查询单个主机连接数量，做平均负载均衡
         String minConnectHost = null;
         int minConnectCount = 0;
         for (String host : hostSet) {
-            int count = (int) redisTemplate.opsForValue().get(ConstantValue.STATISTIC_OF_HOST + host);
-            if (minConnectHost == null || count < minConnectCount) {
+            Object object = redisTemplate.opsForValue().get(ConstantValue.STATISTIC_OF_HOST + host);
+            if (object == null) {
                 minConnectHost = host;
-                minConnectCount = count;
+                break;
+            } else {
+                int count = (int) object;
+                if (minConnectHost == null || count < minConnectCount) {
+                    minConnectHost = host;
+                    minConnectCount = count;
+                }
             }
         }
 
-        return ResultData.success(minConnectHost);
+        String[] split = minConnectHost.split(":");
+        String[] ports = split[1].split("&");
+        String host = split[0];
+        int port = Integer.valueOf(ports[0]);
+        MapDto mapDto = new MapDto();
+        mapDto.add("host", host);
+        mapDto.add("port", port);
+        return ResultData.success(mapDto);
     }
 
     @PostMapping("sendMessage")

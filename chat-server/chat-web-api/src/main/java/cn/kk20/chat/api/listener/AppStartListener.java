@@ -18,9 +18,9 @@ public class AppStartListener implements ApplicationListener<ApplicationContextE
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
-            System.out.println("程序启动完成，启动ChatServer");
+            System.out.println("程序启动完成");
         } else if (event instanceof ContextClosedEvent) {
-            System.out.println("程序关闭，停止ChatServer");
+            System.out.println("程序关闭");
         } else {
             System.out.println("ApplicationContextEvent==" + event.getClass().getSimpleName());
         }

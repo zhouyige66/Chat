@@ -6,6 +6,7 @@ import cn.kk20.chat.core.main.Launcher;
 import cn.kk20.chat.core.main.client.initializer.CenterClientChannelInitializer;
 import cn.kk20.chat.core.main.client.initializer.ClientChannelInitializer;
 import cn.kk20.chat.core.main.client.initializer.WebClientChannelInitializer;
+import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -105,7 +106,7 @@ public class ChatClient implements Launcher {
         }, 0, chatConfigBean.getClient().getWebServer().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
         // 中心服务器
         centerServerExecutor.scheduleWithFixedDelay(() -> {
-            logger.debug("连接中心服务器：执行一次");
+            logger.info("连接中心服务器：执行一次");
             nioEventLoopGroup = new NioEventLoopGroup(1);
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(nioEventLoopGroup)
@@ -131,10 +132,10 @@ public class ChatClient implements Launcher {
                 Channel channel = channelFuture.channel();
                 // 服务器同步连接断开时,这句代码才会往下执行
                 channel.closeFuture().sync();
-                logger.debug("连接中心服务器：正常关闭");
+                logger.info("连接中心服务器：正常关闭");
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                logger.debug("连接中心服务器：发生异常");
+                logger.info("连接中心服务器：发生异常");
             } finally {
                 userChannelManager.removeCenterChannel();
                 connectSuccess = false;
@@ -145,7 +146,7 @@ public class ChatClient implements Launcher {
                     nioEventLoopGroup.shutdownGracefully();
                 }
                 nioEventLoopGroup = null;
-                logger.debug("连接中心服务器：shutdown={}，shuttingDown={}，terminated={}",
+                logger.info("连接中心服务器：shutdown={}，shuttingDown={}，terminated={}",
                         shutdown, shuttingDown, terminated);
             }
         }, 0, chatConfigBean.getClient().getCenter().getAutoRestartTimeInterval(), TimeUnit.SECONDS);
@@ -178,6 +179,9 @@ public class ChatClient implements Launcher {
         if (centerServerExecutor != null && !centerServerExecutor.isShutdown()) {
             centerServerExecutor.shutdown();
         }
+
+        // 收尾
+        userChannelManager.clear();
     }
 
     @Override

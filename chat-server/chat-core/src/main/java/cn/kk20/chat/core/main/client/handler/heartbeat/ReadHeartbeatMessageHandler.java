@@ -74,9 +74,9 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
 
     private void heartbeatFail(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
-        logger.debug("客户端：{}，读超时，关闭通道", channel.remoteAddress());
-        Long userId = userChannelManager.getUserId(channel.remoteAddress());
-        userChannelManager.removeClient(userId);
+        logger.debug("客户端读超时，关闭通道：{}", channel.id().asShortText());
+        Long userId = userChannelManager.getUserId(channel);
+        userChannelManager.remove(userId);
         // 通知好友，该用户下线了
         notifyFriend(userId);
         // 关闭通道

@@ -24,6 +24,7 @@ import cn.roy.demo.fragment.UserInfoFragment;
 import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.service.ChatService;
 import cn.roy.demo.util.CacheManager;
+import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -141,6 +142,7 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onNext(ChatServerStatus status) {
+                        LogUtil.d(MainActivity.this, "收到状态变更通知：" + status.getDes());
                         tv_chat_status.setText(status.getDes());
                     }
 

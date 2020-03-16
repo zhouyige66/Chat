@@ -9,7 +9,6 @@ import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @ClientComponent
 public class UserChannelManager {
     // 客户端通道
-    private ConcurrentHashMap<Long, UserWrapper> userMap = new ConcurrentHashMap<>(12);
-    private ConcurrentHashMap<SocketAddress, Long> hostUserMap = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<Long, UserWrapper> userWrapperMap = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<String, Long> channelIdMap = new ConcurrentHashMap<>(12);
     // 中心服务器通道
     private Channel centerChannel;
 
@@ -31,51 +30,60 @@ public class UserChannelManager {
     @Autowired
     RedisUtil redisUtil;
 
-    public void addClient(UserWrapper userWrapper) {
+    public void cache(UserWrapper userWrapper) {
         Long userId = userWrapper.getUserModel().getId();
-        UserWrapper existUserWrapper = userMap.get(userId);
+        UserWrapper existUserWrapper = userWrapperMap.get(userId);
         if (null != existUserWrapper) {
             // 已经存在且不是当前通道，则关闭
             Channel channel = existUserWrapper.getChannel();
             if (channel != null && channel.isActive() && channel != userWrapper.getChannel()) {
                 channel.closeFuture();
             }
-            hostUserMap.remove(channel.remoteAddress());
+            String channelId = channel.id().asShortText();
+            channelIdMap.remove(channelId);
         }
         // 添加到通道容器
-        userMap.put(userId, userWrapper);
-        SocketAddress socketAddress = userWrapper.getChannel().remoteAddress();
-        hostUserMap.put(socketAddress, userId);
-        // 存储到redis
+        userWrapperMap.put(userId, userWrapper);
+        Channel channel = userWrapper.getChannel();
+        String channelId = channel.id().asShortText();
+        channelIdMap.put(channelId, userId);
+        // 存储到redis，更新当前主机的连接数据量
         String host = getHost();
         redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, host);
-        // 更新当前主机的连接数据量
-        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + host, userMap.size());
+        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + host, userWrapperMap.size());
     }
 
-    private String getHost(){
+    private String getHost() {
         String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
                 chatConfigBean.getClient().getCommonServer().getPort(),
                 chatConfigBean.getClient().getWebServer().getPort());
         return host;
     }
 
-    public void removeClient(Long userId) {
-        UserWrapper remove = userMap.remove(userId);
-        hostUserMap.remove(remove.getChannel().remoteAddress());
+    public void remove(Long userId) {
+        UserWrapper remove = userWrapperMap.remove(userId);
+        channelIdMap.remove(remove.getChannel().id().asShortText());
         redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
-        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userMap.size());
+        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());
     }
 
     public UserWrapper getClient(Long userId) {
-        return userMap.get(userId);
+        return userWrapperMap.get(userId);
     }
 
-    public Long getUserId(SocketAddress socketAddress) {
-        return hostUserMap.get(socketAddress);
+    public Long getUserId(Channel channel) {
+        String channelId = channel.id().asShortText();
+        return channelIdMap.get(channelId);
     }
 
-    /**********功能：服务器通道**********/
+    public void clear() {
+        userWrapperMap.clear();
+        channelIdMap.clear();
+        // 清除当前主机上连接数
+        redisUtil.delete(ConstantValue.STATISTIC_OF_HOST + getHost());
+    }
+
+    /**********功能：中心服务器通道**********/
     public Channel getCenterChannel() {
         return centerChannel;
     }

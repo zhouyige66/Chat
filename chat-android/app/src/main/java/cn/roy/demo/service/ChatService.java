@@ -6,7 +6,6 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.chat.ChatClient;
 import cn.roy.demo.chat.ChatConfig;
 
@@ -25,8 +24,6 @@ public class ChatService extends Service {
 
         chatClient = ChatClient.getInstance();
         ChatConfig chatConfig = new ChatConfig();
-        chatConfig.setHost(ApplicationConfig.NettyConfig.CHAT_SERVER_HOST);
-        chatConfig.setPort(ApplicationConfig.NettyConfig.CHAT_SERVER_PORT);
         chatConfig.setAutoReconnectTime(10);
         chatConfig.setHeartbeatFailCount(5);
         chatClient.setConfig(chatConfig);

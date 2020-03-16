@@ -71,6 +71,7 @@ public class WriteHeartbeatMessageHandler extends SimpleChannelInboundHandler<He
     }
 
     private void heartbeatFail(ChannelHandlerContext ctx) {
+        heartFailCount = 0;
         logger.debug("心跳失败，中心服务器无法连接，通道为：{}", ctx.channel());
         ctx.close();
     }

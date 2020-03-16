@@ -65,7 +65,7 @@ public class UserController {
             throws Exception {
         UserModel userModel = userService.login(userName, password);
         if (!userModel.getPassword().equals(password)) {
-            return ResultData.fail(202, "登录密码错误");
+            return ResultData.requestError("登录密码错误");
         }
         userModel.setPassword(null);
         userModel.setGroupList(null);

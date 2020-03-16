@@ -23,6 +23,7 @@ public class ClientChannelManager {
     private final Logger logger = LoggerFactory.getLogger(ClientChannelManager.class);
     private ConcurrentHashMap<String, Channel> clientMap = new ConcurrentHashMap<>(12);
     private ConcurrentHashMap<String, String> channelMap = new ConcurrentHashMap<>(12);
+    private ConcurrentHashMap<String, Integer> channelFailCountMap = new ConcurrentHashMap<>(12);
 
     @Autowired
     RedisUtil redisUtil;
@@ -62,6 +63,23 @@ public class ClientChannelManager {
         redisUtil.saveParam(ConstantValue.LIST_OF_SERVER, JSON.toJSONString(clientMap.keys()));
         logger.info("客户端：{}", JSON.toJSONString(clientMap));
         logger.info("通道：{}", JSON.toJSONString(channelMap));
+    }
+
+    public void channelHeartFailReset(Channel channel) {
+        String channelId = channel.id().asShortText();
+        Integer integer = 0;
+        channelFailCountMap.put(channelId, integer);
+    }
+
+    public int channelHeartFail(Channel channel) {
+        String channelId = channel.id().asShortText();
+        Integer integer = channelFailCountMap.get(channelId);
+        if (integer == null) {
+            integer = 0;
+        }
+        integer++;
+        channelFailCountMap.put(channelId, integer);
+        return integer;
     }
 
 }
