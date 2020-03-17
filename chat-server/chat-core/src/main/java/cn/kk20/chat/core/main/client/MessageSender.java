@@ -1,5 +1,6 @@
 package cn.kk20.chat.core.main.client;
 
+import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ForwardMessage;
 import cn.kk20.chat.base.message.Message;
 import cn.kk20.chat.base.message.MessageType;
@@ -11,6 +12,8 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,15 +64,28 @@ public class MessageSender {
             return;
         }
 
+        final MessageType messageType = message.getMessageType();
         ChannelFuture channelFuture = channel.writeAndFlush(message);
-        MessageType messageType = message.getMessageType();
-        if (messageType == MessageType.HEARTBEAT) {
-            logger.debug("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), messageType.getDes(),
-                    channelFuture.isSuccess() ? "成功" : "失败");
-        } else {
-            logger.info("发送消息，消息接收者：{},类型为：{}，发送：{}", channel.remoteAddress(), messageType.getDes(),
-                    channelFuture.isSuccess() ? "成功" : "失败");
-        }
+        channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+            @Override
+            public void operationComplete(Future<? super Void> future) throws Exception {
+                String channelId = channel.id().asShortText();
+                boolean success = future.isSuccess();
+                switch (messageType) {
+                    case CHAT:
+                        ChatMessage chatMessage = (ChatMessage) message;
+                        logger.info("发送消息，传输通道：{}，消息id：{}，发送：{}", channelId,
+                                chatMessage.getId(),
+                                success ? "成功" : "失败");
+                        break;
+                    default:
+                        logger.debug("发送消息，传输通道：{}，类型为：{}，发送：{}", channelId,
+                                messageType.getDes(),
+                                success ? "成功" : "失败");
+                        break;
+                }
+            }
+        });
     }
 
 }

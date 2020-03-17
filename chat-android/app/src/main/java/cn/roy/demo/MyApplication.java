@@ -3,7 +3,6 @@ package cn.roy.demo;
 import android.app.Application;
 
 import cn.roy.demo.util.SPUtil;
-import io.reactivex.disposables.Disposable;
 
 /**
  * @Description:
@@ -18,29 +17,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         SPUtil.inject(this);
-
-//        MessageManager.getInstance().getMessageListObservable()
-//                .subscribe(new Observer<ChatMessage>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(ChatMessage chatMessage) {
-//                        LogUtil.log("Application收到通知");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
     }
 
 

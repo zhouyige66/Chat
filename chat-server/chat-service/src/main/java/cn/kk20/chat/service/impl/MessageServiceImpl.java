@@ -21,7 +21,7 @@ public class MessageServiceImpl implements MessageService {
     MessageModelMapper messageModelMapper;
 
     @Override
-    public int save(MessageModel model) {
+    public int insert(MessageModel model) {
         return messageModelMapper.insertSelective(model);
     }
 
@@ -40,7 +40,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public int update(MessageModel model) {
-        return messageModelMapper.updateByPrimaryKey(model);
+        return messageModelMapper.updateByPrimaryKeySelective(model);
     }
 
     @Override

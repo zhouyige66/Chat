@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 9002
 
 spring:
   redis:
@@ -13,7 +13,7 @@ logging:
     root: info
 
 chat:
-  registerAsServer: true
+  registerAsServer: false
   coderType: DELIMITER
   server:
     port: 10000

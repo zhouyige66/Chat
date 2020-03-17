@@ -11,7 +11,7 @@ import java.util.List;
  * @Version: v1.0
  */
 public interface MessageService {
-    int save(MessageModel model);
+    int insert(MessageModel model);
 
     int delete(Long id);
 
