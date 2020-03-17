@@ -1,17 +1,23 @@
 package cn.kk20.chat.core.main.client.processor;
 
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.NotifyMessage;
 import cn.kk20.chat.base.message.chat.ChatMessageType;
+import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.main.ClientComponent;
+import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.dao.model.GroupMessageModel;
 import cn.kk20.chat.dao.model.MessageModel;
 import cn.kk20.chat.service.GroupMessageService;
 import cn.kk20.chat.service.MessageService;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ClientComponent
 public class ProcessorManager {
+    private static final Logger logger = LoggerFactory.getLogger(ProcessorManager.class);
     private ConcurrentHashMap<Integer, MessageProcessor> messageProcessorMap;
 
     @Autowired
@@ -31,6 +38,8 @@ public class ProcessorManager {
     MessageService messageService;
     @Autowired
     GroupMessageService groupMessageService;
+    @Autowired
+    MessageSender messageSender;
 
     @Bean
     public ProcessorManager init() {
@@ -51,8 +60,9 @@ public class ProcessorManager {
 
     public void handleMessage(ChannelHandlerContext ctx, ChatMessage chatMessage, boolean isFromWeb) {
         // 在此处统一存储，存入数据库或redis
+        Long originId = chatMessage.getId();
         ChatMessageType chatMessageType = chatMessage.getChatMessageType();
-        Long id = null;
+        Long currentId = null;
         if (chatMessageType == ChatMessageType.GROUP) {
             GroupMessageModel groupMessageModel = new GroupMessageModel();
             groupMessageModel.setUserId(chatMessage.getFromUserId());
@@ -60,7 +70,7 @@ public class ProcessorManager {
             groupMessageModel.setContentType(chatMessage.getBodyType().getCode());
             groupMessageModel.setContent(chatMessage.getBody());
             groupMessageService.insert(groupMessageModel);
-            id = groupMessageModel.getId();
+            currentId = groupMessageModel.getId();
         } else {
             MessageModel messageModel = new MessageModel();
             messageModel.setFromUserId(chatMessage.getFromUserId());
@@ -68,13 +78,22 @@ public class ProcessorManager {
             messageModel.setContent(chatMessage.getBody());
             messageModel.setContentType(chatMessage.getBodyType().getCode());
             messageService.insert(messageModel);
-            id = messageModel.getId();
+            currentId = messageModel.getId();
         }
+        // 保存成功，回复客户端，数据库ID
+        Map<String, Object> map = new HashMap<>();
+        map.put("originId", originId);
+        map.put("currentId", currentId);
+        logger.debug("回复消息：originId={}，currentId={}", originId, currentId);
+        NotifyMessage notifyMessage = new NotifyMessage();
+        notifyMessage.setNotifyMessageType(NotifyMessageType.CHAT_MESSAGE_ID);
+        notifyMessage.setData(map);
+        messageSender.sendMessage(ctx.channel(), notifyMessage);
 
         // 分配至业务处理器
         int messageType = chatMessageType.getCode();
         MessageProcessor processor = messageProcessorMap.get(messageType);
-        chatMessage.setId(id);
+        chatMessage.setId(currentId);
         processor.processMessage(ctx, chatMessage, isFromWeb);
     }
 

@@ -27,6 +27,7 @@ public class StringToObjectDecoder extends MessageToMessageDecoder<String> {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, String s, List<Object> list)
             throws Exception {
+        System.out.println("解析：" + s);
         JSONObject jsonObject = JSON.parseObject(s);
         if (!jsonObject.containsKey("messageType")) {
             list.add(s);

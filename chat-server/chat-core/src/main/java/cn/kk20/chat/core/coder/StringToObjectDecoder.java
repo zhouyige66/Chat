@@ -1,6 +1,7 @@
 package cn.kk20.chat.core.coder;
 
 import cn.kk20.chat.base.message.*;
+import cn.kk20.chat.base.message.NotifyMessage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.ChannelHandlerContext;

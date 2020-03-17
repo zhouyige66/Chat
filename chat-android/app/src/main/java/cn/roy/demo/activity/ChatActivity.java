@@ -26,6 +26,7 @@ import cn.roy.demo.chat.ChatClient;
 import cn.roy.demo.model.Group;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
+import cn.roy.demo.util.IdGenerator;
 import cn.roy.demo.util.LogUtil;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -197,6 +198,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 messageList.add(chatMessage);
                 // 发送消息
                 if (ChatClient.getInstance().isConnectSuccess()) {
+                    chatMessage.setId(IdGenerator.generate());
                     ChatClient.getInstance().sendMessage(chatMessage);
                 } else {
                     // TODO 即时通讯未连接，通过http方式请求接口发送

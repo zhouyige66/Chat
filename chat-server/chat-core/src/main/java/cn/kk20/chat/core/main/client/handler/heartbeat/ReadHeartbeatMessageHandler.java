@@ -2,6 +2,7 @@ package cn.kk20.chat.core.main.client.handler.heartbeat;
 
 import cn.kk20.chat.base.message.HeartbeatMessage;
 import cn.kk20.chat.base.message.NotifyMessage;
+import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
@@ -110,6 +111,8 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
         map.put("id", userId);
         map.put("login", false);
         NotifyMessage notifyMessage = new NotifyMessage();
+        notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_NOTIFY);
+        notifyMessage.setData(map);
         for (Long friendId : onlineFriendMap.keySet()) {
             messageSender.sendMessage(friendId, notifyMessage);
         }

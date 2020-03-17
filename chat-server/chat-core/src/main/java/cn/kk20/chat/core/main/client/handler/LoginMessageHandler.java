@@ -2,6 +2,7 @@ package cn.kk20.chat.core.main.client.handler;
 
 import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.NotifyMessage;
+import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.main.client.UserChannelManager;
@@ -85,6 +86,8 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         // 回复当前登录用户，好友在线名单
         if (login) {
             NotifyMessage notifyMessage = new NotifyMessage();
+            notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_REPLY);
+            notifyMessage.setData(onlineFriendIdSet);
             messageSender.sendMessage(channel, notifyMessage);
         }
         // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线的好友没必要通知
@@ -92,6 +95,8 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         map.put("id", userId);
         map.put("login", login);
         NotifyMessage notifyMessage = new NotifyMessage();
+        notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_NOTIFY);
+        notifyMessage.setData(map);
         for (Long friendId : onlineFriendIdSet) {
             messageSender.sendMessage(friendId, notifyMessage);
         }
