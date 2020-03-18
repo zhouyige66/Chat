@@ -84,6 +84,7 @@ public class ProcessorManager {
         Map<String, Object> map = new HashMap<>();
         map.put("originId", originId);
         map.put("currentId", currentId);
+        map.put("timestamp", System.currentTimeMillis());
         logger.debug("回复消息：originId={}，currentId={}", originId, currentId);
         NotifyMessage notifyMessage = new NotifyMessage();
         notifyMessage.setNotifyMessageType(NotifyMessageType.CHAT_MESSAGE_ID);

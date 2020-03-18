@@ -13,6 +13,7 @@ import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.Message;
 import cn.kk20.chat.base.message.MessageType;
 import cn.kk20.chat.base.message.NotifyMessage;
+import cn.roy.demo.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
@@ -27,7 +28,7 @@ public class StringToObjectDecoder extends MessageToMessageDecoder<String> {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, String s, List<Object> list)
             throws Exception {
-        System.out.println("解析：" + s);
+        LogUtil.d(this, "收到的内容原文：" + s);
         JSONObject jsonObject = JSON.parseObject(s);
         if (!jsonObject.containsKey("messageType")) {
             list.add(s);

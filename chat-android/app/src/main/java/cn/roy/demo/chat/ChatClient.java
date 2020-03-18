@@ -153,7 +153,11 @@ public class ChatClient {
             public void onNext(JSONObject jsonObject) {
                 failCount = 0;
                 JSONObject map = jsonObject.getJSONObject("map");
-                config.setHost(map.getString("host"));
+                String host = map.getString("host");
+                if(host.equals("127.0.0.1")){
+                    host = "10.0.2.2";
+                }
+                config.setHost(host);
                 config.setPort(map.getIntValue("port"));
             }
 

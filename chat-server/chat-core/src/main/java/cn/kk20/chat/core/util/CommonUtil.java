@@ -39,7 +39,7 @@ public class CommonUtil {
         } catch (Exception e) {
             System.err.println("IP地址获取失败" + e.toString());
         }
-        return null;
+        return "127.0.0.1";
     }
 
     public static String getHostIp2() {

@@ -39,4 +39,5 @@ public class NotifyMessage extends Message {
     public void setData(Object object) {
         this.setData(JSON.toJSONString(object));
     }
+
 }

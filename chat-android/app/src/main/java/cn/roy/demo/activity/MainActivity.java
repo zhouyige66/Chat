@@ -25,7 +25,6 @@ import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.service.ChatService;
 import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
-import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;

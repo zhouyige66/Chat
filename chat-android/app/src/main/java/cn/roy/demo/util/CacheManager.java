@@ -1,12 +1,19 @@
 package cn.roy.demo.util;
 
-import androidx.collection.LruCache;
+import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.chat.ChatMessageType;
+import cn.roy.demo.model.Group;
+import cn.roy.demo.model.RecentContact;
 import cn.roy.demo.model.User;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -22,15 +29,19 @@ public class CacheManager {
     private static CacheManager instance = null;
 
     private CacheManager() {
-        // 最多缓存50个聊天记录
-        messageCache = new LruCache<>(50);
-        groupMessageCache = new LruCache<>(50);
-
         observableEmitterList = new ArrayList<>();
         observable = Observable.create(new ObservableOnSubscribe<ChatMessage>() {
             @Override
             public void subscribe(ObservableEmitter<ChatMessage> emitter) throws Exception {
                 observableEmitterList.add(emitter);
+            }
+        });
+
+        baseInfoObservableEmitterList = new ArrayList<>();
+        baseInfoObservable = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                baseInfoObservableEmitterList.add(emitter);
             }
         });
     }
@@ -70,32 +81,62 @@ public class CacheManager {
     }
 
     /**********功能：缓存聊天信息**********/
-    private LruCache<Long, List<ChatMessage>> messageCache;
-    private LruCache<Long, List<ChatMessage>> groupMessageCache;
+    private Map<String, List<ChatMessage>> messageCache = new HashMap<>();
+
+    public List<ChatMessage> getCacheMessageList(ChatMessageType type, Long chatUserId) {
+        String prefix = type == ChatMessageType.GROUP ? "group_" : "friend_";
+        String key = prefix + chatUserId;
+        List<ChatMessage> chatMessages = messageCache.get(key);
+        if (chatMessages == null) {
+            chatMessages = new ArrayList<>();
+            messageCache.put(key, chatMessages);
+        }
+        return chatMessages;
+    }
 
     public void cacheMessage(ChatMessage message) {
         Long fromUserId = message.getFromUserId();
         Long toUserId = message.getToUserId();
-        Long cacheKey;
-        List<ChatMessage> chatMessages;
-        if (message.getChatMessageType() == ChatMessageType.GROUP) {
-            // 群消息
-            cacheKey = toUserId;
-            chatMessages = groupMessageCache.get(cacheKey);
+        ChatMessageType chatMessageType = message.getChatMessageType();
+        Long contactId;
+        if (chatMessageType == ChatMessageType.GROUP) {// 群消息
+            contactId = toUserId;
         } else {
-            cacheKey = currentUserId == fromUserId ? toUserId : fromUserId;
-            chatMessages = messageCache.get(cacheKey);
+            contactId = currentUserId == fromUserId ? toUserId : fromUserId;
         }
+        String key = getMessageCacheKey(chatMessageType, contactId);
+        List<ChatMessage> chatMessages = messageCache.get(key);
         if (chatMessages == null) {
             chatMessages = new ArrayList<>();
-            if (message.getChatMessageType() == ChatMessageType.GROUP) {
-                groupMessageCache.put(cacheKey, chatMessages);
-            } else {
-                messageCache.put(cacheKey, chatMessages);
-            }
+            messageCache.put(key, chatMessages);
         }
         chatMessages.add(message);
         LogUtil.d(CacheManager.this, "消息条数：" + chatMessages.size());
+
+        // 更新最近联系人列表
+        RecentContact recentContact = contactMap.get(key);
+        int notReadCount = 0;
+        if (recentContact == null) {
+            recentContact = new RecentContact();
+            recentContact.setContact(key);
+            if (chatMessageType == ChatMessageType.GROUP) {
+                recentContact.setGroup(groupMap.get(contactId));
+            } else {
+                recentContact.setUser(userMap.get(contactId));
+            }
+            contactMap.put(key, recentContact);
+            contactList.add(recentContact);
+        } else {
+            notReadCount = recentContact.getNotReadCount();
+        }
+        recentContact.setChatMessage(message);
+        if (this.recentContact != null && this.recentContact.getContact().equals(key)) {
+            recentContact.setNotReadCount(0);
+        } else {
+            recentContact.setNotReadCount(notReadCount++);
+        }
+        sortContactList();
+        // 发送通知
         if (observableEmitterList.size() == 0) {
             return;
         }
@@ -110,35 +151,133 @@ public class CacheManager {
             }
             emitter.onNext(message);
         }
-        if (!disposedList.isEmpty()) {
+        if (disposedList != null && !disposedList.isEmpty()) {
             observableEmitterList.removeAll(disposedList);
         }
     }
 
-    public List<ChatMessage> getCacheMessageList(ChatMessageType type, Long chatUserId) {
-        List<ChatMessage> chatMessages;
-        if (type == ChatMessageType.GROUP) {
-            chatMessages = groupMessageCache.get(chatUserId);
-        } else {
-            chatMessages = messageCache.get(chatUserId);
+    public void deleteMessage(ChatMessageType chatMessageType, Long contactId, ChatMessage... messages) {
+        int length = messages.length;
+        if (length == 0) {
+            return;
         }
-        if (chatMessages == null) {
-            chatMessages = new ArrayList<>();
-            if (type == ChatMessageType.GROUP) {
-                groupMessageCache.put(chatUserId, chatMessages);
-            } else {
-                messageCache.put(chatUserId, chatMessages);
+        String key = getMessageCacheKey(chatMessageType, contactId);
+        List<ChatMessage> messageList = messageCache.get(key);
+        messageList.removeAll(Arrays.asList(messages));
+
+        // 更新最近联系人
+        RecentContact recentContact = contactMap.get(key);
+        recentContact.setNotReadCount(0);
+        if (messageList.isEmpty()) {
+            contactList.remove(recentContact);
+        } else {
+            recentContact.setChatMessage(messageList.get(messageList.size() - 1));
+        }
+        sortContactList();
+    }
+
+    public static String getMessageCacheKey(ChatMessageType chatMessageType, Long contactId) {
+        String key = (chatMessageType == ChatMessageType.GROUP ? "group_" : "friend_") + contactId;
+        return key;
+    }
+
+    /**********功能：缓存最近联系人、好友列表、群组列表**********/
+    private Map<Long, Group> groupMap = new HashMap<>();
+    private Map<Long, User> userMap = new HashMap<>();
+    private RecentContact recentContact;
+    private List<RecentContact> contactList = new ArrayList<>();
+    private Map<String, RecentContact> contactMap = new HashMap<>();
+
+    public void cacheGroupList(List<Group> groupList) {
+        if (groupList == null || groupList.isEmpty()) {
+            return;
+        }
+        groupMap.clear();
+        for (Group group : groupList) {
+            groupMap.put(group.getId(), group);
+        }
+        if (baseInfoObservableEmitterList.isEmpty()) {
+            return;
+        }
+        for (ObservableEmitter emitter : baseInfoObservableEmitterList) {
+            if (!emitter.isDisposed()) {
+                emitter.onNext(0);
             }
         }
-        return chatMessages;
+    }
+
+    public void cacheFriendList(List<User> userList) {
+        if (userList == null || userList.isEmpty()) {
+            return;
+        }
+        userMap.clear();
+        for (User user : userList) {
+            userMap.put(user.getId(), user);
+        }
+        if (baseInfoObservableEmitterList.isEmpty()) {
+            return;
+        }
+        for (ObservableEmitter emitter : baseInfoObservableEmitterList) {
+            if (!emitter.isDisposed()) {
+                emitter.onNext(1);
+            }
+        }
+    }
+
+    public void cacheRecentContact(RecentContact recentContact) {
+        this.recentContact = recentContact;
+    }
+
+    public List<Group> getGroupList() {
+        return new ArrayList<>(groupMap.values());
+    }
+
+    public List<User> getFriendList() {
+        return new ArrayList<>(userMap.values());
+    }
+
+    public List<RecentContact> getRecentContactList() {
+        return contactList;
+    }
+
+    private void sortContactList() {
+        Collections.sort(contactList, new Comparator<RecentContact>() {
+            @Override
+            public int compare(RecentContact o1, RecentContact o2) {
+                Long sendTimestamp = o1.getChatMessage().getSendTimestamp();
+                Long sendTimestamp2 = o2.getChatMessage().getSendTimestamp();
+
+                if (sendTimestamp > sendTimestamp2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        LogUtil.d(this, "最近联系人列表：" + JSON.toJSONString(contactList));
+
+        if (baseInfoObservableEmitterList.isEmpty()) {
+            return;
+        }
+        for (ObservableEmitter emitter : baseInfoObservableEmitterList) {
+            if (!emitter.isDisposed()) {
+                emitter.onNext(2);
+            }
+        }
     }
 
     /**********功能：观察者**********/
+    private Observable<Integer> baseInfoObservable;
+    private List<ObservableEmitter<Integer>> baseInfoObservableEmitterList;
     private Observable<ChatMessage> observable;
     private List<ObservableEmitter<ChatMessage>> observableEmitterList;
 
     public Observable<ChatMessage> getObservable() {
         return observable;
+    }
+
+    public Observable<Integer> getBaseInfoObservable() {
+        return baseInfoObservable;
     }
 
 }

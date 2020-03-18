@@ -24,6 +24,7 @@ import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.chat.ChatClient;
 import cn.roy.demo.model.Group;
+import cn.roy.demo.model.RecentContact;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.IdGenerator;
@@ -57,6 +58,25 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         btn_send = findViewById(R.id.btn_send);
         et_input = findViewById(R.id.et_input);
 
+        String chatType = getIntent().getStringExtra("chatType");
+        Serializable data = getIntent().getSerializableExtra("data");
+        chatMessageType = ChatMessageType.valueOf(chatType);
+
+        RecentContact recentContact = new RecentContact();
+        long contactId;
+        if (chatMessageType == ChatMessageType.GROUP) {
+            Group group = (Group) data;
+            recentContact.setGroup(group);
+            contactId = group.getId();
+        } else {
+            User user = (User) data;
+            recentContact.setUser(user);
+            contactId = user.getId();
+        }
+        recentContact.setContact(CacheManager.getMessageCacheKey(chatMessageType, contactId));
+        recentContact.setNotReadCount(0);
+        CacheManager.getInstance().cacheRecentContact(recentContact);
+
         tv_left.setText("返回");
         tv_left.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,11 +85,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 overridePendingTransition(R.anim.anim_left_enter, R.anim.anim_right_exit);
             }
         });
-
-        int chatType = getIntent().getIntExtra("chatType", 1);
-        chatMessageType = chatType == 0 ? ChatMessageType.SINGLE : ChatMessageType.GROUP;
-        Serializable data = getIntent().getSerializableExtra("data");
-        if (chatType == ChatMessageType.GROUP.getCode()) {
+        if (chatMessageType == ChatMessageType.GROUP) {
             Group group = (Group) data;
             toUserId = group.getId();
             tv_title.setText(group.getName());
@@ -194,8 +210,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 chatMessage.setChatMessageType(chatMessageType);
                 chatMessage.setFromUserId(currentUserId);
                 chatMessage.setToUserId(toUserId);
+                chatMessage.setSendTimestamp(System.currentTimeMillis());
                 chatMessage.setBody(textData);
-                messageList.add(chatMessage);
+                CacheManager.getInstance().cacheMessage(chatMessage);
                 // 发送消息
                 if (ChatClient.getInstance().isConnectSuccess()) {
                     chatMessage.setId(IdGenerator.generate());

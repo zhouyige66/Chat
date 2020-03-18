@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -30,13 +31,15 @@ import cn.roy.demo.R;
 import cn.roy.demo.activity.ChatActivity;
 import cn.roy.demo.adapter.ContactListAdapter;
 import cn.roy.demo.model.Apply;
-import cn.roy.demo.model.Group;
-import cn.roy.demo.model.User;
+import cn.roy.demo.service.ChatService;
 import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
 import cn.roy.demo.util.http.HttpUtil;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @Description:
@@ -49,11 +52,14 @@ public class ContactListFragment extends BaseFragment {
     private TextView tv_loading;
     private ViewStub vs_retry;
     private View v_retry;
-    private ImageView iv_load_tip;
+    private ImageView iv_retry_tip;
+    private SwipeRefreshLayout srf;
     private ExpandableListView elv;
 
     private Map<String, List> dataMap;
     private ContactListAdapter contactListAdapter;
+
+    private CompositeDisposable compositeDisposable;
 
     @Nullable
     @Override
@@ -62,6 +68,7 @@ public class ContactListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
         v_loading = view.findViewById(R.id.v_loading);
         vs_retry = view.findViewById(R.id.vs_retry);
+        srf = view.findViewById(R.id.sfl);
         elv = view.findViewById(R.id.elv_content);
 
         List<String> groupList = new ArrayList<>();
@@ -72,6 +79,14 @@ public class ContactListFragment extends BaseFragment {
         for (String key : groupList) {
             dataMap.put(key, new ArrayList());
         }
+        updateUI();
+
+        srf.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getActivity().startService(new Intent(getActivity(), ChatService.class));
+            }
+        });
         contactListAdapter = new ContactListAdapter(groupList, dataMap);
         elv.setAdapter(contactListAdapter);
         elv.setVisibility(View.GONE);
@@ -80,12 +95,14 @@ public class ContactListFragment extends BaseFragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                         int childPosition, long id) {
                 if (groupPosition > 0) {
-                    Intent intent = new Intent(getActivity(), ChatActivity.class);
-                    intent.putExtra("chatType",
-                            groupPosition == 1 ? ChatMessageType.GROUP.getCode()
-                                    : ChatMessageType.SINGLE.getCode());
                     String key = groupPosition == 1 ? "group" : "friend";
-                    intent.putExtra("data", (Serializable) dataMap.get(key).get(childPosition));
+                    ChatMessageType type = groupPosition == 1 ? ChatMessageType.GROUP
+                            : ChatMessageType.SINGLE;
+                    Object item = dataMap.get(key).get(childPosition);
+
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+                    intent.putExtra("chatType", type.name());
+                    intent.putExtra("data", (Serializable) item);
                     startActivity(intent);
                 } else {
                     LogUtil.d(ContactListFragment.this, "点击了审批子项");
@@ -94,7 +111,43 @@ public class ContactListFragment extends BaseFragment {
             }
         });
 
+        compositeDisposable = new CompositeDisposable();
+        CacheManager.getInstance().getBaseInfoObservable().subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        if (integer < 2) {
+                            updateUI();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        compositeDisposable.dispose();
     }
 
     @Override
@@ -102,11 +155,7 @@ public class ContactListFragment extends BaseFragment {
         super.lazyLoadData();
 
         v_loading.setVisibility(View.VISIBLE);
-        requestSuccessCount = 0;
-        requestFailCount = 0;
         getVerifies();
-        getGroups();
-        getFriends();
     }
 
     private void getVerifies() {
@@ -120,7 +169,7 @@ public class ContactListFragment extends BaseFragment {
 
             @Override
             public void onNext(JSONObject jsonObject) {
-                requestSuccessCount++;
+                v_loading.setVisibility(View.GONE);
                 dataMap.get("apply").clear();
                 JSONArray list = jsonObject.getJSONArray("list");
                 if (list != null && list.size() > 0) {
@@ -128,107 +177,18 @@ public class ContactListFragment extends BaseFragment {
                     });
                     dataMap.get("apply").addAll(applies);
                 }
-                check();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                requestFailCount++;
-                check();
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        };
-        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_VERIFY_LIST,
-                params, observer);
-    }
-
-    private void getGroups() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", CacheManager.getInstance().getCurrentUserId());
-        Observer<JSONObject> observer = new Observer<JSONObject>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(JSONObject jsonObject) {
-                requestSuccessCount++;
-                dataMap.get("group").clear();
-                JSONArray list = jsonObject.getJSONArray("list");
-                if (list != null && list.size() > 0) {
-                    List<Group> groups = JSON.parseObject(list.toJSONString(), new TypeReference<List<Group>>() {
-                    });
-                    dataMap.get("group").addAll(groups);
+                elv.setVisibility(View.VISIBLE);
+                if (contactListAdapter != null) {
+                    contactListAdapter.notifyDataSetChanged();
                 }
-                check();
             }
 
             @Override
             public void onError(Throwable e) {
-                requestFailCount++;
-                check();
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        };
-        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_GROUP_LIST,
-                params, observer);
-    }
-
-    private void getFriends() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", CacheManager.getInstance().getCurrentUserId());
-        Observer<JSONObject> observer = new Observer<JSONObject>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(JSONObject jsonObject) {
-                requestSuccessCount++;
-                dataMap.get("friend").clear();
-                JSONArray list = jsonObject.getJSONArray("list");
-                if (list != null && list.size() > 0) {
-                    List<User> users = JSON.parseObject(list.toJSONString(), new TypeReference<List<User>>() {
-                    });
-                    dataMap.get("friend").addAll(users);
-                }
-                check();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                requestFailCount++;
-                check();
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        };
-        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_FRIEND_LIST,
-                params, observer);
-    }
-
-    private int requestSuccessCount = 0;
-    private int requestFailCount = 0;
-
-    private void check() {
-        LogUtil.d(this, "执行一次检查：" + requestSuccessCount + "/" + requestFailCount);
-        if (requestFailCount + requestSuccessCount == 3) {
-            v_loading.setVisibility(View.GONE);
-            if (requestFailCount > requestSuccessCount) {
+                v_loading.setVisibility(View.GONE);
                 // 失败次数大于成功次数
                 if (vs_retry.getParent() != null) {
                     v_retry = vs_retry.inflate();
-                    iv_load_tip = v_retry.findViewById(R.id.iv_load_tip);
                     TextView tv_retry = v_retry.findViewById(R.id.tv_retry);
                     tv_retry.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -240,13 +200,27 @@ public class ContactListFragment extends BaseFragment {
                 } else {
                     v_retry.setVisibility(View.VISIBLE);
                 }
-            } else {
-                elv.setVisibility(View.VISIBLE);
-                if (contactListAdapter != null) {
-                    contactListAdapter.notifyDataSetChanged();
-                }
             }
-        }
+
+            @Override
+            public void onComplete() {
+            }
+        };
+        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_VERIFY_LIST,
+                params, observer);
     }
 
+    private void updateUI() {
+        List group = dataMap.get("group");
+        List friend = dataMap.get("friend");
+        group.clear();
+        friend.clear();
+        group.addAll(CacheManager.getInstance().getGroupList());
+        friend.addAll(CacheManager.getInstance().getFriendList());
+        if (contactListAdapter != null) {
+            contactListAdapter.notifyDataSetChanged();
+        }
+
+        srf.setRefreshing(false);
+    }
 }

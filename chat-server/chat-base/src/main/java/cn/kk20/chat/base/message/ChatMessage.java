@@ -22,6 +22,7 @@ public class ChatMessage extends Message {
     // 通过bodyType读取类型，然后通过JSON工具转实体类
     private BodyType bodyType;
     private String body;
+    private Long sendTimestamp;
 
     public ChatMessageType getChatMessageType() {
         return chatMessageType;
@@ -69,6 +70,14 @@ public class ChatMessage extends Message {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public Long getSendTimestamp() {
+        return sendTimestamp;
+    }
+
+    public void setSendTimestamp(Long sendTimestamp) {
+        this.sendTimestamp = sendTimestamp;
     }
 
     @JSONField(serialize = false, deserialize = false)
