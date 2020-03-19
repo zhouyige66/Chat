@@ -115,7 +115,6 @@ public class CacheManager {
 
         // 更新最近联系人列表
         RecentContact recentContact = contactMap.get(key);
-        int notReadCount = 0;
         if (recentContact == null) {
             recentContact = new RecentContact();
             recentContact.setContact(key);
@@ -124,17 +123,18 @@ public class CacheManager {
             } else {
                 recentContact.setUser(userMap.get(contactId));
             }
+            recentContact.setNotReadCount(0);
             contactMap.put(key, recentContact);
             contactList.add(recentContact);
-        } else {
-            notReadCount = recentContact.getNotReadCount();
         }
         recentContact.setChatMessage(message);
+        int notReadCount = 0;
         if (this.recentContact != null && this.recentContact.getContact().equals(key)) {
-            recentContact.setNotReadCount(0);
+            notReadCount = 0;
         } else {
-            recentContact.setNotReadCount(notReadCount++);
+            notReadCount = recentContact.getNotReadCount() + 1;
         }
+        recentContact.setNotReadCount(notReadCount);
         sortContactList();
         // 发送通知
         if (observableEmitterList.size() == 0) {

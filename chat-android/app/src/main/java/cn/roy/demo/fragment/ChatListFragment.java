@@ -4,18 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.text.SimpleDateFormat;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import cn.kk20.chat.base.message.ChatMessage;
+import cn.kk20.chat.base.message.chat.ChatMessageType;
 import cn.roy.demo.R;
+import cn.roy.demo.activity.ChatActivity;
 import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.model.RecentContact;
@@ -41,7 +46,7 @@ public class ChatListFragment extends BaseFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
         listView = (ListView) view;
@@ -51,9 +56,17 @@ public class ChatListFragment extends BaseFragment {
             @Override
             public void convert(AdapterViewHolder holder, RecentContact recentContact) {
                 TextView tv_user_name = holder.getView(R.id.tv_user_name);
+                TextView tv_not_read_count = holder.getView(R.id.tv_not_read_count);
                 TextView tv_chat_msg = holder.getView(R.id.tv_chat_msg);
                 TextView tv_chat_time = holder.getView(R.id.tv_chat_time);
 
+                int notReadCount = recentContact.getNotReadCount();
+                if (notReadCount > 100) {
+                    tv_not_read_count.setText("···");
+                } else {
+                    tv_not_read_count.setText(String.valueOf(notReadCount));
+                }
+                tv_not_read_count.setVisibility(notReadCount == 0 ? View.GONE : View.VISIBLE);
                 String contact = recentContact.getContact();
                 if (contact.startsWith("group")) {
                     tv_user_name.setText(recentContact.getGroup().getName());
@@ -63,10 +76,40 @@ public class ChatListFragment extends BaseFragment {
                 ChatMessage chatMessage = recentContact.getChatMessage();
                 tv_chat_msg.setText(chatMessage.getBody());
 
-                tv_chat_time.setText(DateUtil.format(new Date(chatMessage.getSendTimestamp()), "HH:ss"));
+                Date sendDate = new Date(chatMessage.getSendTimestamp());
+                Date time = Calendar.getInstance().getTime();
+                String format = DateUtil.format(time, "yyyy-MM-dd");
+                try {
+                    Date parse = DateUtil.parse(format, "yyyy-MM-dd");
+                    if (sendDate.before(parse)) {
+                        tv_chat_time.setText(DateUtil.format(sendDate, "yyyy-MM-dd"));
+                    } else {
+                        tv_chat_time.setText(DateUtil.format(sendDate, "HH:ss"));
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         };
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecentContact recentContact = recentContactList.get(position);
+                String contact = recentContact.getContact();
+                ChatMessageType chatMessageType;
+                Serializable data;
+                if (contact.startsWith("group")) {
+                    chatMessageType = ChatMessageType.GROUP;
+                    data = recentContact.getGroup();
+                } else {
+                    chatMessageType = ChatMessageType.SINGLE;
+                    data = recentContact.getUser();
+                }
+                ChatActivity.launch(getActivity(), chatMessageType, data);
+                getActivity().overridePendingTransition(R.anim.anim_right_enter, R.anim.anim_left_exit);
+            }
+        });
 
         compositeDisposable = new CompositeDisposable();
         CacheManager.getInstance().getBaseInfoObservable().subscribeOn(Schedulers.io())

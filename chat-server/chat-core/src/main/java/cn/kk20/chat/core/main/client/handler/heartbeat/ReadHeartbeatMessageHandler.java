@@ -67,17 +67,10 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
                     integer = 0;
                 }
                 integer++;
-                logger.debug("客户端：{}，心跳消息读失败：{}次", channelId, integer);
                 hasDeal = true;
                 if (integer > heartFailMax) {
-                    logger.debug("客户端：{}，心跳失败，关闭通道", channelId);
-                    heartFailMap.remove(channelId);
-                    Long userId = userChannelManager.getUserId(channel);
-                    userChannelManager.remove(userId);
-                    // 通知好友，该用户下线了
-                    notifyFriend(userId);
-                    // 关闭通道
-                    channel.close();
+                    logger.info("客户端：{}，心跳失败，关闭通道", channelId);
+                    cleanWork(channel);
                 } else {
                     heartFailMap.put(channelId, integer);
                 }
@@ -87,6 +80,27 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
         if (!hasDeal) {
             super.userEventTriggered(ctx, evt);
         }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        cleanWork(ctx.channel());
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        // 客户端异常退出，清理数据
+        logger.error("通信通道出现异常：{}", cause);
+        cleanWork(ctx.channel());
+    }
+
+    private void cleanWork(Channel channel) {
+        heartFailMap.remove(channel.id().asShortText());
+        Long userId = userChannelManager.getUserId(channel);
+        userChannelManager.remove(userId);
+        // 通知好友，该用户下线了
+        notifyFriend(userId);
+        channel.close();
     }
 
     private void notifyFriend(Long userId) {

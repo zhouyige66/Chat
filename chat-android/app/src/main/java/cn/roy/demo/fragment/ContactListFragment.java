@@ -100,10 +100,8 @@ public class ContactListFragment extends BaseFragment {
                             : ChatMessageType.SINGLE;
                     Object item = dataMap.get(key).get(childPosition);
 
-                    Intent intent = new Intent(getActivity(), ChatActivity.class);
-                    intent.putExtra("chatType", type.name());
-                    intent.putExtra("data", (Serializable) item);
-                    startActivity(intent);
+                    ChatActivity.launch(getActivity(), type, (Serializable) item);
+                    getActivity().overridePendingTransition(R.anim.anim_right_enter, R.anim.anim_left_exit);
                 } else {
                     LogUtil.d(ContactListFragment.this, "点击了审批子项");
                 }
@@ -131,7 +129,7 @@ public class ContactListFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        srf.setRefreshing(false);
                     }
 
                     @Override

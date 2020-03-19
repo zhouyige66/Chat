@@ -10,7 +10,7 @@ public final class ApplicationConfig {
 
     public static final class HttpConfig {
         public static final int TIMEOUT = 10;
-//        public static final String API_BASE_URL = "http://10.0.2.2:8081";
+        //        public static final String API_BASE_URL = "http://10.0.2.2:8081";
         public static final String API_BASE_URL = "http://192.168.43.133:8081";
         public static final String API_REGISTER = "/user/register";
         public static final String API_LOGIN = "/user/login";
@@ -18,6 +18,7 @@ public final class ApplicationConfig {
         public static final String API_GET_GROUP_LIST = "/group/list";
         public static final String API_GET_FRIEND_LIST = "/friend/list";
         public static final String API_GET_NETTY_HOST = "/netty/getHost";
+        public static final String API_SEND_MESSAGE = "/netty/sendMessage";
     }
 
 }

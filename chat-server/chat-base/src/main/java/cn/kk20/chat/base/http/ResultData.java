@@ -1,5 +1,7 @@
 package cn.kk20.chat.base.http;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 
 /**
@@ -118,5 +120,10 @@ public class ResultData implements Serializable {
     public ResultData setData(Serializable data) {
         this.data = data;
         return this;
+    }
+
+    @JSONField(serialize = false, deserialize = false)
+    public boolean isSuccess() {
+        return code == ResultCode.SUCCESS.getCode();
     }
 }

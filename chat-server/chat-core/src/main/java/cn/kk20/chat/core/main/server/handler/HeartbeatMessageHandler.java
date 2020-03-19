@@ -59,9 +59,7 @@ public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<Heartbe
                 logger.info("客户端通道：{}，心跳消息读失败：{}次", channelId, heartFailCount);
                 hasDeal = true;
                 if (heartFailCount > 5) {
-                    channelHeartbeatFailCountMap.remove(channelId);
-                    clientChannelManager.removeChannel(channelId);
-                    ctx.close();
+                    cleanWork(ctx);
                 } else {
                     channelHeartbeatFailCountMap.put(channelId, heartFailCount);
                 }
@@ -71,6 +69,26 @@ public class HeartbeatMessageHandler extends SimpleChannelInboundHandler<Heartbe
         if (!hasDeal) {
             super.userEventTriggered(ctx, evt);
         }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("通道不可用了");
+        cleanWork(ctx);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.info("通道发生异常了");
+        cleanWork(ctx);
+    }
+
+    private void cleanWork(ChannelHandlerContext ctx) {
+        logger.info("执行清理工作");
+        String channelId = ctx.channel().id().asShortText();
+        channelHeartbeatFailCountMap.remove(channelId);
+        clientChannelManager.removeChannel(channelId);
+        ctx.close();
     }
 
 }
