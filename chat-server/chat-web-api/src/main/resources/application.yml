@@ -7,6 +7,12 @@ spring:
   redis:
     host: localhost
     port: 6379
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 500MB
+      # 总大小
+      max-request-size: 10GB
 
 logging:
   file:
@@ -17,3 +23,6 @@ logging:
 feign:
   okhttp:
     enabled: true
+
+file:
+  parentPath: /Users/zzy/Desktop/file/
