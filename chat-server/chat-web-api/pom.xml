@@ -31,6 +31,12 @@
         <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
+        <!--监控监控-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!--swagger-->
         <dependency>
             <groupId>io.springfox</groupId>

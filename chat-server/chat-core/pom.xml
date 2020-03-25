@@ -15,10 +15,17 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--启动配置类-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!--监控监控-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!--netty-->

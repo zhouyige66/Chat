@@ -36,19 +36,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+//        setContentView(R.layout.activity_login);
+        setContentView(R.layout.layout_test);
 
-        et_user_name = findViewById(R.id.et_user_name);
-        et_user_password = findViewById(R.id.et_user_password);
-        tv_login = findViewById(R.id.tv_login);
-        tv_register = findViewById(R.id.tv_register);
-        tv_forget_password = findViewById(R.id.tv_forget_password);
-
-        et_user_name.setText(SPUtil.getString(SPUtil.LOGIN_NAME, ""));
-        et_user_password.setText(SPUtil.getString(SPUtil.LOGIN_PASSWORD, ""));
-        tv_login.setOnClickListener(this);
-        tv_register.setOnClickListener(this);
-        tv_forget_password.setOnClickListener(this);
+//        et_user_name = findViewById(R.id.et_user_name);
+//        et_user_password = findViewById(R.id.et_user_password);
+//        tv_login = findViewById(R.id.tv_login);
+//        tv_register = findViewById(R.id.tv_register);
+//        tv_forget_password = findViewById(R.id.tv_forget_password);
+//
+//        et_user_name.setText(SPUtil.getString(SPUtil.LOGIN_NAME, ""));
+//        et_user_password.setText(SPUtil.getString(SPUtil.LOGIN_PASSWORD, ""));
+//        tv_login.setOnClickListener(this);
+//        tv_register.setOnClickListener(this);
+//        tv_forget_password.setOnClickListener(this);
     }
 
     @Override

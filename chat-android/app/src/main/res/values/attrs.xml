@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GroupHeadView">
+        <attr name="model" format="integer" />
+        <attr name="distance" format="dimension" />
+        <attr name="imageWidth" format="dimension" />
+        <attr name="ringWidth" format="dimension" />
+        <attr name="ringColor" format="color" />
+    </declare-styleable>
+</resources>

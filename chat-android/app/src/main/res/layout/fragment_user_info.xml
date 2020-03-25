@@ -90,9 +90,9 @@
             android:drawableRight="@drawable/ic_indicator"
             android:drawablePadding="5dp"
             android:singleLine="true"
-            android:text="未绑定"
             android:textColor="#000"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:text="未绑定" />
 
         <View
             android:layout_width="match_parent"
@@ -124,9 +124,9 @@
             android:layout_marginRight="10dp"
             android:drawableRight="@drawable/ic_indicator"
             android:drawablePadding="5dp"
-            android:text="未绑定"
             android:textColor="#000"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:text="未绑定" />
 
         <View
             android:layout_width="match_parent"

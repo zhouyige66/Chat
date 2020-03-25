@@ -2,11 +2,19 @@ server:
   port: 9001
 
 spring:
+  profiles:
+    include: service
   redis:
     host: localhost
     port: 6379
-  profiles:
-    include: service
+
+# 监控监控
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      base-path: monitor
 
 logging:
   level:
