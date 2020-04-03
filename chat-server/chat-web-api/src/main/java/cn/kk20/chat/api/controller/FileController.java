@@ -1,14 +1,20 @@
 package cn.kk20.chat.api.controller;
 
+import cn.kk20.chat.api.call.CallFileServerService;
 import cn.kk20.chat.api.service.FileService;
 import cn.kk20.chat.base.http.ResultData;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -27,6 +33,35 @@ import java.util.Map;
 public class FileController {
     @Autowired
     FileService fileService;
+
+    @Autowired
+    CallFileServerService callFileServerService;
+
+    @GetMapping(value = "test")
+    @ApiOperation(value = "上传单个文件", notes = "功能：上传单个文件")
+    public ResultData test(@RequestParam("filePath") String filePath) throws Exception {
+        File file = new File(filePath);
+        FileItemFactory factory = new DiskFileItemFactory(16, null);
+        FileItem item = factory.createItem("file", MediaType.MULTIPART_FORM_DATA_VALUE, true,
+                file.getName());
+        int bytesRead = 0;
+        byte[] buffer = new byte[8192];
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            OutputStream os = item.getOutputStream();
+            while ((bytesRead = fis.read(buffer, 0, 8192))
+                    != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MultipartFile multipartFile = new CommonsMultipartFile(item);
+        final ResultData upload = callFileServerService.upload(multipartFile);
+        return upload;
+    }
 
     @PostMapping(value = "upload")
     @ApiOperation(value = "上传单个文件", notes = "功能：上传单个文件")

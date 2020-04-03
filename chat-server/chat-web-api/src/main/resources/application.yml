@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   profiles:
@@ -17,7 +17,7 @@ spring:
 # 监控监控
 management:
   server:
-    port: 8082
+    port: 8084
   endpoints:
     web:
       base-path: /monitor
