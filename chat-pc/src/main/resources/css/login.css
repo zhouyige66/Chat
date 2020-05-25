@@ -1,0 +1,7 @@
+.root {
+    -fx-background-color: #cbcaca;
+}
+#tipLabel{
+    -fx-text-fill: #FF3333;
+    -fx-font-size: 10;
+}

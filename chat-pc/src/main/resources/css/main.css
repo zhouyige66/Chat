@@ -1,0 +1,42 @@
+.root {
+    -fx-background-image: url("../img/bg_main.png");
+}
+#tabHBox{
+    -fx-fill-height: true;
+    -fx-background-color: #cbcaca;
+}
+
+.radio-button > .radio,
+.radio-button:focused > .radio  {
+    -fx-background-radius: 0em; /* large value to make sure this remains circular */
+    -fx-padding: 0.333333em; /* 4 -- padding from outside edge to the inner black dot */
+}
+.radio-button > .radio > .dot {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0em; /* large value to make sure this remains circular */
+    -fx-padding: 0.333333em; /* 4 -- radius of the inner black dot when selected */
+}
+
+.radio-button{
+    -fx-pref-height: 40;
+    -fx-background-color: #67a567;
+    -fx-image: url("../img/logo.png");
+    -fx-content-display: TEXT_ONLY;
+    -fx-border-color:
+            transparent
+            transparent
+            #ababab
+            transparent;
+    -fx-border-width: 0 0 5 0;
+}
+.radio-button:selected{
+    -fx-pref-height: 40;
+    -fx-background-color: #67a567;
+    -fx-image: url("../img/logo.png");
+    -fx-border-color:
+            transparent
+            transparent
+            #ff3333
+            transparent;
+    -fx-border-width: 0 0 5 0;
+}
