@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.springframework.context.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.ResourceBundle;
 public abstract class BaseController implements Initializable {
     private Main application;
     private Stage mainStage;
+    private ApplicationContext applicationContext;
 
     public void initialize(URL location, ResourceBundle resources) {
     }
@@ -34,6 +36,14 @@ public abstract class BaseController implements Initializable {
     public void setApplication(Main application) {
         this.application = application;
         this.mainStage = application.getMainStage();
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     public void jump2NewScene(String fxmlName) {

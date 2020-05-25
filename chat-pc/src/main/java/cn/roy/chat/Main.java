@@ -10,6 +10,14 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.springframework.beans.BeansException;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +25,26 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Main extends Application {
+@SpringBootApplication(scanBasePackages = "cn.roy.chat")
+@EnableFeignClients
+public class Main extends Application implements ApplicationContextAware, ApplicationRunner {
     private Stage mainStage;
+    public static ApplicationContext context;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        context = applicationContext;
+    }
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        System.out.println("ApplicationRunner");
+        launch(args.getSourceArgs());
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -50,6 +76,7 @@ public class Main extends Application {
             Parent root = loader.load();
             LoginController controller = loader.getController();
             controller.setApplication(this);
+            controller.setApplicationContext(context);
 
             Scene scene = new Scene(root);
             Image image = new Image(classLoader.getResourceAsStream("img" + File.separator + "logo.png"));
@@ -69,10 +96,6 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }
