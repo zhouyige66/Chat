@@ -1,8 +1,11 @@
 package cn.roy.chat.controller;
 
+import cn.roy.chat.cache.CacheUtil;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.enity.LoginEntity;
 import cn.roy.chat.enity.ResultData;
+import cn.roy.chat.enity.UserEntity;
+import com.alibaba.fastjson.JSON;
 import io.netty.util.internal.StringUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -15,6 +18,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 public class LoginController extends BaseController {
     @FXML
     private TextField userNameField;
@@ -24,6 +30,33 @@ public class LoginController extends BaseController {
     private Label tipLabel;
     @FXML
     private Button loginButton;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
+
+        final UserEntity user = CacheUtil.getCacheFromProp("user", UserEntity.class);
+        if (user != null) {
+            userNameField.setText(user.getName());
+            passwordField.setText(user.getPassword());
+
+            userNameField.positionCaret(user.getName().length());
+        }
+    }
+
+    @Override
+    public Scene config(Stage stage, Parent root) {
+        Scene scene = new Scene(root);
+        stage.setTitle("Chat");
+        stage.setMinWidth(300.0);
+        stage.setMaxWidth(400.0);
+        stage.setMinHeight(550.0);
+        stage.setMaxHeight(750.0);
+        stage.setWidth(350.0);
+        stage.setHeight(700.0);
+        stage.setResizable(true);
+        return scene;
+    }
 
     public void login(ActionEvent actionEvent) {
         String userName = userNameField.getText().trim();
@@ -64,6 +97,12 @@ public class LoginController extends BaseController {
                         @Override
                         public void run() {
                             if (resultData.getCode() == 200) {
+                                final UserEntity userEntity = JSON.parseObject(JSON.toJSONString(resultData.getData()),
+                                        UserEntity.class);
+                                userEntity.setPassword(password);
+                                CacheUtil.cacheData("user", userEntity);
+                                CacheUtil.cacheToProp("user", userEntity);
+
                                 userNameField.setEditable(true);
                                 passwordField.setEditable(true);
                                 loginButton.setText("登录");
@@ -96,20 +135,6 @@ public class LoginController extends BaseController {
 
     private void jump2Main() {
         jump2NewScene("main.fxml", "main.css");
-    }
-
-    @Override
-    public Scene config(Stage stage, Parent root) {
-        Scene scene = new Scene(root);
-        stage.setTitle("Chat");
-        stage.setMinWidth(300.0);
-        stage.setMaxWidth(400.0);
-        stage.setMinHeight(550.0);
-        stage.setMaxHeight(750.0);
-        stage.setWidth(350.0);
-        stage.setHeight(700.0);
-        stage.setResizable(true);
-        return scene;
     }
 
 }

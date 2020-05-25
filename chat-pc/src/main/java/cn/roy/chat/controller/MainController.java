@@ -1,5 +1,7 @@
 package cn.roy.chat.controller;
 
+import cn.roy.chat.cache.CacheUtil;
+import cn.roy.chat.enity.UserEntity;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -13,7 +15,9 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -23,6 +27,12 @@ import java.util.ResourceBundle;
  * @Version: v1.0
  */
 public class MainController extends BaseController {
+    @FXML
+    Label userNameLabel;
+    @FXML
+    Label userPhoneLabel;
+    @FXML
+    Label registerTimeLabel;
 
     @FXML
     RadioButton chatRadio;
@@ -41,6 +51,11 @@ public class MainController extends BaseController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        final UserEntity user = CacheUtil.getCache("user", UserEntity.class);
+        userNameLabel.setText(user.getName());
+        userPhoneLabel.setText(user.getPhone());
+        registerTimeLabel.setText(user.getCreateDate());
+
         ToggleGroup toggleGroup = new ToggleGroup();
         chatRadio.setToggleGroup(toggleGroup);
         contactRadio.setToggleGroup(toggleGroup);

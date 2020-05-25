@@ -25,9 +25,9 @@
                     <Insets bottom="10" left="10" right="10" top="10"/>
                 </padding>
                 <children>
-                    <Label maxHeight="Infinity" text="Label" VBox.vgrow="ALWAYS"/>
-                    <Label maxHeight="Infinity" text="Label" VBox.vgrow="ALWAYS"/>
-                    <Label maxHeight="Infinity" text="Label" VBox.vgrow="ALWAYS"/>
+                    <Label fx:id="userNameLabel" maxHeight="Infinity" text="姓名" VBox.vgrow="ALWAYS"/>
+                    <Label fx:id="userPhoneLabel" maxHeight="Infinity" text="电话" VBox.vgrow="ALWAYS"/>
+                    <Label fx:id="registerTimeLabel" maxHeight="Infinity" text="注册时间" VBox.vgrow="ALWAYS"/>
                 </children>
             </VBox>
             <VBox alignment="TOP_CENTER" onMouseClicked="#logout">

@@ -1,6 +1,12 @@
 .root {
     -fx-background-image: url("../img/bg_main.png");
 }
+
+.label{
+    -fx-color-label-visible: #FFF;
+    -fx-text-fill: #FFF;
+}
+
 #tabHBox{
     -fx-fill-height: true;
     -fx-background-color: #cbcaca;
