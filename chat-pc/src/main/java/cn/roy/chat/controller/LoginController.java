@@ -5,6 +5,8 @@ import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.enity.LoginEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
+import cn.roy.chat.http.HttpRequestTask;
+import cn.roy.chat.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.util.internal.StringUtil;
 import javafx.application.Platform;
@@ -86,51 +88,39 @@ public class LoginController extends BaseController {
         entity.setUserName(userName);
         entity.setPassword(password);
 
-        new Thread(new Runnable() {
+        HttpUtil.execute(new HttpRequestTask() {
             @Override
-            public void run() {
+            public ResultData doInBackground() {
                 final CallChatServer callChatServer = getApplicationContext()
                         .getBean(CallChatServer.class);
-                try {
-                    final ResultData resultData = callChatServer.login(entity);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (resultData.getCode() == 200) {
-                                final UserEntity userEntity = JSON.parseObject(JSON.toJSONString(resultData.getData()),
-                                        UserEntity.class);
-                                userEntity.setPassword(password);
-                                CacheUtil.cacheData("user", userEntity);
-                                CacheUtil.cacheToProp("user", userEntity);
-
-                                userNameField.setEditable(true);
-                                passwordField.setEditable(true);
-                                loginButton.setText("登录");
-                                loginButton.setDisable(false);
-                                jump2Main();
-                            } else {
-                                userNameField.setEditable(true);
-                                passwordField.setEditable(true);
-                                tipLabel.setText(resultData.getMsg());
-                                loginButton.setText("登录");
-                                loginButton.setDisable(false);
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            userNameField.setEditable(true);
-                            passwordField.setEditable(true);
-                            tipLabel.setText(e.getMessage());
-                            loginButton.setText("登录");
-                            loginButton.setDisable(false);
-                        }
-                    });
-                }
+                final ResultData resultData = callChatServer.login(entity);
+                return resultData;
             }
-        }).start();
+
+            @Override
+            public void success(String data) {
+                final UserEntity userEntity = JSON.parseObject(data, UserEntity.class);
+                userEntity.setPassword(password);
+                CacheUtil.cacheData("user", userEntity);
+                CacheUtil.cacheToProp("user", userEntity);
+
+                userNameField.setEditable(true);
+                passwordField.setEditable(true);
+                loginButton.setText("登录");
+                loginButton.setDisable(false);
+                jump2Main();
+
+            }
+
+            @Override
+            public void fail(String msg) {
+                userNameField.setEditable(true);
+                passwordField.setEditable(true);
+                tipLabel.setText(msg);
+                loginButton.setText("登录");
+                loginButton.setDisable(false);
+            }
+        });
     }
 
     private void jump2Main() {

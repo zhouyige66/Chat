@@ -13,9 +13,9 @@
     <stylesheets>
         <URL value="@/css/main.css"/>
     </stylesheets>
-    <HBox maxWidth="Infinity" prefHeight="100.0">
+    <HBox maxWidth="Infinity" prefHeight="100.0" alignment="CENTER">
         <children>
-            <ImageView fitHeight="58.0" fitWidth="58.0" preserveRatio="true">
+            <ImageView fx:id="userHeadImageView" fitHeight="58.0" fitWidth="58.0" preserveRatio="true">
                 <image>
                     <Image url="@/img/logo.png"/>
                 </image>
@@ -37,7 +37,7 @@
                 <children>
                     <ImageView fitHeight="28.0" fitWidth="28.0" preserveRatio="true">
                         <image>
-                            <Image url="@/img/logo.png"/>
+                            <Image url="@/img/ic_exit.png"/>
                         </image>
                     </ImageView>
                     <Label text="退出">

@@ -62,6 +62,7 @@ public abstract class BaseController implements Initializable {
             Parent root = loader.load();
             BaseController controller = loader.getController();
             controller.setApplication(this.application);
+            controller.setApplicationContext(applicationContext);
 
             Scene scene = config(this.mainStage, root);
             if (css != null) {

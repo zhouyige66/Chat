@@ -1,23 +1,38 @@
 package cn.roy.chat.controller;
 
 import cn.roy.chat.cache.CacheUtil;
+import cn.roy.chat.call.CallChatServer;
+import cn.roy.chat.enity.FriendEntity;
+import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
+import cn.roy.chat.http.HttpRequestTask;
+import cn.roy.chat.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -27,6 +42,8 @@ import java.util.ResourceBundle;
  * @Version: v1.0
  */
 public class MainController extends BaseController {
+    @FXML
+    ImageView userHeadImageView;
     @FXML
     Label userNameLabel;
     @FXML
@@ -49,9 +66,19 @@ public class MainController extends BaseController {
     @FXML
     TreeView treeView2;
 
+    private UserEntity user;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        final UserEntity user = CacheUtil.getCache("user", UserEntity.class);
+        user = CacheUtil.getCache("user", UserEntity.class);
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(userHeadImageView.getFitWidth() / 2);
+        dropShadow.setOffsetX(0);
+        dropShadow.setOffsetY(0);
+        dropShadow.setColor(Color.color(1.0, 1.0, 1.0));
+        userHeadImageView.setEffect(dropShadow);
+
         userNameLabel.setText(user.getName());
         userPhoneLabel.setText(user.getPhone());
         registerTimeLabel.setText(user.getCreateDate());
@@ -60,7 +87,6 @@ public class MainController extends BaseController {
         chatRadio.setToggleGroup(toggleGroup);
         contactRadio.setToggleGroup(toggleGroup);
         groupRadio.setToggleGroup(toggleGroup);
-
         toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
@@ -74,15 +100,6 @@ public class MainController extends BaseController {
             }
         });
 
-        ObservableList<String> data = FXCollections.observableArrayList();
-        data.addAll("A", "B", "C", "D", "E");
-        listView.setItems(data);
-        listView.setCellFactory(new Callback<ListView, ListCell>() {
-            @Override
-            public ListCell call(ListView param) {
-                return new ColorRectCell();
-            }
-        });
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -90,7 +107,7 @@ public class MainController extends BaseController {
                 Stage stage = new Stage();
                 stage.setTitle("聊天");
                 BorderPane root = new BorderPane();
-                stage.setScene(new Scene(root,400,400));
+                stage.setScene(new Scene(root, 400, 400));
                 stage.show();
             }
         });
@@ -108,6 +125,38 @@ public class MainController extends BaseController {
         // Add to Root
         rootItem.getChildren().addAll(itemJSP, itemSpring);
         treeView.setRoot(rootItem);
+
+        HttpUtil.execute(new HttpRequestTask() {
+            @Override
+            public ResultData doInBackground() {
+                final CallChatServer callChatServer = getApplicationContext()
+                        .getBean(CallChatServer.class);
+                final ResultData resultData = callChatServer.getFriendList(Long.valueOf(user.getId()));
+                return resultData;
+            }
+
+            @Override
+            public void success(String data) {
+                final JSONObject jsonObject = JSON.parseObject(data);
+                final List<FriendEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
+                        FriendEntity.class);
+
+                ObservableList<FriendEntity> dataList = FXCollections.observableArrayList();
+                dataList.addAll(list);
+                listView.setItems(dataList);
+                listView.setCellFactory(new Callback<ListView, ListCell>() {
+                    @Override
+                    public ListCell call(ListView param) {
+                        return new ContactListCell();
+                    }
+                });
+            }
+
+            @Override
+            public void fail(String msg) {
+                System.out.println("发生错误：" + msg);
+            }
+        });
     }
 
     @Override
@@ -122,7 +171,42 @@ public class MainController extends BaseController {
 
             Label label = new Label();
             label.setText(item);
+            final Paint paint = Paint.valueOf("#ff3333");
+            label.setTextFill(paint);
+            label.setFont(new Font("Arial", 30));
             setGraphic(label);
+        }
+
+        @Override
+        public void updateSelected(boolean selected) {
+            super.updateSelected(false);
+        }
+    }
+
+    static class ContactListCell extends ListCell<FriendEntity> {
+        @Override
+        protected void updateItem(FriendEntity item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty) {
+                return;
+            }
+
+            try {
+                final URL itemUrl = getClass().getClassLoader()
+                        .getResource("layout" + File.separator + "item_friend.fxml");
+                HBox parent = new FXMLLoader(itemUrl).load();
+                final Label label = (Label) parent.getChildren().get(2);
+                label.setText(item.getName());
+                setGraphic(parent);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void updateSelected(boolean selected) {
+            super.updateSelected(false);
         }
     }
 
@@ -156,7 +240,7 @@ public class MainController extends BaseController {
         }
 
         @Override
-        public String toString()  {
+        public String toString() {
             return this.name;
         }
 

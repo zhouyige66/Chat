@@ -2,10 +2,11 @@ package cn.roy.chat.call;
 
 import cn.roy.chat.enity.LoginEntity;
 import cn.roy.chat.enity.ResultData;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Description:
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface CallChatServer {
 
     @PostMapping("/user/login")
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
     ResultData login(@RequestBody LoginEntity entity);
+
+    @GetMapping("/friend/list")
+    ResultData getFriendList(@RequestParam Long userId);
 
 }
