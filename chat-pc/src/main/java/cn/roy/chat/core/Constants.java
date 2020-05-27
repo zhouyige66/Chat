@@ -11,7 +11,7 @@ import java.nio.charset.Charset;
  * @Date: 2019/1/21 10:46
  * @Version: v1.0
  */
-final public class ConstantValue {
+final public class Constants {
     // Message协议头
     public static final int HEAD_DATA = 0x8888;
     // 默认编码格式

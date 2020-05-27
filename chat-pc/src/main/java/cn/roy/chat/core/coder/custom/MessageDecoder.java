@@ -1,6 +1,6 @@
 package cn.roy.chat.core.coder.custom;
 
-import cn.roy.chat.core.ConstantValue;
+import cn.roy.chat.core.Constants;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -34,7 +34,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
                 // 标记包头开始的index
                 byteBuf.markReaderIndex();
                 // 读到协议开始标志，结束循环
-                if (byteBuf.readInt() == ConstantValue.HEAD_DATA) {
+                if (byteBuf.readInt() == Constants.HEAD_DATA) {
                     break;
                 }
                 // 未读到协议开始标志，略过一个字节
@@ -60,7 +60,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
             byteBuf.readBytes(data);
 
             // 数据格式转换（可直接转换成Model）
-            String body = new String(data, ConstantValue.CHARSET);
+            String body = new String(data, Constants.CHARSET);
             list.add(body);
         }
     }

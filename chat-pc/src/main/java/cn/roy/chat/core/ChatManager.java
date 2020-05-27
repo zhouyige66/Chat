@@ -2,6 +2,10 @@ package cn.roy.chat.core;
 
 import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.Message;
+import cn.roy.chat.Main;
+import cn.roy.chat.broadcast.NotifyEvent;
+import cn.roy.chat.broadcast.NotifyManager;
+import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.core.coder.ObjectToStringEncoder;
 import cn.roy.chat.core.coder.StringToObjectDecoder;
 import cn.roy.chat.core.coder.custom.MessageDecoder;
@@ -10,6 +14,11 @@ import cn.roy.chat.core.coder.delimiter.DelimiterBasedFrameEncoder;
 import cn.roy.chat.core.handler.HeartbeatHandler;
 import cn.roy.chat.core.handler.MessageHandler;
 import cn.roy.chat.core.util.LogUtil;
+import cn.roy.chat.enity.ResultData;
+import cn.roy.chat.util.http.HttpRequestTask;
+import cn.roy.chat.util.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -39,6 +48,7 @@ import java.util.concurrent.TimeUnit;
  * @Version: v1.0
  */
 public class ChatManager {
+    private static final String NOTIFY_CHAT_STATUS = "notify_chat_status";
     private static ChatManager instance;
 
     private ChatConfig config;
@@ -47,7 +57,7 @@ public class ChatManager {
     private EventLoopGroup eventLoopGroup;
     private Channel channel;
     // 状态等
-    private ChatConnectStatus connectStatus;
+    private ConnectStatus connectStatus = ConnectStatus.INIT;
     private boolean connectSuccess = false;
     private int failCount = 0;
 
@@ -67,37 +77,32 @@ public class ChatManager {
     }
 
     private void getHostFromServer() {
-//        LogUtil.d(this, "调用接口查询聊天服务器Host");
-//        Observer<JSONObject> observer = new Observer<JSONObject>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//            }
-//
-//            @Override
-//            public void onNext(JSONObject jsonObject) {
-//                failCount = 0;
-//                JSONObject map = jsonObject.getJSONObject("map");
-//                String host = map.getString("host");
-//                if(host.equals("127.0.0.1")){
-//                    host = "10.0.2.2";
-//                }
-//                config.setHost(host);
-//                config.setPort(map.getIntValue("port"));
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//            }
-//        };
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("userId", CacheManager.getInstance().getCurrentUserId());
-//        HttpUtil.getInstance().getWithoutHeader(ApplicationConfig.HttpConfig.API_GET_NETTY_HOST,
-//                params, observer);
+        LogUtil.d(this, "调用接口查询聊天服务器Host");
+        HttpUtil.execute(new HttpRequestTask() {
+            @Override
+            public ResultData doInBackground() {
+                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
+                final ResultData resultData = callChatServer.getHost(Long.valueOf(Main.currentUser.getId()));
+                return resultData;
+            }
+
+            @Override
+            public void success(String data) {
+                failCount = 0;
+
+                final JSONObject jsonObject = JSON.parseObject(data);
+                JSONObject map = jsonObject.getJSONObject("map");
+                String host = map.getString("host");
+                config.setHost(host);
+                config.setPort(map.getIntValue("port"));
+            }
+
+            @Override
+            public void fail(String msg) {
+                failCount++;
+                notifyStatusChange(ConnectStatus.SERVER_ERROR);
+            }
+        });
     }
 
     private void reconnect() {
@@ -112,7 +117,7 @@ public class ChatManager {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-                        switch (ConstantValue.CODER_TYPE) {
+                        switch (Constants.CODER_TYPE) {
                             case STRING:// 方式一：字符串方式
                                 pipeline.addLast(
                                         new ObjectToStringEncoder(),
@@ -122,7 +127,7 @@ public class ChatManager {
                                 break;
                             case DELIMITER:// 方式二：分隔符方式
                                 ByteBuf delimiterByteBuf =
-                                        Unpooled.copiedBuffer(ConstantValue.DELIMITER.getBytes());
+                                        Unpooled.copiedBuffer(Constants.DELIMITER.getBytes());
                                 pipeline.addLast(
                                         new DelimiterBasedFrameEncoder(),
                                         new DelimiterBasedFrameDecoder(2048, delimiterByteBuf),
@@ -154,6 +159,7 @@ public class ChatManager {
                 public void operationComplete(Future<? super Void> future) throws Exception {
                     LogUtil.d(ChatManager.this, "监听回调：" + future.isSuccess());
                     if (future.isSuccess()) {// 连接成功
+                        notifyStatusChange(ConnectStatus.CONNECTED);
                         connectSuccess = true;
                         // 重置失败次数
                         failCount = 0;
@@ -179,14 +185,15 @@ public class ChatManager {
             eventLoopGroup = null;
             failCount++;
             LogUtil.d(ChatManager.this, "失败次数：" + failCount);
+            notifyStatusChange(ConnectStatus.INIT);
         }
     }
 
     private void login(boolean isLogin) {
         LogUtil.d(this, "执行登录：" + isLogin);
         LoginMessage loginMessage = new LoginMessage();
-        loginMessage.setUserId(CacheManager.getInstance().getCurrentUserId());
-        loginMessage.setUserName(CacheManager.getInstance().getCurrentUserName());
+        loginMessage.setUserId(Long.valueOf(Main.currentUser.getId()));
+        loginMessage.setUserName(Main.currentUser.getName());
         loginMessage.setDevice("android");
         loginMessage.setLocation("暂无");
         loginMessage.setLogin(isLogin);
@@ -194,17 +201,13 @@ public class ChatManager {
         sendMessage(loginMessage);
     }
 
-    private void notifyStatus(ChatConnectStatus status) {
+    private void notifyStatusChange(ConnectStatus status) {
         LogUtil.d(this, "广播状态：" + status.getDes());
-        this.status = status;
-        if (observableEmitterList.size() == 0) {
-            return;
-        }
-        for (ObservableEmitter emitter : observableEmitterList) {
-            if (!emitter.isDisposed()) {
-                emitter.onNext(this.status);
-            }
-        }
+        this.connectStatus = status;
+        NotifyEvent notifyEvent = new NotifyEvent();
+        notifyEvent.setEventType(NOTIFY_CHAT_STATUS);
+        notifyEvent.put("status", status.getCode());
+        NotifyManager.getInstance().notifyEvent(notifyEvent);
     }
 
     /**
@@ -223,6 +226,7 @@ public class ChatManager {
         if (executorService != null) {
             executorService.shutdown();
         }
+        notifyStatusChange(ConnectStatus.CONNECTING);
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
@@ -265,6 +269,7 @@ public class ChatManager {
 
     /**
      * 配置连接参数
+     *
      * @param config
      */
     public void setConfig(ChatConfig config) {
@@ -276,7 +281,6 @@ public class ChatManager {
     }
 
     /**
-     *
      * @return
      */
     public boolean isConnected() {
@@ -285,9 +289,10 @@ public class ChatManager {
 
     /**
      * 获取当前连接状态
+     *
      * @return
      */
-    public ChatConnectStatus getStatus() {
+    public ConnectStatus getStatus() {
         return connectStatus;
     }
 

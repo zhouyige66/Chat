@@ -2,7 +2,7 @@ package cn.roy.chat.core.coder.custom;
 
 import cn.kk20.chat.base.message.Message;
 import cn.kk20.chat.base.message.MessageType;
-import cn.roy.chat.core.ConstantValue;
+import cn.roy.chat.core.Constants;
 import cn.roy.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
@@ -24,9 +24,9 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
         if (message.getMessageType() != MessageType.HEARTBEAT.HEARTBEAT) {
             LogUtil.d(this, "发送消息：" + msgStr);
         }
-        byte[] data = msgStr.getBytes(ConstantValue.CHARSET);
+        byte[] data = msgStr.getBytes(Constants.CHARSET);
         // 1.写入头部标志信息
-        byteBuf.writeInt(ConstantValue.HEAD_DATA);
+        byteBuf.writeInt(Constants.HEAD_DATA);
         // 2.写入消息长度
         byteBuf.writeInt(data.length);
         // 3.写入消息内容

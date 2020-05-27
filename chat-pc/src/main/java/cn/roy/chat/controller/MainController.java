@@ -1,12 +1,12 @@
 package cn.roy.chat.controller;
 
-import cn.roy.chat.cache.CacheUtil;
+import cn.roy.chat.util.CacheUtil;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.enity.FriendEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
-import cn.roy.chat.http.HttpRequestTask;
-import cn.roy.chat.http.HttpUtil;
+import cn.roy.chat.util.http.HttpRequestTask;
+import cn.roy.chat.util.http.HttpUtil;
 import cn.roy.chat.util.FXMLUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -15,21 +15,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;

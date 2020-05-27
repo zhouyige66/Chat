@@ -1,15 +1,17 @@
 package cn.roy.chat.controller;
 
-import cn.roy.chat.cache.CacheUtil;
+import cn.roy.chat.Main;
+import cn.roy.chat.core.ChatConfig;
+import cn.roy.chat.core.ChatManager;
+import cn.roy.chat.util.CacheUtil;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.enity.LoginEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
-import cn.roy.chat.http.HttpRequestTask;
-import cn.roy.chat.http.HttpUtil;
+import cn.roy.chat.util.http.HttpRequestTask;
+import cn.roy.chat.util.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.util.internal.StringUtil;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -101,8 +103,17 @@ public class LoginController extends BaseController {
             public void success(String data) {
                 final UserEntity userEntity = JSON.parseObject(data, UserEntity.class);
                 userEntity.setPassword(password);
+                Main.currentUser = userEntity;
                 CacheUtil.cacheData("user", userEntity);
                 CacheUtil.cacheToProp("user", userEntity);
+
+                ChatConfig config = new ChatConfig();
+                config.setHost("127.0.0.1");
+                config.setPort(10001);
+                config.setAutoReconnectTime(5);
+                config.setHeartbeatFailCount(6);
+                ChatManager.getInstance().setConfig(config);
+                ChatManager.getInstance().connectServer();
 
                 userNameField.setEditable(true);
                 passwordField.setEditable(true);

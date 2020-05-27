@@ -1,6 +1,7 @@
 package cn.roy.chat;
 
 import cn.roy.chat.controller.LoginController;
+import cn.roy.chat.enity.UserEntity;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -30,6 +31,7 @@ import java.net.URL;
 public class Main extends Application implements ApplicationContextAware, ApplicationRunner {
     private Stage mainStage;
     public static ApplicationContext context;
+    public static UserEntity currentUser;
 
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);

@@ -20,8 +20,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,7 +45,7 @@ public class NettyRelateController {
     @GetMapping("getHost")
     @ApiOperation(value = "查询netty服务主机", notes = "功能：查询负载均衡netty服务主机")
     @ApiImplicitParam(name = "userId", value = "用户ID")
-    public ResultData addFriend(@RequestParam Long userId) throws Exception {
+    public ResultData getHost(@RequestParam Long userId) throws Exception {
         if (userId == null) {
             return ResultData.requestError();
         }

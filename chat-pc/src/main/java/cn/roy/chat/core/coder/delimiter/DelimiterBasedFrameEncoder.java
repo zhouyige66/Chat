@@ -2,7 +2,7 @@ package cn.roy.chat.core.coder.delimiter;
 
 import cn.kk20.chat.base.message.Message;
 import cn.kk20.chat.base.message.MessageType;
-import cn.roy.chat.core.ConstantValue;
+import cn.roy.chat.core.Constants;
 import cn.roy.chat.core.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
@@ -25,8 +25,8 @@ public class DelimiterBasedFrameEncoder extends MessageToByteEncoder<Message> {
         if (message.getMessageType() != MessageType.HEARTBEAT) {
             LogUtil.d(this, "发送消息：" + msgStr);
         }
-        String data = msgStr + ConstantValue.DELIMITER;
-        byteBuf.writeBytes(data.getBytes(ConstantValue.CHARSET));
+        String data = msgStr + Constants.DELIMITER;
+        byteBuf.writeBytes(data.getBytes(Constants.CHARSET));
     }
 
 }

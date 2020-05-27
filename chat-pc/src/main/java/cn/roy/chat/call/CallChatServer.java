@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Date: 5/25/2020 10:13 AM
  * @Version: v1.0
  */
-@FeignClient(name = "ChatServer",url = "localhost:8082")
+@FeignClient(name = "ChatServer", url = "localhost:8082")
 public interface CallChatServer {
 
     @PostMapping("/user/login")
@@ -23,4 +23,6 @@ public interface CallChatServer {
     @GetMapping("/friend/list")
     ResultData getFriendList(@RequestParam Long userId);
 
+    @GetMapping("getHost")
+    ResultData getHost(@RequestParam Long userId);
 }

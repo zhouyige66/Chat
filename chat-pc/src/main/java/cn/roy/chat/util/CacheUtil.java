@@ -1,4 +1,4 @@
-package cn.roy.chat.cache;
+package cn.roy.chat.util;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.util.StringUtils;

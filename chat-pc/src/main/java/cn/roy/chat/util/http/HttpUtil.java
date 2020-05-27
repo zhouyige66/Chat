@@ -1,4 +1,4 @@
-package cn.roy.chat.http;
+package cn.roy.chat.util.http;
 
 import cn.roy.chat.enity.ResultData;
 import com.alibaba.fastjson.JSON;
