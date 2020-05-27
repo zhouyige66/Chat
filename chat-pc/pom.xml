@@ -65,6 +65,13 @@
             <artifactId>feign-jackson</artifactId>
             <version>11.0</version>
         </dependency>
+
+        <dependency>
+            <artifactId>chat-base</artifactId>
+            <groupId>cn.kk20</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+            <systemPath>./libs/chat-base-0.0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

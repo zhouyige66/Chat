@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<HBox xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+      minWidth="800.0" minHeight="200.0"
+      maxWidth="1000.0" maxHeight="600.0">
+    <children>
+        <ListView minWidth="200.0" maxWidth="250.0" maxHeight="Infinity" prefHeight="600.0" prefWidth="200.0"
+                  HBox.hgrow="ALWAYS"/>
+        <VBox minWidth="600.0" maxWidth="Infinity" maxHeight="Infinity" prefHeight="600.0" prefWidth="600.0"
+              HBox.hgrow="ALWAYS">
+            <children>
+                <Label prefHeight="60.0" text="姓名" VBox.vgrow="NEVER" maxHeight="60.0" minHeight="60.0">
+                    <padding>
+                        <Insets left="10"/>
+                    </padding>
+                </Label>
+                <SplitPane dividerPositions="0.65" maxHeight="Infinity" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                    <items>
+                        <ListView maxHeight="Infinity" minHeight="200" prefHeight="350.0" prefWidth="600.0"
+                                  SplitPane.resizableWithParent="true"/>
+                        <VBox>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                                    <children>
+                                        <Button mnemonicParsing="false" text="Button"/>
+                                        <Button mnemonicParsing="false" text="Button"/>
+                                        <Button mnemonicParsing="false" text="Button"/>
+                                        <Button mnemonicParsing="false" text="Button"/>
+                                        <HBox alignment="CENTER_RIGHT" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Button mnemonicParsing="false" text="Button"/>
+                                                <Button layoutX="54.5" mnemonicParsing="false" text="Button"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                                <TextArea maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
+            </children>
+        </VBox>
+    </children>
+</HBox>

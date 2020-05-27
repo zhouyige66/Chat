@@ -7,6 +7,7 @@ import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
 import cn.roy.chat.http.HttpRequestTask;
 import cn.roy.chat.http.HttpUtil;
+import cn.roy.chat.util.FXMLUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import javafx.beans.value.ChangeListener;
@@ -24,8 +25,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -106,8 +105,14 @@ public class MainController extends BaseController {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 Stage stage = new Stage();
                 stage.setTitle("聊天");
-                BorderPane root = new BorderPane();
-                stage.setScene(new Scene(root, 400, 400));
+
+                final Parent parent = FXMLUtil.loadFXML("chat");
+                final Scene scene = new Scene(parent, 800, 600);
+                stage.setScene(scene);
+                stage.setMinWidth(800.0);
+                stage.setMaxWidth(1200.0);
+                stage.setMinHeight(600.0);
+                stage.setMaxHeight(900.0);
                 stage.show();
             }
         });
@@ -164,25 +169,6 @@ public class MainController extends BaseController {
         return null;
     }
 
-    static class ColorRectCell extends ListCell<String> {
-        @Override
-        public void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-
-            Label label = new Label();
-            label.setText(item);
-            final Paint paint = Paint.valueOf("#ff3333");
-            label.setTextFill(paint);
-            label.setFont(new Font("Arial", 30));
-            setGraphic(label);
-        }
-
-        @Override
-        public void updateSelected(boolean selected) {
-            super.updateSelected(false);
-        }
-    }
-
     static class ContactListCell extends ListCell<FriendEntity> {
         @Override
         protected void updateItem(FriendEntity item, boolean empty) {
@@ -192,16 +178,10 @@ public class MainController extends BaseController {
                 return;
             }
 
-            try {
-                final URL itemUrl = getClass().getClassLoader()
-                        .getResource("layout" + File.separator + "item_friend.fxml");
-                HBox parent = new FXMLLoader(itemUrl).load();
-                final Label label = (Label) parent.getChildren().get(2);
-                label.setText(item.getName());
-                setGraphic(parent);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            HBox parent = FXMLUtil.loadFXML("item_friend");
+            final Label label = (Label) parent.getChildren().get(2);
+            label.setText(item.getName());
+            setGraphic(parent);
         }
 
         @Override
