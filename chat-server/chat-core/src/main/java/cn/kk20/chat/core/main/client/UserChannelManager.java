@@ -62,6 +62,9 @@ public class UserChannelManager {
 
     public void remove(Long userId) {
         UserWrapper remove = userWrapperMap.remove(userId);
+        if (remove == null) {
+            return;
+        }
         channelIdMap.remove(remove.getChannel().id().asShortText());
         redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
         redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());

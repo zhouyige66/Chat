@@ -1,5 +1,5 @@
 server:
-  port: 9001
+  port: 9003
 
 spring:
   profiles:
@@ -10,11 +10,11 @@ spring:
 
 # 监控监控
 management:
-  server:
-    port: 8082
+#  server:
+#    port: 8082
   endpoints:
     web:
-      base-path: monitor
+      base-path: /monitor
 
 logging:
   level:
@@ -32,8 +32,8 @@ chat:
       port: 10000
       autoRestartTimeInterval: 5
     commonServer:
-      port: 10001
+      port: 10003
       autoRestartTimeInterval: 5
     webServer:
-      port: 10002
+      port: 10004
       autoRestartTimeInterval: 5

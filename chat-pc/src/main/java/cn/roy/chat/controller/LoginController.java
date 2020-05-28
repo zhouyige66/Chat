@@ -1,29 +1,24 @@
 package cn.roy.chat.controller;
 
 import cn.roy.chat.Main;
+import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.core.ChatConfig;
 import cn.roy.chat.core.ChatManager;
-import cn.roy.chat.util.CacheUtil;
-import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.enity.LoginEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
+import cn.roy.chat.util.CacheUtil;
+import cn.roy.chat.util.FXMLUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
 import cn.roy.chat.util.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.util.internal.StringUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class LoginController extends BaseController {
     @FXML
@@ -36,9 +31,7 @@ public class LoginController extends BaseController {
     private Button loginButton;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        super.initialize(location, resources);
-
+    public void init() {
         final UserEntity user = CacheUtil.getCacheFromProp("user", UserEntity.class);
         if (user != null) {
             userNameField.setText(user.getName());
@@ -46,20 +39,6 @@ public class LoginController extends BaseController {
 
             userNameField.positionCaret(user.getName().length());
         }
-    }
-
-    @Override
-    public Scene config(Stage stage, Parent root) {
-        Scene scene = new Scene(root);
-        stage.setTitle("Chat");
-        stage.setMinWidth(300.0);
-        stage.setMaxWidth(400.0);
-        stage.setMinHeight(550.0);
-        stage.setMaxHeight(750.0);
-        stage.setWidth(350.0);
-        stage.setHeight(700.0);
-        stage.setResizable(true);
-        return scene;
     }
 
     public void login(ActionEvent actionEvent) {
@@ -93,8 +72,7 @@ public class LoginController extends BaseController {
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
-                final CallChatServer callChatServer = getApplicationContext()
-                        .getBean(CallChatServer.class);
+                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
                 final ResultData resultData = callChatServer.login(entity);
                 return resultData;
             }
@@ -135,7 +113,16 @@ public class LoginController extends BaseController {
     }
 
     private void jump2Main() {
-        jump2NewScene("main.fxml", "main.css");
+        mStage.setTitle("Chat");
+        mStage.setMinWidth(300.0);
+        mStage.setMaxWidth(400.0);
+        mStage.setMinHeight(550.0);
+        mStage.setMaxHeight(750.0);
+        mStage.setWidth(350.0);
+        mStage.setHeight(700.0);
+        mStage.setResizable(true);
+        final MainController mainController = FXMLUtil.startNewScene("main", mStage);
+        mainController.setStage(mStage);
     }
 
 }

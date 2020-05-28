@@ -23,6 +23,6 @@ public interface CallChatServer {
     @GetMapping("/friend/list")
     ResultData getFriendList(@RequestParam Long userId);
 
-    @GetMapping("getHost")
+    @GetMapping("/netty/getHost")
     ResultData getHost(@RequestParam Long userId);
 }

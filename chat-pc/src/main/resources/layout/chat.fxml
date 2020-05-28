@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.geometry.Insets?>
 <HBox xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
       minWidth="800.0" minHeight="200.0"
-      maxWidth="1000.0" maxHeight="600.0">
+      maxWidth="1000.0" maxHeight="600.0"
+      fx:controller="cn.roy.chat.controller.ChatController">
     <children>
-        <ListView minWidth="200.0" maxWidth="250.0" maxHeight="Infinity" prefHeight="600.0" prefWidth="200.0"
+        <ListView fx:id="recentContactListView" minWidth="200.0" maxWidth="250.0" maxHeight="Infinity"
+                  prefHeight="600.0" prefWidth="200.0"
                   HBox.hgrow="ALWAYS"/>
         <VBox minWidth="600.0" maxWidth="Infinity" maxHeight="Infinity" prefHeight="600.0" prefWidth="600.0"
               HBox.hgrow="ALWAYS">

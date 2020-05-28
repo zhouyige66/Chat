@@ -1,13 +1,16 @@
 package cn.roy.chat.controller;
 
-import cn.roy.chat.util.CacheUtil;
+import cn.roy.chat.Main;
+import cn.roy.chat.broadcast.NotifyEvent;
+import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.enity.FriendEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
+import cn.roy.chat.util.CacheUtil;
+import cn.roy.chat.util.FXMLUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
 import cn.roy.chat.util.http.HttpUtil;
-import cn.roy.chat.util.FXMLUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import javafx.beans.value.ChangeListener;
@@ -15,20 +18,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * @Description:
@@ -52,6 +52,7 @@ public class MainController extends BaseController {
     RadioButton contactRadio;
     @FXML
     RadioButton groupRadio;
+
     @FXML
     StackPane stackPane;
     @FXML
@@ -64,7 +65,7 @@ public class MainController extends BaseController {
     private UserEntity user;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void init() {
         user = CacheUtil.getCache("user", UserEntity.class);
 
         DropShadow dropShadow = new DropShadow();
@@ -101,15 +102,12 @@ public class MainController extends BaseController {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 Stage stage = new Stage();
                 stage.setTitle("聊天");
-
-                final Parent parent = FXMLUtil.loadFXML("chat");
-                final Scene scene = new Scene(parent, 800, 600);
-                stage.setScene(scene);
                 stage.setMinWidth(800.0);
                 stage.setMaxWidth(1200.0);
                 stage.setMinHeight(600.0);
                 stage.setMaxHeight(900.0);
-                stage.show();
+                final ChatController chatController = FXMLUtil.startNewScene("chat", stage);
+                chatController.setStage(stage);
             }
         });
 
@@ -130,8 +128,7 @@ public class MainController extends BaseController {
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
-                final CallChatServer callChatServer = getApplicationContext()
-                        .getBean(CallChatServer.class);
+                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
                 final ResultData resultData = callChatServer.getFriendList(Long.valueOf(user.getId()));
                 return resultData;
             }
@@ -160,9 +157,10 @@ public class MainController extends BaseController {
         });
     }
 
-    @Override
-    public Scene config(Stage stage, Parent root) {
-        return null;
+    public void logout(MouseEvent mouseEvent) {
+        final NotifyEvent notifyEvent = new NotifyEvent();
+        notifyEvent.setEventType("logout");
+        NotifyManager.getInstance().notifyEvent(notifyEvent);
     }
 
     static class ContactListCell extends ListCell<FriendEntity> {

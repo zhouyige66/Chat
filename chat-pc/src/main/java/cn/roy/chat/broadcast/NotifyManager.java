@@ -1,9 +1,7 @@
 package cn.roy.chat.broadcast;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @Description:
@@ -25,13 +23,13 @@ public class NotifyManager {
         return instance;
     }
 
-    private Map<String, List<NotifyReceiver>> receiverMap = new HashMap<>();
+    private Map<String, CopyOnWriteArrayList<NotifyReceiver>> receiverMap = new HashMap<>();
 
     public void register(NotifyReceiver receiver) {
         final String receiveEventType = receiver.getReceiveEventType();
-        List<NotifyReceiver> notifyReceivers = receiverMap.get(receiveEventType);
+        CopyOnWriteArrayList<NotifyReceiver> notifyReceivers = receiverMap.get(receiveEventType);
         if (notifyReceivers == null) {
-            notifyReceivers = new ArrayList<>();
+            notifyReceivers = new CopyOnWriteArrayList<>();
             receiverMap.put(receiveEventType, notifyReceivers);
         }
         if (!notifyReceivers.contains(receiver)) {
@@ -41,7 +39,7 @@ public class NotifyManager {
 
     public void unRegister(NotifyReceiver receiver) {
         final String receiveEventType = receiver.getReceiveEventType();
-        final List<NotifyReceiver> notifyReceivers = receiverMap.get(receiveEventType);
+        CopyOnWriteArrayList<NotifyReceiver> notifyReceivers = receiverMap.get(receiveEventType);
         if (notifyReceivers != null && notifyReceivers.contains(receiver)) {
             notifyReceivers.remove(receiver);
         }
@@ -49,11 +47,9 @@ public class NotifyManager {
 
     public void notifyEvent(NotifyEvent event) {
         final String type = event.getType();
-        final List<NotifyReceiver> notifyReceivers = receiverMap.get(type);
+        CopyOnWriteArrayList<NotifyReceiver> notifyReceivers = receiverMap.get(type);
         if (notifyReceivers != null && notifyReceivers.size() > 0) {
-            for (NotifyReceiver receiver : notifyReceivers) {
-                receiver.onReceiveEvent(event);
-            }
+            notifyReceivers.stream().forEach(e -> e.onReceiveEvent(event));
         }
     }
 
