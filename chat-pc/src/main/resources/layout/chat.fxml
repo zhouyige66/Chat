@@ -14,7 +14,7 @@
         <VBox minWidth="600.0" maxWidth="Infinity" maxHeight="Infinity" prefHeight="600.0" prefWidth="600.0"
               HBox.hgrow="ALWAYS">
             <children>
-                <Label prefHeight="60.0" text="姓名" VBox.vgrow="NEVER" maxHeight="60.0" minHeight="60.0">
+                <Label fx:id="currentContactUserLabel" prefHeight="60.0" text="姓名" VBox.vgrow="NEVER" maxHeight="60.0" minHeight="60.0">
                     <padding>
                         <Insets left="10"/>
                     </padding>
@@ -39,7 +39,7 @@
                                         </HBox>
                                     </children>
                                 </HBox>
-                                <TextArea maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
+                                <TextArea fx:id="msgTextArea" maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
                             </children>
                         </VBox>
                     </items>

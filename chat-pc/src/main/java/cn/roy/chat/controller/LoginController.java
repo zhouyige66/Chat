@@ -3,7 +3,7 @@ package cn.roy.chat.controller;
 import cn.roy.chat.Main;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.core.ChatConfig;
-import cn.roy.chat.core.ChatManager;
+import cn.roy.chat.core.ChatClient;
 import cn.roy.chat.enity.LoginEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
@@ -90,8 +90,8 @@ public class LoginController extends BaseController {
                 config.setPort(10001);
                 config.setAutoReconnectTime(5);
                 config.setHeartbeatFailCount(6);
-                ChatManager.getInstance().setConfig(config);
-                ChatManager.getInstance().connectServer();
+                ChatClient.getInstance().setConfig(config);
+                ChatClient.getInstance().connectServer();
 
                 userNameField.setEditable(true);
                 passwordField.setEditable(true);

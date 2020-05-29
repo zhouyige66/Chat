@@ -1,7 +1,7 @@
 package cn.roy.chat.core.handler;
 
 import cn.kk20.chat.base.message.HeartbeatMessage;
-import cn.roy.chat.core.ChatManager;
+import cn.roy.chat.core.ChatClient;
 import cn.roy.chat.core.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -31,7 +31,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessa
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.WRITER_IDLE) {
                 heartFailCount++;
-                if (heartFailCount > ChatManager.getInstance().getConfig().getHeartbeatFailCount()) {
+                if (heartFailCount > ChatClient.getInstance().getConfig().getHeartbeatFailCount()) {
                     heartFailCount = 0;
                     LogUtil.d(this, "客户端读超时，关闭通道：" + ctx.channel().remoteAddress().toString());
                     ctx.close();
@@ -39,7 +39,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessa
                 }
 
                 HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
-                ChatManager.getInstance().sendMessage(heartbeatMessage);
+                ChatClient.getInstance().sendMessage(heartbeatMessage);
             } else {
                 super.userEventTriggered(ctx, evt);
             }

@@ -9,8 +9,8 @@ package cn.roy.chat.core;
 public enum ConnectStatus {
     INIT(0, "未连接"),
     CONNECTING(1, "连接中..."),
-    CONNECTED(2, "已连接"),
-    SERVER_ERROR(3, "服务无响应");
+    CONNECTED(2, "在线"),
+    SERVER_ERROR(3, "无服务");
     private int code;
     private String des;
 

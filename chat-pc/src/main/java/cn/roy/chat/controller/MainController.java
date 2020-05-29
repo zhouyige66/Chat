@@ -3,7 +3,9 @@ package cn.roy.chat.controller;
 import cn.roy.chat.Main;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
+import cn.roy.chat.broadcast.NotifyReceiver;
 import cn.roy.chat.call.CallChatServer;
+import cn.roy.chat.core.ChatClient;
 import cn.roy.chat.enity.FriendEntity;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.enity.UserEntity;
@@ -13,6 +15,7 @@ import cn.roy.chat.util.http.HttpRequestTask;
 import cn.roy.chat.util.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -39,6 +42,8 @@ import java.util.List;
 public class MainController extends BaseController {
     @FXML
     ImageView userHeadImageView;
+    @FXML
+    Label connectStatusLabel;
     @FXML
     Label userNameLabel;
     @FXML
@@ -74,6 +79,7 @@ public class MainController extends BaseController {
         dropShadow.setOffsetY(0);
         dropShadow.setColor(Color.color(1.0, 1.0, 1.0));
         userHeadImageView.setEffect(dropShadow);
+        connectStatusLabel.setText(ChatClient.getInstance().getStatus().getDes());
 
         userNameLabel.setText(user.getName());
         userPhoneLabel.setText(user.getPhone());
@@ -153,6 +159,23 @@ public class MainController extends BaseController {
             @Override
             public void fail(String msg) {
                 System.out.println("发生错误：" + msg);
+            }
+        });
+
+        NotifyManager.getInstance().register(new NotifyReceiver() {
+            @Override
+            public String getReceiveEventType() {
+                return ChatClient.NOTIFY_CHAT_STATUS;
+            }
+
+            @Override
+            public void onReceiveEvent(NotifyEvent event) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectStatusLabel.setText(event.getStringValue("statusDes"));
+                    }
+                });
             }
         });
     }

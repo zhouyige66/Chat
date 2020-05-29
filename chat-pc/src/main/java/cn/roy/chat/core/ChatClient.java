@@ -47,9 +47,9 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2019/1/14 13:25
  * @Version: v1.0
  */
-public class ChatManager {
-    private static final String NOTIFY_CHAT_STATUS = "notify_chat_status";
-    private static ChatManager instance;
+public class ChatClient {
+    public static final String NOTIFY_CHAT_STATUS = "notify_chat_status";
+    private static ChatClient instance;
 
     private ChatConfig config;
     private ScheduledExecutorService executorService;
@@ -61,18 +61,18 @@ public class ChatManager {
     private boolean connectSuccess = false;
     private int failCount = 0;
 
-    public static ChatManager getInstance() {
+    public static ChatClient getInstance() {
         if (instance == null) {
-            synchronized (ChatManager.class) {
+            synchronized (ChatClient.class) {
                 if (instance == null) {
-                    instance = new ChatManager();
+                    instance = new ChatClient();
                 }
             }
         }
         return instance;
     }
 
-    private ChatManager() {
+    private ChatClient() {
 
     }
 
@@ -151,13 +151,13 @@ public class ChatManager {
                     }
                 });
         // 发起异步连接操作
-        LogUtil.d(ChatManager.this, "连接server：执行一次");
+        LogUtil.d(ChatClient.this, "连接server：执行一次");
         try {
             ChannelFuture future = bootstrap.connect(config.getHost(), config.getPort());
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    LogUtil.d(ChatManager.this, "监听回调：" + future.isSuccess());
+                    LogUtil.d(ChatClient.this, "监听回调：" + future.isSuccess());
                     if (future.isSuccess()) {// 连接成功
                         notifyStatusChange(ConnectStatus.CONNECTED);
                         connectSuccess = true;
@@ -169,22 +169,22 @@ public class ChatManager {
                 }
             });
             channel = future.channel();
-            LogUtil.d(ChatManager.this, "连接server：等待通道关闭");
+            LogUtil.d(ChatClient.this, "连接server：等待通道关闭");
             // 服务器同步连接断开时,这句代码才会往下执行
             channel.closeFuture().sync();
-            LogUtil.d(ChatManager.this, "连接server：通道正常关闭");
+            LogUtil.d(ChatClient.this, "连接server：通道正常关闭");
         } catch (InterruptedException e) {
-            LogUtil.d(ChatManager.this, "连接server：出现异常");
+            LogUtil.d(ChatClient.this, "连接server：出现异常");
             e.printStackTrace();
         } finally {
-            LogUtil.d(ChatManager.this, "连接server：执行finally");
+            LogUtil.d(ChatClient.this, "连接server：执行finally");
             connectSuccess = false;
             if (!eventLoopGroup.isShutdown()) {
                 eventLoopGroup.shutdownGracefully();
             }
             eventLoopGroup = null;
             failCount++;
-            LogUtil.d(ChatManager.this, "失败次数：" + failCount);
+            LogUtil.d(ChatClient.this, "失败次数：" + failCount);
             notifyStatusChange(ConnectStatus.INIT);
         }
     }
@@ -207,6 +207,7 @@ public class ChatManager {
         NotifyEvent notifyEvent = new NotifyEvent();
         notifyEvent.setEventType(NOTIFY_CHAT_STATUS);
         notifyEvent.put("status", status.getCode());
+        notifyEvent.put("statusDes", status.getDes());
         NotifyManager.getInstance().notifyEvent(notifyEvent);
     }
 
@@ -243,7 +244,7 @@ public class ChatManager {
                  * 4.重连
                  * 5.重登录
                  */
-                LogUtil.d(ChatManager.this, "核心线程，重试一次");
+                LogUtil.d(ChatClient.this, "核心线程，重试一次");
                 if (StringUtils.isEmpty(config.getHost()) || failCount >= 5) {
                     // 调用接口获取服务器地址
                     getHostFromServer();

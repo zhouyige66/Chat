@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import java.net.URL?>
-<VBox maxHeight="Infinity" maxWidth="Infinity" prefHeight="600.0"
-      prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="Infinity" maxWidth="Infinity" prefHeight="600.0" prefWidth="400.0"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="cn.roy.chat.controller.MainController">
     <stylesheets>
         <URL value="@/css/main.css"/>
     </stylesheets>
-    <HBox maxWidth="Infinity" prefHeight="100.0" alignment="CENTER">
+    <HBox alignment="CENTER" maxWidth="Infinity" prefHeight="100.0">
         <children>
-            <ImageView fx:id="userHeadImageView" fitHeight="58.0" fitWidth="58.0" preserveRatio="true">
-                <image>
-                    <Image url="@/img/logo.png"/>
-                </image>
-            </ImageView>
+            <VBox alignment="CENTER">
+                <children>
+                    <ImageView fx:id="userHeadImageView" fitHeight="58.0" fitWidth="58.0" preserveRatio="true">
+                        <image>
+                            <Image url="@/img/logo.png"/>
+                        </image>
+                    </ImageView>
+                    <Label fx:id="connectStatusLabel" text="未连接"/>
+                </children>
+            </VBox>
             <VBox alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                 <padding>
                     <Insets bottom="10" left="10" right="10" top="10"/>
@@ -49,14 +54,14 @@
             </VBox>
         </children>
     </HBox>
-    <HBox fx:id="tabHBox" maxWidth="Infinity" prefHeight="40.0" minHeight="40.0" maxHeight="40.0" alignment="CENTER">
+    <HBox fx:id="tabHBox" alignment="CENTER" maxHeight="40.0" maxWidth="Infinity" minHeight="40.0" prefHeight="40.0">
         <children>
             <RadioButton fx:id="chatRadio" alignment="CENTER" maxWidth="Infinity" mnemonicParsing="false"
                          selected="true" text="聊天" HBox.hgrow="ALWAYS"/>
-            <RadioButton fx:id="contactRadio" alignment="CENTER" maxWidth="Infinity" mnemonicParsing="false"
-                         text="联系人" HBox.hgrow="ALWAYS"/>
-            <RadioButton fx:id="groupRadio" alignment="CENTER" maxWidth="Infinity" mnemonicParsing="false"
-                         text="群组" HBox.hgrow="ALWAYS"/>
+            <RadioButton fx:id="contactRadio" alignment="CENTER" maxWidth="Infinity" mnemonicParsing="false" text="联系人"
+                         HBox.hgrow="ALWAYS"/>
+            <RadioButton fx:id="groupRadio" alignment="CENTER" maxWidth="Infinity" mnemonicParsing="false" text="群组"
+                         HBox.hgrow="ALWAYS"/>
         </children>
     </HBox>
     <StackPane fx:id="stackPane" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">

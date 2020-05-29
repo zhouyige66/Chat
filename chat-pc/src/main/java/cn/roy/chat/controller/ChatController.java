@@ -1,7 +1,9 @@
 package cn.roy.chat.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 
 
 /**
@@ -13,9 +15,14 @@ import javafx.scene.control.ListView;
 public class ChatController extends BaseController{
     @FXML
     ListView recentContactListView;
+    @FXML
+    Label currentContactUserLabel;
+    @FXML
+    TextArea msgTextArea;
 
     @Override
     public void init() {
 
     }
+
 }
