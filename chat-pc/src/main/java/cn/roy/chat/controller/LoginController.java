@@ -10,7 +10,7 @@ import cn.roy.chat.enity.UserEntity;
 import cn.roy.chat.util.CacheUtil;
 import cn.roy.chat.util.FXMLUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
-import cn.roy.chat.util.http.HttpUtil;
+import cn.roy.chat.util.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.util.internal.StringUtil;
 import javafx.event.ActionEvent;

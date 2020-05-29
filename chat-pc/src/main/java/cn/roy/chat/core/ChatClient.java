@@ -16,7 +16,7 @@ import cn.roy.chat.core.handler.MessageHandler;
 import cn.roy.chat.core.util.LogUtil;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.util.http.HttpRequestTask;
-import cn.roy.chat.util.http.HttpUtil;
+import cn.roy.chat.util.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.netty.bootstrap.Bootstrap;

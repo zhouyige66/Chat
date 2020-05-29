@@ -9,8 +9,8 @@ import cn.roy.chat.core.ChatClient;
 import cn.roy.chat.enity.*;
 import cn.roy.chat.util.CacheUtil;
 import cn.roy.chat.util.FXMLUtil;
+import cn.roy.chat.util.HttpUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
-import cn.roy.chat.util.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
@@ -171,7 +171,7 @@ public class MainController extends BaseController {
             }
         });
 
-        NotifyManager.getInstance().register(new NotifyReceiver() {
+        registerNotifyEventReceiver(new NotifyReceiver() {
             @Override
             public String getReceiveEventType() {
                 return ChatClient.NOTIFY_CHAT_STATUS;

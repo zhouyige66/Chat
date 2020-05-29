@@ -4,10 +4,17 @@ import cn.roy.chat.Main;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -17,17 +24,24 @@ import java.util.ResourceBundle;
  * @Version: v1.0
  */
 public abstract class BaseController implements Initializable {
+    public final Logger logger = LoggerFactory.getLogger(getClass());
+
     protected Stage mStage;
 
     public void setStage(Stage mStage) {
         this.mStage = mStage;
+        this.mStage.sceneProperty().addListener(new ChangeListener<Scene>() {
+            @Override
+            public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
+                logger.info("已经发送了变化，需要回收处理");
+                release();
+            }
+        });
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-
-        NotifyManager.getInstance().register(new NotifyReceiver() {
+        registerNotifyEventReceiver(new NotifyReceiver() {
             @Override
             public String getReceiveEventType() {
                 return "logout";
@@ -46,5 +60,31 @@ public abstract class BaseController implements Initializable {
     }
 
     public abstract void init();
+
+    private List<NotifyReceiver> notifyReceiverList;
+
+    public void registerNotifyEventReceiver(NotifyReceiver receiver) {
+        if (notifyReceiverList == null) {
+            notifyReceiverList = new ArrayList<>();
+        }
+        notifyReceiverList.add(receiver);
+        NotifyManager.getInstance().register(receiver);
+    }
+
+    public void unRegisterNotifyEventReceiver(NotifyReceiver receiver) {
+        if (notifyReceiverList.contains(receiver)) {
+            notifyReceiverList.remove(receiver);
+        }
+        NotifyManager.getInstance().unRegister(receiver);
+    }
+
+    protected void release() {
+        // 注销全部观察器
+        if (notifyReceiverList != null && notifyReceiverList.size() > 0) {
+            for (NotifyReceiver receiver : notifyReceiverList) {
+                NotifyManager.getInstance().unRegister(receiver);
+            }
+        }
+    }
 
 }

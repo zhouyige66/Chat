@@ -47,7 +47,6 @@ public class FXMLUtil {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
-
             Controller controller = loader.getController();
             return controller;
         } catch (UnsupportedEncodingException e) {

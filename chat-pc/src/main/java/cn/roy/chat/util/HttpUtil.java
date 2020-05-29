@@ -1,6 +1,7 @@
-package cn.roy.chat.util.http;
+package cn.roy.chat.util;
 
 import cn.roy.chat.enity.ResultData;
+import cn.roy.chat.util.http.HttpRequestTask;
 import com.alibaba.fastjson.JSON;
 import javafx.application.Platform;
 
