@@ -20,9 +20,13 @@ public interface CallChatServer {
     @PostMapping("/user/login")
     ResultData login(@RequestBody LoginEntity entity);
 
+    @GetMapping("/netty/getHost")
+    ResultData getHost(@RequestParam Long userId);
+
     @GetMapping("/friend/list")
     ResultData getFriendList(@RequestParam Long userId);
 
-    @GetMapping("/netty/getHost")
-    ResultData getHost(@RequestParam Long userId);
+    @GetMapping("/group/list")
+    ResultData getGroupList(@RequestParam Long userId);
+
 }

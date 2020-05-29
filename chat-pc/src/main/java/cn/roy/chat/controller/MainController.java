@@ -6,9 +6,7 @@ import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.core.ChatClient;
-import cn.roy.chat.enity.FriendEntity;
-import cn.roy.chat.enity.ResultData;
-import cn.roy.chat.enity.UserEntity;
+import cn.roy.chat.enity.*;
 import cn.roy.chat.util.CacheUtil;
 import cn.roy.chat.util.FXMLUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
@@ -27,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -61,17 +60,25 @@ public class MainController extends BaseController {
     @FXML
     StackPane stackPane;
     @FXML
-    ListView listView;
+    ListView chatListView;
     @FXML
-    TreeView treeView;
+    ListView friendListView;
     @FXML
-    TreeView treeView2;
+    ListView groupListView;
+    @FXML
+    Label noDataLabel;
 
     private UserEntity user;
+    private ObservableList<RecentContactEntity> recentContactEntities;
+    private ObservableList<FriendEntity> friendEntities;
+    private ObservableList<GroupEntity> groupEntities;
 
     @Override
     public void init() {
         user = CacheUtil.getCache("user", UserEntity.class);
+        recentContactEntities = FXCollections.observableArrayList();
+        friendEntities = FXCollections.observableArrayList();
+        groupEntities = FXCollections.observableArrayList();
 
         DropShadow dropShadow = new DropShadow();
         dropShadow.setRadius(userHeadImageView.getFitWidth() / 2);
@@ -92,18 +99,25 @@ public class MainController extends BaseController {
         toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                ListView frontListView;
                 if (newValue == chatRadio) {
-                    listView.toFront();
+                    frontListView = chatListView;
                 } else if (newValue == contactRadio) {
-                    treeView.toFront();
+                    frontListView = friendListView;
                 } else {
-                    treeView2.toFront();
+                    frontListView = groupListView;
+                }
+
+                frontListView.toFront();
+                int size = frontListView.getItems().size();
+                if (size == 0) {
+                    noDataLabel.toFront();
                 }
             }
         });
 
-        listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        listView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        chatListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        chatListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 Stage stage = new Stage();
@@ -116,49 +130,44 @@ public class MainController extends BaseController {
                 chatController.setStage(stage);
             }
         });
-
-        BookCategory catJava = new BookCategory("JAVA-00", "Java");
-        BookCategory catJSP = new BookCategory("JAVA-01", "Jsp");
-        BookCategory catSpring = new BookCategory("JAVA-02", "Spring");
-        // Root Item
-        TreeItem<BookCategory> rootItem = new TreeItem<BookCategory>(catJava);
-        rootItem.setExpanded(true);
-        // JSP Item
-        TreeItem<BookCategory> itemJSP = new TreeItem<BookCategory>(catJSP);
-        // Spring Item
-        TreeItem<BookCategory> itemSpring = new TreeItem<>(catSpring);
-        // Add to Root
-        rootItem.getChildren().addAll(itemJSP, itemSpring);
-        treeView.setRoot(rootItem);
-
-        HttpUtil.execute(new HttpRequestTask() {
+        friendListView.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
-            public ResultData doInBackground() {
-                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
-                final ResultData resultData = callChatServer.getFriendList(Long.valueOf(user.getId()));
-                return resultData;
+            public ListCell call(ListView param) {
+                return new FriendListCell();
             }
-
+        });
+        friendListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        friendListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void success(String data) {
-                final JSONObject jsonObject = JSON.parseObject(data);
-                final List<FriendEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
-                        FriendEntity.class);
-
-                ObservableList<FriendEntity> dataList = FXCollections.observableArrayList();
-                dataList.addAll(list);
-                listView.setItems(dataList);
-                listView.setCellFactory(new Callback<ListView, ListCell>() {
-                    @Override
-                    public ListCell call(ListView param) {
-                        return new ContactListCell();
-                    }
-                });
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                Stage stage = new Stage();
+                stage.setTitle("聊天");
+                stage.setMinWidth(800.0);
+                stage.setMaxWidth(1200.0);
+                stage.setMinHeight(600.0);
+                stage.setMaxHeight(900.0);
+                final ChatController chatController = FXMLUtil.startNewScene("chat", stage);
+                chatController.setStage(stage);
             }
-
+        });
+        groupListView.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
-            public void fail(String msg) {
-                System.out.println("发生错误：" + msg);
+            public ListCell call(ListView param) {
+                return new GroupListCell();
+            }
+        });
+        groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        groupListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                Stage stage = new Stage();
+                stage.setTitle("聊天");
+                stage.setMinWidth(800.0);
+                stage.setMaxWidth(1200.0);
+                stage.setMinHeight(600.0);
+                stage.setMaxHeight(900.0);
+                final ChatController chatController = FXMLUtil.startNewScene("chat", stage);
+                chatController.setStage(stage);
             }
         });
 
@@ -178,6 +187,53 @@ public class MainController extends BaseController {
                 });
             }
         });
+
+        HttpUtil.execute(new HttpRequestTask() {
+            @Override
+            public ResultData doInBackground() {
+                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
+                final ResultData resultData = callChatServer.getFriendList(Long.valueOf(user.getId()));
+                return resultData;
+            }
+
+            @Override
+            public void success(String data) {
+                final JSONObject jsonObject = JSON.parseObject(data);
+                final List<FriendEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
+                        FriendEntity.class);
+
+                friendEntities.addAll(list);
+                friendListView.setItems(friendEntities);
+            }
+
+            @Override
+            public void fail(String msg) {
+                System.out.println("发生错误：" + msg);
+            }
+        });
+
+        HttpUtil.execute(new HttpRequestTask() {
+            @Override
+            public ResultData doInBackground() {
+                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
+                final ResultData resultData = callChatServer.getGroupList(Long.valueOf(user.getId()));
+                return resultData;
+            }
+
+            @Override
+            public void success(String data) {
+                final JSONObject jsonObject = JSON.parseObject(data);
+                final List<GroupEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
+                        GroupEntity.class);
+                groupEntities.addAll(list);
+                groupListView.setItems(groupEntities);
+            }
+
+            @Override
+            public void fail(String msg) {
+                System.out.println("发生错误：" + msg);
+            }
+        });
     }
 
     public void logout(MouseEvent mouseEvent) {
@@ -186,9 +242,9 @@ public class MainController extends BaseController {
         NotifyManager.getInstance().notifyEvent(notifyEvent);
     }
 
-    static class ContactListCell extends ListCell<FriendEntity> {
+    static class RecentContactListCell extends ListCell<RecentContactEntity> {
         @Override
-        protected void updateItem(FriendEntity item, boolean empty) {
+        protected void updateItem(RecentContactEntity item, boolean empty) {
             super.updateItem(item, empty);
 
             if (empty) {
@@ -196,7 +252,8 @@ public class MainController extends BaseController {
             }
 
             HBox parent = FXMLUtil.loadFXML("item_friend");
-            final Label label = (Label) parent.getChildren().get(2);
+            VBox vBox = (VBox) parent.getChildren().get(1);
+            final Label label = (Label) vBox.getChildren().get(0);
             label.setText(item.getName());
             setGraphic(parent);
         }
@@ -207,40 +264,56 @@ public class MainController extends BaseController {
         }
     }
 
-    static class BookCategory {
-        private String code;
-        private String name;
+    static class FriendListCell extends ListCell<FriendEntity> {
+        @Override
+        protected void updateItem(FriendEntity item, boolean empty) {
+            super.updateItem(item, empty);
 
-        public BookCategory() {
+            if (empty) {
+                return;
+            }
 
-        }
-
-        public BookCategory(String code, String name) {
-            this.code = code;
-            this.name = name;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
+            HBox parent = FXMLUtil.loadFXML("item_friend");
+            VBox vBox = (VBox) parent.getChildren().get(1);
+            final Label label = (Label) vBox.getChildren().get(0);
+            final Label label2 = (Label) vBox.getChildren().get(1);
+            final Label label3 = (Label) parent.getChildren().get(2);
+            label.setText(item.getName());
+            label2.setText("在线");
+            label3.setText("");
+            setGraphic(parent);
         }
 
         @Override
-        public String toString() {
-            return this.name;
+        public void updateSelected(boolean selected) {
+            super.updateSelected(false);
+        }
+    }
+
+    static class GroupListCell extends ListCell<GroupEntity> {
+        @Override
+        protected void updateItem(GroupEntity item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty) {
+                return;
+            }
+
+            HBox parent = FXMLUtil.loadFXML("item_friend");
+            final VBox vBox = (VBox) parent.getChildren().get(1);
+            final Label label = (Label) vBox.getChildren().get(0);
+            final Label label2 = (Label) vBox.getChildren().get(1);
+            final Label label3 = (Label) parent.getChildren().get(2);
+            label.setText(item.getName());
+            label2.setText(item.getCreateDate());
+            label3.setText("8");
+            setGraphic(parent);
         }
 
+        @Override
+        public void updateSelected(boolean selected) {
+            super.updateSelected(false);
+        }
     }
 
 }

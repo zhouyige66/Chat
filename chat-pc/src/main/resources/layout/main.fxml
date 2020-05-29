@@ -45,7 +45,7 @@
                             <Image url="@/img/ic_exit.png"/>
                         </image>
                     </ImageView>
-                    <Label text="退出">
+                    <Label fx:id="logoutLabel" text="退出">
                         <font>
                             <Font name="Arial" size="10.0"/>
                         </font>
@@ -65,8 +65,9 @@
         </children>
     </HBox>
     <StackPane fx:id="stackPane" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
-        <TreeView fx:id="treeView"/>
-        <TreeView fx:id="treeView2"/>
-        <ListView fx:id="listView"/>
+        <ListView fx:id="groupListView"/>
+        <ListView fx:id="friendListView"/>
+        <ListView fx:id="chatListView"/>
+        <Label fx:id="noDataLabel" text="无数据"/>
     </StackPane>
 </VBox>
