@@ -1,5 +1,5 @@
 server:
-  port: 9003
+  port: 9001
 
 spring:
   profiles:
@@ -32,8 +32,8 @@ chat:
       port: 10000
       autoRestartTimeInterval: 5
     commonServer:
-      port: 10003
+      port: 10001
       autoRestartTimeInterval: 5
     webServer:
-      port: 10004
+      port: 10002
       autoRestartTimeInterval: 5

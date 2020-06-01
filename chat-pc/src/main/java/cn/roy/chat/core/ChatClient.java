@@ -50,17 +50,6 @@ import java.util.concurrent.TimeUnit;
 public class ChatClient {
     public static final String NOTIFY_CHAT_STATUS = "notify_chat_status";
     private static ChatClient instance;
-
-    private ChatConfig config;
-    private ScheduledExecutorService executorService;
-    private Bootstrap bootstrap;
-    private EventLoopGroup eventLoopGroup;
-    private Channel channel;
-    // 状态等
-    private ConnectStatus connectStatus = ConnectStatus.INIT;
-    private boolean connectSuccess = false;
-    private int failCount = 0;
-
     public static ChatClient getInstance() {
         if (instance == null) {
             synchronized (ChatClient.class) {
@@ -71,6 +60,16 @@ public class ChatClient {
         }
         return instance;
     }
+
+    private ChatConfig config;
+    private ScheduledExecutorService executorService;
+    private Bootstrap bootstrap;
+    private EventLoopGroup eventLoopGroup;
+    private Channel channel;
+    // 状态等
+    private ConnectStatus connectStatus = ConnectStatus.INIT;
+    private boolean connectSuccess = false;
+    private int failCount = 0;
 
     private ChatClient() {
 
@@ -212,7 +211,7 @@ public class ChatClient {
     }
 
     /**
-     * 连接聊天服务器
+     * 连接服务器
      */
     public void connectServer() {
         if (config == null) {
@@ -269,7 +268,7 @@ public class ChatClient {
     }
 
     /**
-     * 配置连接参数
+     * 设置配置参数
      *
      * @param config
      */
@@ -277,11 +276,19 @@ public class ChatClient {
         this.config = config;
     }
 
+    /**
+     * 获取配置参数
+     *
+     * @return
+     */
     public ChatConfig getConfig() {
         return config;
     }
 
     /**
+     *
+     * 获取是否连接
+     *
      * @return
      */
     public boolean isConnected() {

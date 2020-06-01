@@ -98,7 +98,6 @@ public class LoginController extends BaseController {
                 loginButton.setText("登录");
                 loginButton.setDisable(false);
                 jump2Main();
-
             }
 
             @Override

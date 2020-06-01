@@ -14,14 +14,15 @@
         <VBox minWidth="600.0" maxWidth="Infinity" maxHeight="Infinity" prefHeight="600.0" prefWidth="600.0"
               HBox.hgrow="ALWAYS">
             <children>
-                <Label fx:id="currentContactUserLabel" prefHeight="60.0" text="姓名" VBox.vgrow="NEVER" maxHeight="60.0" minHeight="60.0">
+                <Label fx:id="currentContactUserLabel" prefHeight="60.0" text="姓名" VBox.vgrow="NEVER" maxHeight="60.0"
+                       minHeight="60.0">
                     <padding>
                         <Insets left="10"/>
                     </padding>
                 </Label>
                 <SplitPane dividerPositions="0.65" maxHeight="Infinity" orientation="VERTICAL" VBox.vgrow="ALWAYS">
                     <items>
-                        <ListView maxHeight="Infinity" minHeight="200" prefHeight="350.0" prefWidth="600.0"
+                        <ListView fx:id="messageListView" maxHeight="Infinity" minHeight="200" prefHeight="350.0" prefWidth="600.0"
                                   SplitPane.resizableWithParent="true"/>
                         <VBox>
                             <children>

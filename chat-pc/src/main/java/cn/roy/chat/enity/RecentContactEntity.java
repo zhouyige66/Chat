@@ -1,5 +1,7 @@
 package cn.roy.chat.enity;
 
+import cn.kk20.chat.base.message.Message;
+
 /**
  * @Description:
  * @Author: Roy Z
@@ -7,117 +9,40 @@ package cn.roy.chat.enity;
  * @Version: v1.0
  */
 public class RecentContactEntity {
-    /**
-     * id : 1
-     * name : kk20
-     * phone : 13982799214
-     * email : 751664206@qq.com
-     * password :
-     * head :
-     * isDelete : false
-     * createDate :
-     * modifyDate :
-     * friendList :
-     * groupList :
-     */
+    private int type;// 0-好友，1-群组
+    private FriendEntity friendEntity;
+    private GroupEntity groupEntity;
+    private Message lastChatMessage;
 
-    private int id;
-    private String name;
-    private String phone;
-    private String email;
-    private String password;
-    private String head;
-    private boolean isDelete;
-    private String createDate;
-    private String modifyDate;
-    private String friendList;
-    private String groupList;
-
-    public int getId() {
-        return id;
+    public int getType() {
+        return type;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public String getName() {
-        return name;
+    public FriendEntity getFriendEntity() {
+        return friendEntity;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFriendEntity(FriendEntity friendEntity) {
+        this.friendEntity = friendEntity;
     }
 
-    public String getPhone() {
-        return phone;
+    public GroupEntity getGroupEntity() {
+        return groupEntity;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setGroupEntity(GroupEntity groupEntity) {
+        this.groupEntity = groupEntity;
     }
 
-    public String getEmail() {
-        return email;
+    public Message getLastChatMessage() {
+        return lastChatMessage;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHead() {
-        return head;
-    }
-
-    public void setHead(String head) {
-        this.head = head;
-    }
-
-    public boolean isIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(boolean isDelete) {
-        this.isDelete = isDelete;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(String modifyDate) {
-        this.modifyDate = modifyDate;
-    }
-
-    public String getFriendList() {
-        return friendList;
-    }
-
-    public void setFriendList(String friendList) {
-        this.friendList = friendList;
-    }
-
-    public String getGroupList() {
-        return groupList;
-    }
-
-    public void setGroupList(String groupList) {
-        this.groupList = groupList;
+    public void setLastChatMessage(Message lastChatMessage) {
+        this.lastChatMessage = lastChatMessage;
     }
 }

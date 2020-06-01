@@ -23,20 +23,14 @@ import java.util.ResourceBundle;
  * @Date: 21/05/2020 16:35
  * @Version: v1.0
  */
-public abstract class BaseController implements Initializable {
+public abstract class BaseController implements Initializable,ChangeListener<Scene> {
     public final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected Stage mStage;
 
-    public void setStage(Stage mStage) {
-        this.mStage = mStage;
-        this.mStage.sceneProperty().addListener(new ChangeListener<Scene>() {
-            @Override
-            public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
-                logger.info("已经发送了变化，需要回收处理");
-                release();
-            }
-        });
+    public void setStage(Stage stage) {
+        this.mStage = stage;
+        this.mStage.sceneProperty().addListener(this);
     }
 
     @Override
@@ -57,6 +51,13 @@ public abstract class BaseController implements Initializable {
         });
 
         init();
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
+        logger.info("已经发送了变化，需要回收处理");
+        mStage.sceneProperty().removeListener(this);
+        release();
     }
 
     public abstract void init();
@@ -84,7 +85,9 @@ public abstract class BaseController implements Initializable {
             for (NotifyReceiver receiver : notifyReceiverList) {
                 NotifyManager.getInstance().unRegister(receiver);
             }
+            notifyReceiverList.clear();
         }
+        notifyReceiverList = null;
     }
 
 }

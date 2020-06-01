@@ -6,6 +6,7 @@ import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.core.ChatClient;
+import cn.roy.chat.core.ChatManager;
 import cn.roy.chat.enity.*;
 import cn.roy.chat.util.CacheUtil;
 import cn.roy.chat.util.FXMLUtil;
@@ -27,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.util.List;
@@ -69,6 +69,8 @@ public class MainController extends BaseController {
     Label noDataLabel;
 
     private UserEntity user;
+    private ToggleGroup toggleGroup;
+    private ChangeListener<Toggle> toggleChangeListener;
     private ObservableList<RecentContactEntity> recentContactEntities;
     private ObservableList<FriendEntity> friendEntities;
     private ObservableList<GroupEntity> groupEntities;
@@ -92,11 +94,11 @@ public class MainController extends BaseController {
         userPhoneLabel.setText(user.getPhone());
         registerTimeLabel.setText(user.getCreateDate());
 
-        ToggleGroup toggleGroup = new ToggleGroup();
+        toggleGroup = new ToggleGroup();
         chatRadio.setToggleGroup(toggleGroup);
         contactRadio.setToggleGroup(toggleGroup);
         groupRadio.setToggleGroup(toggleGroup);
-        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        toggleChangeListener = new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                 ListView frontListView;
@@ -114,20 +116,33 @@ public class MainController extends BaseController {
                     noDataLabel.toFront();
                 }
             }
-        });
+        };
+        toggleGroup.selectedToggleProperty().addListener(toggleChangeListener);
 
         chatListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         chatListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                Stage stage = new Stage();
-                stage.setTitle("聊天");
-                stage.setMinWidth(800.0);
-                stage.setMaxWidth(1200.0);
-                stage.setMinHeight(600.0);
-                stage.setMaxHeight(900.0);
-                final ChatController chatController = FXMLUtil.startNewScene("chat", stage);
-                chatController.setStage(stage);
+                final RecentContactEntity recentContactEntity = recentContactEntities.get(newValue.intValue());
+                if (recentContactEntity.getType() == 0) {
+                    ChatManager.getInstance().chatWithFriend(recentContactEntity.getFriendEntity());
+                } else {
+                    ChatManager.getInstance().chatWithGroup(recentContactEntity.getGroupEntity());
+                }
+            }
+        });
+        chatListView.setCellFactory(new Callback<ListView, ListCell>() {
+            @Override
+            public ListCell call(ListView param) {
+                return new RecentContactListCell();
+            }
+        });
+
+        friendListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        friendListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                ChatManager.getInstance().chatWithFriend(friendEntities.get(newValue.intValue()));
             }
         });
         friendListView.setCellFactory(new Callback<ListView, ListCell>() {
@@ -136,38 +151,18 @@ public class MainController extends BaseController {
                 return new FriendListCell();
             }
         });
-        friendListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        friendListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+        groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        groupListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                Stage stage = new Stage();
-                stage.setTitle("聊天");
-                stage.setMinWidth(800.0);
-                stage.setMaxWidth(1200.0);
-                stage.setMinHeight(600.0);
-                stage.setMaxHeight(900.0);
-                final ChatController chatController = FXMLUtil.startNewScene("chat", stage);
-                chatController.setStage(stage);
+                ChatManager.getInstance().chatWithGroup(groupEntities.get(newValue.intValue()));
             }
         });
         groupListView.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
             public ListCell call(ListView param) {
                 return new GroupListCell();
-            }
-        });
-        groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        groupListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                Stage stage = new Stage();
-                stage.setTitle("聊天");
-                stage.setMinWidth(800.0);
-                stage.setMaxWidth(1200.0);
-                stage.setMinHeight(600.0);
-                stage.setMaxHeight(900.0);
-                final ChatController chatController = FXMLUtil.startNewScene("chat", stage);
-                chatController.setStage(stage);
             }
         });
 
@@ -211,7 +206,6 @@ public class MainController extends BaseController {
                 System.out.println("发生错误：" + msg);
             }
         });
-
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
@@ -236,6 +230,13 @@ public class MainController extends BaseController {
         });
     }
 
+    @Override
+    protected void release() {
+        super.release();
+
+        toggleGroup.selectedToggleProperty().removeListener(toggleChangeListener);
+    }
+
     public void logout(MouseEvent mouseEvent) {
         final NotifyEvent notifyEvent = new NotifyEvent();
         notifyEvent.setEventType("logout");
@@ -248,13 +249,21 @@ public class MainController extends BaseController {
             super.updateItem(item, empty);
 
             if (empty) {
+                setGraphic(null);
                 return;
             }
 
             HBox parent = FXMLUtil.loadFXML("item_friend");
             VBox vBox = (VBox) parent.getChildren().get(1);
             final Label label = (Label) vBox.getChildren().get(0);
-            label.setText(item.getName());
+            final int type = item.getType();
+            if (type == 0) {
+                final FriendEntity friendEntity = item.getFriendEntity();
+                label.setText(friendEntity.getName());
+            } else {
+                final GroupEntity groupEntity = item.getGroupEntity();
+                label.setText(groupEntity.getName());
+            }
             setGraphic(parent);
         }
 
@@ -270,6 +279,7 @@ public class MainController extends BaseController {
             super.updateItem(item, empty);
 
             if (empty) {
+                setGraphic(null);
                 return;
             }
 
@@ -296,6 +306,7 @@ public class MainController extends BaseController {
             super.updateItem(item, empty);
 
             if (empty) {
+                setGraphic(null);
                 return;
             }
 
