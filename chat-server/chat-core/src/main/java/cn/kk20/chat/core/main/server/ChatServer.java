@@ -79,7 +79,6 @@ public class ChatServer implements Launcher {
         if (serverExecutor != null && !serverExecutor.isShutdown()) {
             serverExecutor.shutdown();
         }
-
         // 回收操作
         redisUtil.delete(ConstantValue.LIST_OF_SERVER);
     }

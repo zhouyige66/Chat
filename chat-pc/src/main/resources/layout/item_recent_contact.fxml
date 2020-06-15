@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" prefHeight="50.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10" />
+    </padding>
+    <children>
+        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@/img/logo.png" />
+            </image>
+        </ImageView>
+        <VBox alignment="CENTER_LEFT" fillWidth="true" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+                <Insets left="10" />
+            </HBox.margin>
+            <children>
+                <Label text="姓名" />
+                <Label text="消息">
+                    <padding>
+                        <Insets top="5" />
+                    </padding>
+                </Label>
+            </children>
+        </VBox>
+        <VBox>
+            <children>
+                <Label text="时间">
+                    <font>
+                        <Font size="10" />
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+    </children>
+</HBox>

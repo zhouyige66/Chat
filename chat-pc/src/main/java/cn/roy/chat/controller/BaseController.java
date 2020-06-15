@@ -6,9 +6,12 @@ import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +26,7 @@ import java.util.ResourceBundle;
  * @Date: 21/05/2020 16:35
  * @Version: v1.0
  */
-public abstract class BaseController implements Initializable,ChangeListener<Scene> {
+public abstract class BaseController implements Initializable, ChangeListener<Scene> {
     public final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected Stage mStage;
@@ -31,6 +34,17 @@ public abstract class BaseController implements Initializable,ChangeListener<Sce
     public void setStage(Stage stage) {
         this.mStage = stage;
         this.mStage.sceneProperty().addListener(this);
+        if (this.mStage != Main.primaryStage) {
+            this.mStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    EventType<WindowEvent> eventType = event.getEventType();
+                    if (eventType.equals(WindowEvent.WINDOW_CLOSE_REQUEST)) {
+                        release();
+                    }
+                }
+            });
+        }
     }
 
     @Override

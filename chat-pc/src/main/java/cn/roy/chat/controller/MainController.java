@@ -119,16 +119,16 @@ public class MainController extends BaseController {
         };
         toggleGroup.selectedToggleProperty().addListener(toggleChangeListener);
 
+        chatListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
+        friendListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
+        groupListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
+
         chatListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         chatListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 final RecentContactEntity recentContactEntity = recentContactEntities.get(newValue.intValue());
-                if (recentContactEntity.getType() == 0) {
-                    ChatManager.getInstance().chatWithFriend(recentContactEntity.getFriendEntity());
-                } else {
-                    ChatManager.getInstance().chatWithGroup(recentContactEntity.getGroupEntity());
-                }
+                ChatManager.getInstance().addRecentContact(recentContactEntity);
             }
         });
         chatListView.setCellFactory(new Callback<ListView, ListCell>() {
@@ -137,12 +137,17 @@ public class MainController extends BaseController {
                 return new RecentContactListCell();
             }
         });
+        chatListView.setItems(recentContactEntities);
 
         friendListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         friendListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                ChatManager.getInstance().chatWithFriend(friendEntities.get(newValue.intValue()));
+                final FriendEntity friendEntity = friendEntities.get(newValue.intValue());
+                final RecentContactEntity recentContactEntity = new RecentContactEntity();
+                recentContactEntity.setType(0);
+                recentContactEntity.setFriendEntity(friendEntity);
+                ChatManager.getInstance().addRecentContact(recentContactEntity);
             }
         });
         friendListView.setCellFactory(new Callback<ListView, ListCell>() {
@@ -151,12 +156,17 @@ public class MainController extends BaseController {
                 return new FriendListCell();
             }
         });
+        friendListView.setItems(friendEntities);
 
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         groupListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                ChatManager.getInstance().chatWithGroup(groupEntities.get(newValue.intValue()));
+                final GroupEntity groupEntity = groupEntities.get(newValue.intValue());
+                final RecentContactEntity recentContactEntity = new RecentContactEntity();
+                recentContactEntity.setType(1);
+                recentContactEntity.setGroupEntity(groupEntity);
+                ChatManager.getInstance().addRecentContact(recentContactEntity);
             }
         });
         groupListView.setCellFactory(new Callback<ListView, ListCell>() {
@@ -165,6 +175,7 @@ public class MainController extends BaseController {
                 return new GroupListCell();
             }
         });
+        groupListView.setItems(groupEntities);
 
         registerNotifyEventReceiver(new NotifyReceiver() {
             @Override
@@ -180,6 +191,18 @@ public class MainController extends BaseController {
                         connectStatusLabel.setText(event.getStringValue("statusDes"));
                     }
                 });
+            }
+        });
+        registerNotifyEventReceiver(new NotifyReceiver() {
+            @Override
+            public String getReceiveEventType() {
+                return "update_recent_contact";
+            }
+
+            @Override
+            public void onReceiveEvent(NotifyEvent event) {
+                RecentContactEntity entity = (RecentContactEntity) event.getSerializableValue("data");
+                recentContactEntities.add(entity);
             }
         });
 
@@ -198,7 +221,6 @@ public class MainController extends BaseController {
                         FriendEntity.class);
 
                 friendEntities.addAll(list);
-                friendListView.setItems(friendEntities);
             }
 
             @Override
@@ -220,7 +242,6 @@ public class MainController extends BaseController {
                 final List<GroupEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
                         GroupEntity.class);
                 groupEntities.addAll(list);
-                groupListView.setItems(groupEntities);
             }
 
             @Override
@@ -241,6 +262,8 @@ public class MainController extends BaseController {
         final NotifyEvent notifyEvent = new NotifyEvent();
         notifyEvent.setEventType("logout");
         NotifyManager.getInstance().notifyEvent(notifyEvent);
+
+        ChatManager.getInstance().clearRecentContact();
     }
 
     static class RecentContactListCell extends ListCell<RecentContactEntity> {
@@ -298,6 +321,7 @@ public class MainController extends BaseController {
         public void updateSelected(boolean selected) {
             super.updateSelected(false);
         }
+
     }
 
     static class GroupListCell extends ListCell<GroupEntity> {

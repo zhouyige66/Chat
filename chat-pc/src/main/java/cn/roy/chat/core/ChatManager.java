@@ -1,9 +1,9 @@
 package cn.roy.chat.core;
 
 import cn.kk20.chat.base.message.Message;
+import cn.roy.chat.broadcast.NotifyEvent;
+import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.controller.ChatController;
-import cn.roy.chat.enity.FriendEntity;
-import cn.roy.chat.enity.GroupEntity;
 import cn.roy.chat.enity.RecentContactEntity;
 import cn.roy.chat.util.FXMLUtil;
 import javafx.stage.Stage;
@@ -31,35 +31,30 @@ public class ChatManager {
     }
 
     private ChatController chatController;
-    private ContactManager contactManager;
-    private MessageManager messageManager;
+    private ContactManager contactManager = new ContactManager();
+    private MessageManager messageManager = new MessageManager();
 
     private ChatManager() {
 
-    }
-
-    public ChatController getChatController() {
-        return chatController;
     }
 
     public void setChatController(ChatController chatController) {
         this.chatController = chatController;
     }
 
-    public void chatWithFriend(FriendEntity friendEntity) {
+    /**********功能：最近联系人相关**********/
+    public void addRecentContact(RecentContactEntity entity) {
         validAndOpenChat();
-        RecentContactEntity recentContactEntity = new RecentContactEntity();
-        recentContactEntity.setType(0);
-        recentContactEntity.setFriendEntity(friendEntity);
-        chatController.setRecentContactEntity(recentContactEntity);
+        chatController.setRecentContactEntity(entity);
+        contactManager.add(entity);
     }
 
-    public void chatWithGroup(GroupEntity groupEntity) {
-        validAndOpenChat();
-        RecentContactEntity recentContactEntity = new RecentContactEntity();
-        recentContactEntity.setType(1);
-        recentContactEntity.setGroupEntity(groupEntity);
-        chatController.setRecentContactEntity(recentContactEntity);
+    public void removeRecentContact(RecentContactEntity entity) {
+        contactManager.remove(entity);
+    }
+
+    public void clearRecentContact() {
+        contactManager.clear();
     }
 
     private void validAndOpenChat() {
@@ -75,6 +70,7 @@ public class ChatManager {
         }
     }
 
+    /**********功能：消息相关**********/
     public void sendMessage(Message message) {
 
     }
@@ -85,6 +81,35 @@ public class ChatManager {
 
     private static class ContactManager {
         private Map<String, RecentContactEntity> contactEntityMap = new HashMap<>();
+
+        public void add(RecentContactEntity entity) {
+            final String key = getKey(entity);
+            if (contactEntityMap.containsKey(key)) {
+                return;
+            }
+            contactEntityMap.put(key, entity);
+
+            NotifyEvent notifyEvent = new NotifyEvent();
+            notifyEvent.setEventType("update_recent_contact");
+            notifyEvent.put("data", entity);
+            NotifyManager.getInstance().notifyEvent(notifyEvent);
+        }
+
+        public void remove(RecentContactEntity entity) {
+            final String key = getKey(entity);
+            if (contactEntityMap.containsKey(key)) {
+                contactEntityMap.remove(key);
+            }
+        }
+
+        public void clear() {
+            contactEntityMap.clear();
+        }
+
+        private String getKey(RecentContactEntity entity) {
+            return entity.getType() == 0 ? ("friend_" + entity.getFriendEntity().getId())
+                    : ("group_" + entity.getGroupEntity().getId());
+        }
     }
 
     private static class MessageManager {

@@ -2,13 +2,15 @@ package cn.roy.chat.enity;
 
 import cn.kk20.chat.base.message.Message;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @Author: Roy Z
  * @Date: 2020/5/26 13:46
  * @Version: v1.0
  */
-public class RecentContactEntity {
+public class RecentContactEntity implements Serializable {
     private int type;// 0-好友，1-群组
     private FriendEntity friendEntity;
     private GroupEntity groupEntity;

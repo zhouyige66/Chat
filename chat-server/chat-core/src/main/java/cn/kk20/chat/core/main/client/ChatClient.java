@@ -6,7 +6,6 @@ import cn.kk20.chat.core.main.Launcher;
 import cn.kk20.chat.core.main.client.initializer.CenterClientChannelInitializer;
 import cn.kk20.chat.core.main.client.initializer.ClientChannelInitializer;
 import cn.kk20.chat.core.main.client.initializer.WebClientChannelInitializer;
-import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -56,7 +55,6 @@ public class ChatClient implements Launcher {
     // 中心服务器使用
     private ScheduledExecutorService centerServerExecutor = null;
     private NioEventLoopGroup nioEventLoopGroup = null;
-    private Channel serverChannel = null;
     private boolean connectSuccess = false;
 
     @Override
@@ -179,7 +177,6 @@ public class ChatClient implements Launcher {
         if (centerServerExecutor != null && !centerServerExecutor.isShutdown()) {
             centerServerExecutor.shutdown();
         }
-
         // 收尾
         userChannelManager.clear();
     }

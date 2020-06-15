@@ -1,5 +1,7 @@
 server:
   port: 8082
+  tomcat:
+    max-http-post-size: 32
 
 spring:
   profiles:

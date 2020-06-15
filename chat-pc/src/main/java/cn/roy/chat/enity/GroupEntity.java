@@ -1,12 +1,14 @@
 package cn.roy.chat.enity;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @Author: Roy Z
  * @Date: 2020/5/29 09:42
  * @Version: v1.0
  */
-public class GroupEntity {
+public class GroupEntity implements Serializable {
     /**
      * id : 1
      * name : 研发一组

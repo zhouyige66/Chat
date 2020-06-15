@@ -13,9 +13,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @Description:
@@ -40,6 +42,8 @@ public class FriendController {
         if (applyBean == null || applyBean.getApplyUserId() == null || applyBean.getTargetUserId() == null) {
             return ResultData.requestError();
         }
+
+        final Properties properties = System.getProperties();
 
         ApplyLogModel applyLogModel = new ApplyLogModel();
         applyLogModel.setType(ApplyLogTypeEnum.ADD_FRIEND.getType());
@@ -78,8 +82,12 @@ public class FriendController {
     @ApiOperation(value = "查询好友列表", notes = "功能：根据用户ID查询用户好友列表")
     @ApiImplicitParam(name = "userId", value = "用户ID")
     public ResultData getFriendList(@RequestParam Long userId) {
-        List<UserModel> friendList = userService.getFriendList(userId);
-        ListDto<UserModel> userModelListDto = new ListDto<UserModel>(friendList);
-        return ResultData.success(userModelListDto);
+        try {
+            List<UserModel> friendList = userService.getFriendList(userId);
+            ListDto<UserModel> userModelListDto = new ListDto<UserModel>(friendList);
+            return ResultData.success(userModelListDto);
+        } catch (Exception e) {
+            return ResultData.fail(ResultData.ResultCode.SERVER_ERROR, e.getMessage());
+        }
     }
 }

@@ -32,8 +32,8 @@ public class UserChannelManager {
 
     public void cache(UserWrapper userWrapper) {
         Long userId = userWrapper.getUserModel().getId();
-        UserWrapper existUserWrapper = userWrapperMap.get(userId);
-        if (null != existUserWrapper) {
+        if (userWrapperMap.contains(userId)) {
+            UserWrapper existUserWrapper = userWrapperMap.get(userId);
             // 已经存在且不是当前通道，则关闭
             Channel channel = existUserWrapper.getChannel();
             if (channel != null && channel.isActive() && channel != userWrapper.getChannel()) {
@@ -61,10 +61,10 @@ public class UserChannelManager {
     }
 
     public void remove(Long userId) {
-        UserWrapper remove = userWrapperMap.remove(userId);
-        if (remove == null) {
+        if (!userWrapperMap.contains(userId)) {
             return;
         }
+        UserWrapper remove = userWrapperMap.remove(userId);
         channelIdMap.remove(remove.getChannel().id().asShortText());
         redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
         redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());

@@ -22,6 +22,13 @@ public class FXMLUtil {
     private FXMLUtil() {
     }
 
+    public static String getCSSUrl(String name) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("css").append(File.separator).append(name).append(".css");
+        final String s = FXMLUtil.class.getClassLoader().getResource(stringBuilder.toString()).toExternalForm();
+        return s;
+    }
+
     public static FXMLLoader getFXMLLoader(String name) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("layout").append(File.separator).append(name).append(".fxml");

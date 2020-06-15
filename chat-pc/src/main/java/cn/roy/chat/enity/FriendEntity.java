@@ -1,12 +1,14 @@
 package cn.roy.chat.enity;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @Author: Roy Z
  * @Date: 2020/5/26 13:46
  * @Version: v1.0
  */
-public class FriendEntity {
+public class FriendEntity implements Serializable {
     /**
      * id : 1
      * name : kk20

@@ -44,6 +44,7 @@ public class ChatController extends BaseController {
     @Override
     public void init() {
         recentContactEntities = FXCollections.observableArrayList();
+        recentContactListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
         recentContactListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         recentContactListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -92,7 +93,6 @@ public class ChatController extends BaseController {
                 index = recentContactEntities.size() - 1;
             }
         }
-        recentContactListView.refresh();
         recentContactListView.getSelectionModel().select(index);
     }
 
@@ -126,11 +126,12 @@ public class ChatController extends BaseController {
                 return;
             }
 
-            HBox parent = FXMLUtil.loadFXML("item_friend");
+            HBox parent = FXMLUtil.loadFXML("item_recent_contact");
             final VBox vBox = (VBox) parent.getChildren().get(1);
+            final VBox vBox2 = (VBox) parent.getChildren().get(2);
             final Label label = (Label) vBox.getChildren().get(0);
             final Label label2 = (Label) vBox.getChildren().get(1);
-            final Label label3 = (Label) parent.getChildren().get(2);
+            final Label label3 = (Label) vBox2.getChildren().get(0);
             if (item.getType() == 0) {
                 label.setText(item.getFriendEntity().getName());
             } else {
@@ -142,6 +143,11 @@ public class ChatController extends BaseController {
             }
 
             setGraphic(parent);
+        }
+
+        @Override
+        public void updateSelected(boolean selected) {
+            super.updateSelected(false);
         }
     }
 
