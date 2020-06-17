@@ -1,5 +1,5 @@
 server:
-  port: 9001
+  port: 10002
 
 spring:
   profiles:
@@ -10,11 +10,11 @@ spring:
 
 # 监控监控
 management:
-#  server:
-#    port: 8082
   endpoints:
     web:
       base-path: /monitor
+      exposure:
+        include: "*"
 
 logging:
   level:
@@ -24,16 +24,16 @@ chat:
   registerAsServer: false
   coderType: DELIMITER
   server:
-    port: 10000
+    port: 20000
     autoRestartTimeInterval: 5
   client:
     center:
       host: localhost
-      port: 10000
+      port: 20000
       autoRestartTimeInterval: 5
     commonServer:
-      port: 10001
+      port: 20001
       autoRestartTimeInterval: 5
     webServer:
-      port: 10002
+      port: 20002
       autoRestartTimeInterval: 5

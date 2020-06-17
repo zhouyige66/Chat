@@ -1,51 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<HBox xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
-      minWidth="800.0" minHeight="200.0"
-      maxWidth="1000.0" maxHeight="600.0"
-      fx:controller="cn.roy.chat.controller.ChatController">
-    <children>
-        <ListView fx:id="recentContactListView" minWidth="200.0" maxWidth="250.0" maxHeight="Infinity"
+
+<SplitPane maxHeight="600.0" maxWidth="1000.0" minHeight="200.0" minWidth="800.0"
+           dividerPositions="0.5"
+           xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="cn.roy.chat.controller.ChatController">
+    <items>
+        <ListView fx:id="recentContactListView"
+                  maxHeight="Infinity" maxWidth="250.0" minWidth="200.0"
                   prefHeight="600.0" prefWidth="200.0"
-                  HBox.hgrow="ALWAYS"/>
-        <VBox minWidth="600.0" maxWidth="Infinity" maxHeight="Infinity" prefHeight="600.0" prefWidth="600.0"
-              HBox.hgrow="ALWAYS">
+                  SplitPane.resizableWithParent="true"/>
+        <VBox maxHeight="Infinity" maxWidth="Infinity"
+              minWidth="600.0"
+              prefHeight="600.0" prefWidth="600.0"
+              SplitPane.resizableWithParent="true">
             <children>
-                <Label fx:id="currentContactUserLabel" prefHeight="60.0" text="姓名" VBox.vgrow="NEVER" maxHeight="60.0"
-                       minHeight="60.0">
+                <Label fx:id="currentContactUserLabel" maxHeight="60.0" minHeight="60.0" prefHeight="60.0"
+                       text="姓名" VBox.vgrow="NEVER">
                     <padding>
                         <Insets left="10"/>
                     </padding>
                 </Label>
-                <SplitPane dividerPositions="0.65" maxHeight="Infinity" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                <SplitPane dividerPositions="0.65"
+                           maxHeight="Infinity" orientation="VERTICAL"
+                           VBox.vgrow="ALWAYS">
                     <items>
-                        <ListView fx:id="messageListView" maxHeight="Infinity" minHeight="200" prefHeight="350.0" prefWidth="600.0"
+                        <ListView fx:id="messageListView"
+                                  maxHeight="Infinity" minHeight="200"
+                                  prefHeight="350.0" prefWidth="600.0"
                                   SplitPane.resizableWithParent="true"/>
-                        <VBox>
+                        <VBox minHeight="100.0"
+                              SplitPane.resizableWithParent="true">
                             <children>
-                                <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                                <HBox alignment="CENTER_LEFT"
+                                      maxWidth="Infinity">
                                     <children>
-                                        <Button mnemonicParsing="false" text="Button"/>
-                                        <Button mnemonicParsing="false" text="Button"/>
-                                        <Button mnemonicParsing="false" text="Button"/>
-                                        <Button mnemonicParsing="false" text="Button"/>
+                                        <Button mnemonicParsing="false" text="表情"/>
+                                        <Button mnemonicParsing="false" text="文件"/>
+                                        <Button mnemonicParsing="false" text="拍照"/>
+                                        <Button mnemonicParsing="false" text="截图"/>
                                         <HBox alignment="CENTER_RIGHT" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Button mnemonicParsing="false" text="Button"/>
-                                                <Button layoutX="54.5" mnemonicParsing="false" text="Button"/>
+                                                <Button mnemonicParsing="false" text="视频"/>
+                                                <Button mnemonicParsing="false" text="语音"/>
                                             </children>
                                         </HBox>
                                     </children>
                                 </HBox>
-                                <TextArea fx:id="msgTextArea" maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
+                                <TextArea fx:id="msgTextArea"
+                                          maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
                             </children>
                         </VBox>
                     </items>
                 </SplitPane>
             </children>
         </VBox>
-    </children>
-</HBox>
+    </items>
+</SplitPane>

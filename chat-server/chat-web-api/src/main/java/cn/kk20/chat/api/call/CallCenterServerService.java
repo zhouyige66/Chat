@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @Date: 2020/3/16 11:13
  * @Version: v1.0
  */
-@FeignClient(value = "server", path = "server", url = "localhost:9000")
+@FeignClient(value = "server", path = "server", url = "localhost:10001")
 public interface CallCenterServerService {
 
     @PostMapping("forwardChatMessage")

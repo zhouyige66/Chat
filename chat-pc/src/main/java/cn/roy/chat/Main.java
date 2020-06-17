@@ -34,7 +34,6 @@ public class Main extends Application implements ApplicationContextAware, Applic
         SpringApplication.run(Main.class, args);
     }
 
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;

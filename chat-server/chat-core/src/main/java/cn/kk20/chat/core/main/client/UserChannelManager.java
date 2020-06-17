@@ -61,6 +61,9 @@ public class UserChannelManager {
     }
 
     public void remove(Long userId) {
+        if(userId==null){
+            return;
+        }
         if (!userWrapperMap.contains(userId)) {
             return;
         }

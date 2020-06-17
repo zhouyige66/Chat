@@ -23,7 +23,7 @@ public class CacheUtil {
     private static Map<String, String> cacheMap = new HashMap<>();
 
     public static <T> void cacheData(String key, T t) {
-        // 使用内存缓存，以后更换为其他方案
+        // TODO 目前暂时使用内存缓存，以后更换为其他方案
         if (t instanceof String) {
             cacheMap.put(key, (String) t);
         } else {

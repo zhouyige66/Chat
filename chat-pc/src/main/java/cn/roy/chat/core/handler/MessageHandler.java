@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
- * @Description: 消息处理器（处理来至Android、IOS的消息）
+ * @Description: 消息处理器
  * @Author: Roy
  * @Date: 2019/1/21 15:55
  * @Version: v1.0

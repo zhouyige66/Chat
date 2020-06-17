@@ -15,6 +15,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("client")
 public class ChatClientController {
 
-
-
 }

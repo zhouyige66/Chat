@@ -49,7 +49,7 @@ public class ChatController extends BaseController {
         recentContactListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-
+                recentContactEntity = recentContactEntities.get(newValue.intValue());
             }
         });
         recentContactListView.setCellFactory(new Callback<ListView, ListCell>() {

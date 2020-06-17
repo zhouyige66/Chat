@@ -12,10 +12,6 @@
     -fx-background-color: #D3D3D3;
 }
 
-.list-cell .negative {
-    -fx-text-fill: red;
-}
-
 .label:focused, .label:selected, .label:cell-selection, .label:row-selection, .label:default {
     -fx-text-fill: #000000;
 }

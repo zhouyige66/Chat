@@ -72,11 +72,15 @@ public class ChatManager {
 
     /**********功能：消息相关**********/
     public void sendMessage(Message message) {
-
+        messageManager.addMessage(message);
     }
 
     public void receiveMessage(Message message) {
+        messageManager.addMessage(message);
+    }
 
+    public void removeMessage(Message message) {
+        messageManager.removeMessage(message);
     }
 
     private static class ContactManager {

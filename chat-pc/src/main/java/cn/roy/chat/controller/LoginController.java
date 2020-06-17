@@ -87,7 +87,7 @@ public class LoginController extends BaseController {
 
                 ChatConfig config = new ChatConfig();
                 config.setHost("127.0.0.1");
-                config.setPort(10001);
+                config.setPort(20001);
                 config.setAutoReconnectTime(5);
                 config.setHeartbeatFailCount(6);
                 ChatClient.getInstance().setConfig(config);
