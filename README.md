@@ -21,11 +21,11 @@
 ### 客户端
  * 修改相应的host为当前部署的服务器地址，然后分别运行。
 ### 效果展示
-  ! [text ] (https://github.com/zhouyige66/Chat/blob/master/screenshot/%E6%88%AA%E5%9B%BE1.png)
-  ! [text ] (https://github.com/zhouyige66/Chat/blob/master/screenshot/%E6%88%AA%E5%9B%BE2.png)
-  ! [text ] (https://github.com/zhouyige66/Chat/blob/master/screenshot/%E6%88%AA%E5%9B%BE3.png)
-  ! [text ] (https://github.com/zhouyige66/Chat/blob/master/screenshot/%E6%88%AA%E5%9B%BE4.png)
-  ! [text ] (https://github.com/zhouyige66/Chat/blob/master/screenshot/%E6%88%AA%E5%9B%BE5.png)
+  ![text] (https://github.com/zhouyige66/Chat/blob/master/screenshot/1.png)
+  ![text] (https://github.com/zhouyige66/Chat/blob/master/screenshot/2.png)
+  ![text] (https://github.com/zhouyige66/Chat/blob/master/screenshot/3.png)
+  ![text] (https://github.com/zhouyige66/Chat/blob/master/screenshot/4.png)
+  ![text] (https://github.com/zhouyige66/Chat/blob/master/screenshot/5.png)
 ## 关于作者
  * Email： 751664206@qq.com
  * 有任何建议或者使用中遇到问题都可以给我发邮件。
