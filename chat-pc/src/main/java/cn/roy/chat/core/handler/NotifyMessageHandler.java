@@ -38,7 +38,7 @@ public class NotifyMessageHandler extends SimpleChannelInboundHandler<NotifyMess
                 });
                 if (map != null) {
                     final boolean login = (boolean) map.get("login");
-                    final long id = (Long) map.get("login");
+                    final long id = (Long) map.get("id");
                     if (login) {
                         ChatManager.getInstance().addOnlineIds(id);
                     } else {
