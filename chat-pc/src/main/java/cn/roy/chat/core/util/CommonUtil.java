@@ -4,6 +4,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 
 /**
@@ -54,6 +55,11 @@ public class CommonUtil {
 
     public static String getTargetAddress(String host, int port, int webPort) {
         return host + ":" + port + "&" + webPort;
+    }
+
+    public static String getTimeStr(long time) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(time);
     }
 
 }

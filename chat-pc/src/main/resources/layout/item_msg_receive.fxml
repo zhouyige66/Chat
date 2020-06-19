@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="80.0" prefWidth="300.0"
+      xmlns="http://javafx.com/javafx/10.0.2-internal"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="10" left="15" right="15" top="10"/>
+    </padding>
+    <children>
+        <Label fx:id="timeLabel"
+               maxHeight="Infinity" maxWidth="Infinity"
+               VBox.vgrow="ALWAYS"
+               alignment="CENTER"
+               text="时间">
+            <padding>
+                <Insets bottom="10"/>
+            </padding>
+        </Label>
+        <HBox maxHeight="Infinity" maxWidth="Infinity"
+              prefHeight="80.0" prefWidth="531.0">
+            <children>
+                <ImageView
+                        fx:id="headImageView"
+                        fitHeight="60.0" fitWidth="60.0"
+                        pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@/img/logo.png"/>
+                    </image>
+                </ImageView>
+                <Label fx:id="msgLabel" text="消息内容"/>
+            </children>
+        </HBox>
+    </children>
+</VBox>

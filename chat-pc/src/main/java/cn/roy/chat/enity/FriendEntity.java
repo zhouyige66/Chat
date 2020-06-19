@@ -34,6 +34,7 @@ public class FriendEntity implements Serializable {
     private String modifyDate;
     private String friendList;
     private String groupList;
+    private boolean isOnline;
 
     public int getId() {
         return id;
@@ -121,5 +122,13 @@ public class FriendEntity implements Serializable {
 
     public void setGroupList(String groupList) {
         this.groupList = groupList;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 }

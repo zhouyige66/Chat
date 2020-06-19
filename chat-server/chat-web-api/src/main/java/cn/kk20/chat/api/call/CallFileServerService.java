@@ -18,7 +18,7 @@ import java.util.Map;
  * @Date: 2020/3/16 11:13
  * @Version: v1.0
  */
-@FeignClient(name = "file", path = "file", url = "localhost:8081")
+@FeignClient(name = "file", path = "file", url = "localhost:9001")
 public interface CallFileServerService {
 
     @PostMapping(value = "upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

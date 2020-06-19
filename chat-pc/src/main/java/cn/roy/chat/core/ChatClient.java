@@ -11,8 +11,10 @@ import cn.roy.chat.core.coder.StringToObjectDecoder;
 import cn.roy.chat.core.coder.custom.MessageDecoder;
 import cn.roy.chat.core.coder.custom.MessageEncoder;
 import cn.roy.chat.core.coder.delimiter.DelimiterBasedFrameEncoder;
+import cn.roy.chat.core.handler.ApplyMessageHandler;
 import cn.roy.chat.core.handler.HeartbeatHandler;
-import cn.roy.chat.core.handler.MessageHandler;
+import cn.roy.chat.core.handler.ChatMessageHandler;
+import cn.roy.chat.core.handler.NotifyMessageHandler;
 import cn.roy.chat.core.util.LogUtil;
 import cn.roy.chat.enity.ResultData;
 import cn.roy.chat.util.http.HttpRequestTask;
@@ -50,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 public class ChatClient {
     public static final String NOTIFY_CHAT_STATUS = "notify_chat_status";
     private static ChatClient instance;
+
     public static ChatClient getInstance() {
         if (instance == null) {
             synchronized (ChatClient.class) {
@@ -146,7 +149,10 @@ public class ChatClient {
                         pipeline.addLast(new IdleStateHandler(0,
                                         5, 0),
                                 new HeartbeatHandler(),
-                                new MessageHandler());
+                                new ApplyMessageHandler(),
+                                new NotifyMessageHandler(),
+                                new ChatMessageHandler()
+                        );
                     }
                 });
         // 发起异步连接操作
@@ -286,7 +292,6 @@ public class ChatClient {
     }
 
     /**
-     *
      * 获取是否连接
      *
      * @return

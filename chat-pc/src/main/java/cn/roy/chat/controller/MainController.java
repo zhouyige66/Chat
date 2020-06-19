@@ -29,6 +29,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class MainController extends BaseController {
     @FXML
     StackPane stackPane;
     @FXML
-    ListView chatListView;
+    ListView recentContactListView;
     @FXML
     ListView friendListView;
     @FXML
@@ -71,7 +72,7 @@ public class MainController extends BaseController {
     private UserEntity user;
     private ToggleGroup toggleGroup;
     private ChangeListener<Toggle> toggleChangeListener;
-    private ObservableList<RecentContactEntity> recentContactEntities;
+    private ObservableList<ContactEntity> recentContactEntities;
     private ObservableList<FriendEntity> friendEntities;
     private ObservableList<GroupEntity> groupEntities;
 
@@ -103,7 +104,7 @@ public class MainController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                 ListView frontListView;
                 if (newValue == chatRadio) {
-                    frontListView = chatListView;
+                    frontListView = recentContactListView;
                 } else if (newValue == contactRadio) {
                     frontListView = friendListView;
                 } else {
@@ -119,35 +120,33 @@ public class MainController extends BaseController {
         };
         toggleGroup.selectedToggleProperty().addListener(toggleChangeListener);
 
-        chatListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
+        recentContactListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
         friendListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
         groupListView.getStylesheets().add(FXMLUtil.getCSSUrl("item"));
 
-        chatListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        chatListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        recentContactListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        recentContactListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                final RecentContactEntity recentContactEntity = recentContactEntities.get(newValue.intValue());
-                ChatManager.getInstance().addRecentContact(recentContactEntity);
+                final ContactEntity contactEntity = recentContactEntities.get(newValue.intValue());
+                ChatManager.getInstance().openChatScene(contactEntity);
             }
         });
-        chatListView.setCellFactory(new Callback<ListView, ListCell>() {
+        recentContactListView.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
             public ListCell call(ListView param) {
                 return new RecentContactListCell();
             }
         });
-        chatListView.setItems(recentContactEntities);
+        recentContactListView.setItems(recentContactEntities);
 
         friendListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         friendListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 final FriendEntity friendEntity = friendEntities.get(newValue.intValue());
-                final RecentContactEntity recentContactEntity = new RecentContactEntity();
-                recentContactEntity.setType(0);
-                recentContactEntity.setFriendEntity(friendEntity);
-                ChatManager.getInstance().addRecentContact(recentContactEntity);
+                final ContactEntity contactEntity = new ContactEntity(friendEntity);
+                ChatManager.getInstance().openChatScene(contactEntity);
             }
         });
         friendListView.setCellFactory(new Callback<ListView, ListCell>() {
@@ -163,10 +162,8 @@ public class MainController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 final GroupEntity groupEntity = groupEntities.get(newValue.intValue());
-                final RecentContactEntity recentContactEntity = new RecentContactEntity();
-                recentContactEntity.setType(1);
-                recentContactEntity.setGroupEntity(groupEntity);
-                ChatManager.getInstance().addRecentContact(recentContactEntity);
+                final ContactEntity contactEntity = new ContactEntity(groupEntity);
+                ChatManager.getInstance().openChatScene(contactEntity);
             }
         });
         groupListView.setCellFactory(new Callback<ListView, ListCell>() {
@@ -201,8 +198,23 @@ public class MainController extends BaseController {
 
             @Override
             public void onReceiveEvent(NotifyEvent event) {
-                RecentContactEntity entity = (RecentContactEntity) event.getSerializableValue("data");
-                recentContactEntities.add(entity);
+                ContactEntity entity = (ContactEntity) event.getSerializableValue("data");
+                if (!recentContactEntities.contains(entity)) {
+                    recentContactEntities.add(entity);
+                }
+                recentContactListView.refresh();
+            }
+        });
+        registerNotifyEventReceiver(new NotifyReceiver() {
+            @Override
+            public String getReceiveEventType() {
+                return "update_online_friend";
+            }
+
+            @Override
+            public void onReceiveEvent(NotifyEvent event) {
+                recentContactListView.refresh();
+                friendListView.refresh();
             }
         });
 
@@ -219,8 +231,10 @@ public class MainController extends BaseController {
                 final JSONObject jsonObject = JSON.parseObject(data);
                 final List<FriendEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
                         FriendEntity.class);
-
-                friendEntities.addAll(list);
+                if (!CollectionUtils.isEmpty(list)) {
+                    ChatManager.getInstance().bindFriendList(list);
+                    friendEntities.addAll(list);
+                }
             }
 
             @Override
@@ -241,7 +255,10 @@ public class MainController extends BaseController {
                 final JSONObject jsonObject = JSON.parseObject(data);
                 final List<GroupEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
                         GroupEntity.class);
-                groupEntities.addAll(list);
+                if (!CollectionUtils.isEmpty(list)) {
+                    ChatManager.getInstance().bindGroupList(list);
+                    groupEntities.addAll(list);
+                }
             }
 
             @Override
@@ -266,9 +283,9 @@ public class MainController extends BaseController {
         ChatManager.getInstance().clearRecentContact();
     }
 
-    static class RecentContactListCell extends ListCell<RecentContactEntity> {
+    static class RecentContactListCell extends ListCell<ContactEntity> {
         @Override
-        protected void updateItem(RecentContactEntity item, boolean empty) {
+        protected void updateItem(ContactEntity item, boolean empty) {
             super.updateItem(item, empty);
 
             if (empty) {
@@ -279,14 +296,11 @@ public class MainController extends BaseController {
             HBox parent = FXMLUtil.loadFXML("item_friend");
             VBox vBox = (VBox) parent.getChildren().get(1);
             final Label label = (Label) vBox.getChildren().get(0);
-            final int type = item.getType();
-            if (type == 0) {
-                final FriendEntity friendEntity = item.getFriendEntity();
-                label.setText(friendEntity.getName());
-            } else {
-                final GroupEntity groupEntity = item.getGroupEntity();
-                label.setText(groupEntity.getName());
-            }
+            final Label msgLabel = (Label) vBox.getChildren().get(1);
+            final Label timeLabel = (Label) parent.getChildren().get(2);
+            label.setText(item.getContactName());
+            msgLabel.setText(item.getLatestMessage());
+            timeLabel.setText(item.getLastContactTime());
             setGraphic(parent);
         }
 
@@ -312,7 +326,7 @@ public class MainController extends BaseController {
             final Label label2 = (Label) vBox.getChildren().get(1);
             final Label label3 = (Label) parent.getChildren().get(2);
             label.setText(item.getName());
-            label2.setText("在线");
+            label2.setText(item.isOnline() ? "在线" : "离线");
             label3.setText("");
             setGraphic(parent);
         }

@@ -13,6 +13,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 /**
  * @Description: 消息处理器（处理来至Android、IOS的消息）
@@ -36,6 +37,10 @@ public class ForwardMessageHandler extends SimpleChannelInboundHandler<ForwardMe
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ForwardMessage message) throws Exception {
         Long targetUserId = message.getTargetUserId();
         String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetUserId);
+        if (StringUtils.isEmpty(host)) {
+            logger.debug("用户{}未登录", targetUserId);
+            return;
+        }
         Channel channel = clientChannelManager.getChannel(host);
         messageSender.sendMessage(channel, message);
     }

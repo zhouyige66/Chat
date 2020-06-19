@@ -67,7 +67,7 @@
     <StackPane fx:id="stackPane" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
         <ListView fx:id="groupListView"/>
         <ListView fx:id="friendListView"/>
-        <ListView fx:id="chatListView"/>
+        <ListView fx:id="recentContactListView"/>
         <Label fx:id="noDataLabel" text="无数据"/>
     </StackPane>
 </VBox>
