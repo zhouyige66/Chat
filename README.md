@@ -21,7 +21,7 @@
 ### 客户端
  * 修改相应的host为当前部署的服务器地址，然后分别运行。
 ### 效果展示
-  ![部署](https://raw.githubusercontent.com/zhouyige66/Chat/master/screenshot/1.png)
+  ![部署](screenshot/1.png)
   ![PC_1](https://raw.githubusercontent.com/zhouyige66/Chat/master/screenshot/2.png)
   ![PC_2](https://raw.githubusercontent.com/zhouyige66/Chat/master/screenshot/3.png)
   ![Android_1](https://raw.githubusercontent.com/zhouyige66/Chat/master/screenshot/4.png)
