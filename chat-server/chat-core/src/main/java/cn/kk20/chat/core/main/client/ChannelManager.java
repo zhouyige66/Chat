@@ -8,9 +8,13 @@ import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.CommonUtil;
 import cn.kk20.chat.core.util.RedisUtil;
 import cn.kk20.chat.dao.model.UserModel;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -55,8 +59,16 @@ public class ChannelManager {
         channelIdMap.put(channelId, userId);
         // 存储到redis，更新当前主机的连接数据量
         String host = getHost();
-        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, host);
-        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + host, userWrapperMap.size());
+        String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
+        JSONObject hostJson;
+        if (!StringUtils.isEmpty(hostInfo)) {
+            hostJson = JSON.parseObject(hostInfo);
+        } else {
+            hostJson = new JSONObject();
+        }
+        hostJson.put(clientType.getIdentify(), host);
+        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, hostJson.toJSONString());
+        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + host, channelIdMap.size());
     }
 
     public Long remove(Channel channel) {
@@ -76,15 +88,15 @@ public class ChannelManager {
         return null;
     }
 
-    public UserWrapper getClient(Long userId) {
-        return userWrapperMap.get(userId);
-    }
-
     public void clear() {
         userWrapperMap.clear();
         channelIdMap.clear();
         // 清除当前主机上连接数
         redisUtil.delete(ConstantValue.STATISTIC_OF_HOST + getHost());
+    }
+
+    public UserWrapper getClient(Long userId) {
+        return userWrapperMap.get(userId);
     }
 
     private String getHost() {
