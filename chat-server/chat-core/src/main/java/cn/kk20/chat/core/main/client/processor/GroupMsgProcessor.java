@@ -34,7 +34,7 @@ public class GroupMsgProcessor implements MessageProcessor {
             if (memberId == fromUserId) {
                 continue;
             }
-            messageSender.sendMessage(memberId, chatMessage);
+            messageSender.sendMessage2Target(memberId, chatMessage);
         }
     }
 

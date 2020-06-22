@@ -1,11 +1,9 @@
 package cn.kk20.chat.core.main.server.handler;
 
 import cn.kk20.chat.base.message.ForwardMessage;
-import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ServerComponent;
 import cn.kk20.chat.core.main.server.ClientChannelManager;
 import cn.kk20.chat.core.main.server.MessageSender;
-import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +11,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 /**
  * @Description: 消息处理器（处理来至Android、IOS的消息）
@@ -27,21 +24,18 @@ public class ForwardMessageHandler extends SimpleChannelInboundHandler<ForwardMe
     private final Logger logger = LoggerFactory.getLogger(ForwardMessageHandler.class);
 
     @Autowired
-    RedisUtil redisUtil;
+    ClientChannelManager clientChannelManager;
     @Autowired
     MessageSender messageSender;
-    @Autowired
-    ClientChannelManager clientChannelManager;
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ForwardMessage message) throws Exception {
-        Long targetUserId = message.getTargetUserId();
-        String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + targetUserId);
-        if (StringUtils.isEmpty(host)) {
-            logger.debug("用户{}未登录", targetUserId);
+        String targetHost = message.getTargetHost();
+        Channel channel = clientChannelManager.getChannel(targetHost);
+        if (channel == null) {
+            logger.debug("转发的目标主机已离线，无法完成该请求");
             return;
         }
-        Channel channel = clientChannelManager.getChannel(host);
         messageSender.sendMessage(channel, message);
     }
 

@@ -91,7 +91,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_NOTIFY);
         notifyMessage.setData(map);
         for (Long friendId : onlineFriendIdSet) {
-            messageSender.sendMessage(friendId, notifyMessage);
+            messageSender.sendMessage2Target(friendId, notifyMessage);
         }
     }
 }

@@ -73,34 +73,34 @@ public class ChannelManager {
     public Long remove(Channel channel) {
         String channelId = channel.id().asShortText();
         Long userId = channelIdMap.get(channelId);
-        if (userId != null) {
-            UserWrapper userWrapper = userWrapperMap.get(userId);
-            if (userWrapper != null) {
-                ClientType clientType = userWrapper.removeChannel(channel);
-                if (userWrapper.isOnline()) {
-                    String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
-                    JSONObject hostJson;
-                    if (!StringUtils.isEmpty(hostInfo)) {
-                        hostJson = JSON.parseObject(hostInfo);
-                        if (hostJson.containsKey(clientType.getIdentify())) {
-                            hostJson.remove(clientType.getIdentify());
-                            final int size = hostJson.size();
-                            if (size == 0) {
-                                redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
-                            } else {
-                                redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
-                            }
+        if (userId == null) {// 之前已删除
+            return null;
+        }
+
+        UserWrapper userWrapper = userWrapperMap.get(userId);
+        if (userWrapper != null) {
+            ClientType clientType = userWrapper.removeChannel(channel);
+            if (clientType != null) {// 拿到该channel对应的客户端类型
+                String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
+                if (!StringUtils.isEmpty(hostInfo)) {
+                    JSONObject hostJson = JSON.parseObject(hostInfo);
+                    if (hostJson.containsKey(clientType.getIdentify())) {
+                        hostJson.remove(clientType.getIdentify());
+                        final int size = hostJson.size();
+                        if (size == 0) {// 登录的客户端全部下线
+                            userWrapperMap.remove(userId);
+                            redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+                        } else {
+                            redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, hostJson.toJSONString());
                         }
                     }
                 }
             }
-            // 清除引用
-            channelIdMap.remove(channelId);
-            redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());
-            return userId;
         }
-
-        return null;
+        // 清除引用
+        channelIdMap.remove(channelId);
+        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), channelIdMap.size());
+        return userId;
     }
 
     public void clear() {
@@ -114,7 +114,11 @@ public class ChannelManager {
         return userWrapperMap.get(userId);
     }
 
-    private String getHost() {
+    public Long getUserIdByChannel(Channel channel) {
+        return channelIdMap.get(channel.id().asShortText());
+    }
+
+    public String getHost() {
         String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
                 chatConfigBean.getClient().getCommonServer().getPort(),
                 chatConfigBean.getClient().getWebServer().getPort());

@@ -18,6 +18,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,32 @@ public class MessageSender {
     @Autowired
     ChannelManager channelManager;
 
-    public void sendMessage(Long targetUserId, Message message) {
+    /**
+     * 同步消息（相同账号在多个平台登录，发送的消息需要同步到其他登录平台）
+     *
+     * @param channel
+     * @param message
+     */
+    public void syncMessage(Channel channel, Message message) {
+        Long userId = channelManager.getUserIdByChannel(channel);
+        if (userId == null) {
+            return;
+        }
+
+        UserWrapper userWrapper = channelManager.getClient(userId);
+        Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
+        if (!CollectionUtils.isEmpty(channelMap)) {
+            Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
+            for (Map.Entry<ClientType, Channel> entry : entries) {
+                Channel value = entry.getValue();
+                if (channel != value) {
+                    sendMessage(value, message);
+                }
+            }
+        }
+    }
+
+    public void sendMessage2Target(Long targetUserId, Message message) {
         // 实时发给目标客户
         UserWrapper userWrapper = channelManager.getClient(targetUserId);
         if (null == userWrapper) {

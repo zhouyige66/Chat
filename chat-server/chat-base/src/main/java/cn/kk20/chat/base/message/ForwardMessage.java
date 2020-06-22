@@ -8,12 +8,21 @@ package cn.kk20.chat.base.message;
  */
 public class ForwardMessage extends Message {
     // 用于中央server转发
+    private String targetHost;
     private Long targetUserId;
     private Message message;
 
     @Override
     public MessageType getMessageType() {
         return MessageType.FORWARD;
+    }
+
+    public String getTargetHost() {
+        return targetHost;
+    }
+
+    public void setTargetHost(String targetHost) {
+        this.targetHost = targetHost;
     }
 
     public Long getTargetUserId() {

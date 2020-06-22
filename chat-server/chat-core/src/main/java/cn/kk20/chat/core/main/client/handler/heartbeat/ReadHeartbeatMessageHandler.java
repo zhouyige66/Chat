@@ -127,7 +127,7 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
         notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_NOTIFY);
         notifyMessage.setData(map);
         for (Long friendId : onlineFriendMap.keySet()) {
-            messageSender.sendMessage(friendId, notifyMessage);
+            messageSender.sendMessage2Target(friendId, notifyMessage);
         }
         channel.close();
     }
