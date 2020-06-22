@@ -6,7 +6,7 @@ import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
-import cn.kk20.chat.core.main.client.UserChannelManager;
+import cn.kk20.chat.core.main.client.ChannelManager;
 import cn.kk20.chat.core.util.RedisUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -38,11 +38,11 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
     private Map<String, Integer> heartFailMap = new HashMap<>(12);
 
     @Autowired
-    UserChannelManager userChannelManager;
+    RedisUtil redisUtil;
+    @Autowired
+    ChannelManager channelManager;
     @Autowired
     MessageSender messageSender;
-    @Autowired
-    RedisUtil redisUtil;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage heartbeatMessage) throws Exception {
@@ -96,8 +96,10 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
 
     private void cleanWork(Channel channel) {
         heartFailMap.remove(channel.id().asShortText());
-        Long userId = userChannelManager.getUserId(channel);
-        userChannelManager.remove(userId);
+        Long userId = channelManager.remove(channel);
+        if (userId == null) {
+            return;
+        }
         // 通知好友，该用户下线了
         notifyFriend(userId);
         channel.close();

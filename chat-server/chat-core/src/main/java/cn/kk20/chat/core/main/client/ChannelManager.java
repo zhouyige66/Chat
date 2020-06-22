@@ -1,11 +1,13 @@
 package cn.kk20.chat.core.main.client;
 
+import cn.kk20.chat.base.message.login.ClientType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.CommonUtil;
 import cn.kk20.chat.core.util.RedisUtil;
+import cn.kk20.chat.dao.model.UserModel;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version: v1.0
  */
 @ClientComponent
-public class UserChannelManager {
+public class ChannelManager {
     // 客户端通道
     private ConcurrentHashMap<Long, UserWrapper> userWrapperMap = new ConcurrentHashMap<>(12);
     private ConcurrentHashMap<String, Long> channelIdMap = new ConcurrentHashMap<>(12);
@@ -30,21 +32,25 @@ public class UserChannelManager {
     @Autowired
     RedisUtil redisUtil;
 
-    public void cache(UserWrapper userWrapper) {
-        Long userId = userWrapper.getUserModel().getId();
+    public void cache(UserModel userModel, ClientType clientType, Channel channel) {
+        Long userId = userModel.getId();
+        UserWrapper userWrapper;
         if (userWrapperMap.contains(userId)) {
-            UserWrapper existUserWrapper = userWrapperMap.get(userId);
+            userWrapper = userWrapperMap.get(userId);
             // 已经存在且不是当前通道，则关闭
-            Channel channel = existUserWrapper.getChannel();
-            if (channel != null && channel.isActive() && channel != userWrapper.getChannel()) {
-                channel.closeFuture();
+            Channel clientChannel = userWrapper.getChannel(clientType);
+            if (clientChannel != null && clientChannel != channel) {
+                clientChannel.closeFuture();
+                String channelId = clientChannel.id().asShortText();
+                channelIdMap.remove(channelId);
             }
-            String channelId = channel.id().asShortText();
-            channelIdMap.remove(channelId);
+            userWrapper.addChannel(clientType, channel);
+        } else {
+            userWrapper = new UserWrapper();
+            userWrapper.setUserModel(userModel);
+            userWrapper.addChannel(clientType, channel);
+            userWrapperMap.put(userId, userWrapper);
         }
-        // 添加到通道容器
-        userWrapperMap.put(userId, userWrapper);
-        Channel channel = userWrapper.getChannel();
         String channelId = channel.id().asShortText();
         channelIdMap.put(channelId, userId);
         // 存储到redis，更新当前主机的连接数据量
@@ -53,33 +59,25 @@ public class UserChannelManager {
         redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + host, userWrapperMap.size());
     }
 
-    private String getHost() {
-        String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
-                chatConfigBean.getClient().getCommonServer().getPort(),
-                chatConfigBean.getClient().getWebServer().getPort());
-        return host;
-    }
-
-    public void remove(Long userId) {
-        if(userId==null){
-            return;
+    public Long remove(Channel channel) {
+        String channelId = channel.id().asShortText();
+        Long userId = channelIdMap.get(channelId);
+        if (userId != null) {
+            UserWrapper userWrapper = userWrapperMap.remove(userId);
+            if (userWrapper != null) {
+                userWrapper.removeChannel(channel);
+            }
+            // 清除引用
+            userWrapperMap.remove(channelId);
+            redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+            redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());
+            return userId;
         }
-        if (!userWrapperMap.contains(userId)) {
-            return;
-        }
-        UserWrapper remove = userWrapperMap.remove(userId);
-        channelIdMap.remove(remove.getChannel().id().asShortText());
-        redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
-        redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());
+        return null;
     }
 
     public UserWrapper getClient(Long userId) {
         return userWrapperMap.get(userId);
-    }
-
-    public Long getUserId(Channel channel) {
-        String channelId = channel.id().asShortText();
-        return channelIdMap.get(channelId);
     }
 
     public void clear() {
@@ -89,6 +87,13 @@ public class UserChannelManager {
         redisUtil.delete(ConstantValue.STATISTIC_OF_HOST + getHost());
     }
 
+    private String getHost() {
+        String host = CommonUtil.getTargetAddress(CommonUtil.getHostIp(),
+                chatConfigBean.getClient().getCommonServer().getPort(),
+                chatConfigBean.getClient().getWebServer().getPort());
+        return host;
+    }
+
     /**********功能：中心服务器通道**********/
     public Channel getCenterChannel() {
         return centerChannel;
@@ -96,10 +101,6 @@ public class UserChannelManager {
 
     public void setCenterChannel(Channel centerChannel) {
         this.centerChannel = centerChannel;
-    }
-
-    public void removeCenterChannel() {
-        this.centerChannel = null;
     }
 
 }

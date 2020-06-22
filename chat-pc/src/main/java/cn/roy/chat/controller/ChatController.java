@@ -148,6 +148,7 @@ public class ChatController extends BaseController {
                     // 更新列表
                     ChatMessage chatMessage = (ChatMessage) event.getSerializableValue("data");
                     chatMessages.add(chatMessage);
+                    messageListView.scrollTo(chatMessages.size() - 1);
                 }
             }
         };

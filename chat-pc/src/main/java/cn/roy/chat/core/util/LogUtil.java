@@ -15,6 +15,17 @@ public class LogUtil {
 
     public static void d(Object o, String log) {
         final Logger logger = LoggerFactory.getLogger(o.getClass());
+        logger.debug(log);
+    }
+
+    public static void i(Object o, String log) {
+        final Logger logger = LoggerFactory.getLogger(o.getClass());
         logger.info(log);
     }
+
+    public static void e(Object o, String log) {
+        final Logger logger = LoggerFactory.getLogger(o.getClass());
+        logger.error(log);
+    }
+
 }

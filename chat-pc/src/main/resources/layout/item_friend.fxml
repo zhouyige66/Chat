@@ -6,31 +6,37 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<HBox alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" prefHeight="80.0"
-      xmlns="http://javafx.com/javafx/10.0.2-internal"
-      xmlns:fx="http://javafx.com/fxml/1">
+<HBox xmlns="http://javafx.com/javafx/10.0.2-internal"
+      xmlns:fx="http://javafx.com/fxml/1"
+      maxHeight="Infinity" maxWidth="Infinity"
+      prefHeight="80.0" prefWidth="300.0"
+      alignment="CENTER_LEFT">
     <padding>
         <Insets top="10" right="15" left="15" bottom="10"/>
     </padding>
     <children>
-        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="60.0" fitWidth="60.0"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@/img/logo.png"/>
             </image>
         </ImageView>
-        <VBox alignment="CENTER_LEFT" fillWidth="true" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <VBox maxWidth="Infinity"
+              fillWidth="true"
+              alignment="CENTER_LEFT"
+              HBox.hgrow="ALWAYS">
             <HBox.margin>
                 <Insets left="10"/>
             </HBox.margin>
             <children>
-                <Label text="Label"/>
-                <Label text="Label">
+                <Label text="名称"/>
+                <Label text="消息">
                     <padding>
-                        <Insets top="5"/>
+                        <Insets top="10"/>
                     </padding>
                 </Label>
             </children>
         </VBox>
-        <Label text="Label"/>
+        <Label text="时间"/>
     </children>
 </HBox>

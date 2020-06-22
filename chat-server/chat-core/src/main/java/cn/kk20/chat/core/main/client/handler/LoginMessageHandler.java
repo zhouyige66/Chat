@@ -4,9 +4,8 @@ import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.NotifyMessage;
 import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
+import cn.kk20.chat.core.main.client.ChannelManager;
 import cn.kk20.chat.core.main.client.MessageSender;
-import cn.kk20.chat.core.main.client.UserChannelManager;
-import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.RedisUtil;
 import cn.kk20.chat.dao.model.LoginLogModel;
 import cn.kk20.chat.dao.model.UserModel;
@@ -38,7 +37,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
     @Autowired
     RedisUtil redisUtil;
     @Autowired
-    UserChannelManager userChannelManager;
+    ChannelManager channelManager;
     @Autowired
     MessageSender messageSender;
 
@@ -47,18 +46,13 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
             throws Exception {
         Channel channel = channelHandlerContext.channel();
         Long userId = loginMessage.getUserId();
+
         UserModel userModel = new UserModel();
         userModel.setId(userId);
         userModel.setName(loginMessage.getUserName());
-        // 交由客户端管理器处理
         boolean login = loginMessage.isLogin();
         if (login) {
-            UserWrapper wrapper = new UserWrapper();
-            wrapper.setChannel(channel);
-            wrapper.setUserModel(userModel);
-            wrapper.setIsWebUser(false);
-            userChannelManager.cache(wrapper);
-
+            channelManager.cache(userModel, loginMessage.getClientType(), channel);
             // TODO 保存登录日志
             LoginLogModel loginLogModel = new LoginLogModel();
             loginLogModel.withUserId(userId)
@@ -66,7 +60,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
                     .withDevice("暂无")
                     .withLocation("暂无");
         } else {
-            userChannelManager.remove(userId);
+            channelManager.remove(channel);
         }
 
         // 查询好友列表，走数据库或redis

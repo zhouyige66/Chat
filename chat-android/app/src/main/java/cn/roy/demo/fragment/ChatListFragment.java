@@ -25,6 +25,7 @@ import cn.roy.demo.adapter.AdapterViewHolder;
 import cn.roy.demo.adapter.CommonAdapter;
 import cn.roy.demo.model.RecentContact;
 import cn.roy.demo.util.CacheManager;
+import cn.roy.demo.util.ChatMessageUtil;
 import cn.roy.demo.util.DateUtil;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -74,7 +75,7 @@ public class ChatListFragment extends BaseFragment {
                     tv_user_name.setText(recentContact.getUser().getName());
                 }
                 ChatMessage chatMessage = recentContact.getChatMessage();
-                tv_chat_msg.setText(chatMessage.getBody());
+                tv_chat_msg.setText(ChatMessageUtil.getMsg(chatMessage));
 
                 Date sendDate = new Date(chatMessage.getSendTimestamp());
                 Date time = Calendar.getInstance().getTime();

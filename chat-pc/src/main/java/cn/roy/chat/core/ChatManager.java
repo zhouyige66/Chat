@@ -6,6 +6,7 @@ import cn.roy.chat.Main;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.controller.ChatController;
+import cn.roy.chat.core.util.LogUtil;
 import cn.roy.chat.enity.ContactEntity;
 import cn.roy.chat.enity.FriendEntity;
 import cn.roy.chat.enity.GroupEntity;
@@ -50,6 +51,7 @@ public class ChatManager {
 
     /**********功能：在线好友列表**********/
     public void addOnlineIds(Long... ids) {
+        LogUtil.d(this, "有人上线了：" + ids);
         boolean needNotify = false;
         if (ids.length > 0) {
             for (Long id : ids) {
@@ -68,6 +70,7 @@ public class ChatManager {
     }
 
     public void removeOnlineIds(Long... ids) {
+        LogUtil.d(this, "有人下线了：" + ids);
         if (ids.length > 0) {
             boolean needNotify = false;
             for (Long id : ids) {
@@ -88,6 +91,7 @@ public class ChatManager {
     }
 
     public void bindFriendList(List<FriendEntity> friendEntityList) {
+        LogUtil.d(this,"绑定好友列表");
         for (FriendEntity friendEntity : friendEntityList) {
             if (onlineSet.contains(friendEntity.getId())) {
                 friendEntity.setOnline(true);
@@ -98,6 +102,7 @@ public class ChatManager {
     }
 
     public void bindGroupList(List<GroupEntity> groupEntityList) {
+        LogUtil.d(this,"绑定群组列表");
         for (GroupEntity groupEntity : groupEntityList) {
             final ContactEntity contactEntity = new ContactEntity(groupEntity);
             contactManager.add(contactEntity);

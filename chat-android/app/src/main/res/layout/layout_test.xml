@@ -10,10 +10,29 @@
         android:layout_width="280dp"
         android:layout_height="280dp"
         android:background="#cbcaca"
+        android:visibility="gone"
         groupheadvew:distance="80dp"
         groupheadvew:imageWidth="140dp"
         groupheadvew:model="6"
         groupheadvew:ringColor="#000000"
         groupheadvew:ringWidth="30dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="button1" />
+
+        <Button
+            android:id="@+id/btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="button2" />
+
+    </FrameLayout>
 
 </LinearLayout>

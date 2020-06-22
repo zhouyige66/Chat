@@ -47,7 +47,7 @@ public class ChatClient implements Launcher {
     @Autowired
     CenterClientChannelInitializer centerClientChannelInitializer;
     @Autowired
-    UserChannelManager userChannelManager;
+    ChannelManager channelManager;
 
     // 聊天服务器使用
     private ScheduledExecutorService commonServerExecutor = null, webServerExecutor = null;
@@ -123,7 +123,7 @@ public class ChatClient implements Launcher {
                         if (future.isSuccess()) {
                             ChannelFuture cf = (ChannelFuture) future;
                             connectSuccess = true;
-                            userChannelManager.setCenterChannel(cf.channel());
+                            channelManager.setCenterChannel(cf.channel());
                         }
                     }
                 });
@@ -135,7 +135,7 @@ public class ChatClient implements Launcher {
                 e.printStackTrace();
                 logger.info("连接中心服务器：发生异常");
             } finally {
-                userChannelManager.removeCenterChannel();
+                channelManager.setCenterChannel(null);
                 connectSuccess = false;
                 boolean shutdown = nioEventLoopGroup.isShutdown();
                 boolean shuttingDown = nioEventLoopGroup.isShuttingDown();
@@ -177,8 +177,9 @@ public class ChatClient implements Launcher {
         if (centerServerExecutor != null && !centerServerExecutor.isShutdown()) {
             centerServerExecutor.shutdown();
         }
+
         // 收尾
-        userChannelManager.clear();
+        channelManager.clear();
     }
 
     @Override

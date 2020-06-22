@@ -245,8 +245,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             public void onComplete() {
             }
         };
-        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_SEND_MESSAGE, chatMessage,
-                observer);
+        HttpUtil.getInstance().post(ApplicationConfig.HttpConfig.API_SEND_MESSAGE,
+                chatMessage, observer);
     }
 
 }

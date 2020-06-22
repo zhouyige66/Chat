@@ -1,5 +1,7 @@
 package cn.kk20.chat.base.message;
 
+import cn.kk20.chat.base.message.login.ClientType;
+
 /**
  * @Description:
  * @Author: Roy Z
@@ -7,6 +9,7 @@ package cn.kk20.chat.base.message;
  * @Version: v1.0
  */
 public class LoginMessage extends Message {
+    private ClientType clientType;
     private Long userId;
     private String userName;
     private String device;
@@ -16,6 +19,14 @@ public class LoginMessage extends Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.LOGIN;
+    }
+
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
     }
 
     public Long getUserId() {

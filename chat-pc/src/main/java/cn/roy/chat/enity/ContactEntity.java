@@ -54,6 +54,7 @@ public class ContactEntity implements Serializable {
 
     public void setOnline(boolean online) {
         if (type == 0) {
+            friendEntity.setOnline(online);
             isOnline = online;
         }
     }

@@ -4,28 +4,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane maxHeight="600.0" maxWidth="1000.0" minHeight="200.0" minWidth="800.0"
+<SplitPane xmlns="http://javafx.com/javafx/10.0.2-internal"
+           xmlns:fx="http://javafx.com/fxml/1"
+           maxHeight="600.0" maxWidth="1000.0" minHeight="200.0" minWidth="800.0"
            dividerPositions="0.5"
-           xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="cn.roy.chat.controller.ChatController">
     <items>
         <ListView fx:id="recentContactListView"
                   maxHeight="Infinity" maxWidth="250.0" minWidth="200.0"
                   prefHeight="600.0" prefWidth="200.0"
                   SplitPane.resizableWithParent="true"/>
-        <VBox maxHeight="Infinity" maxWidth="Infinity"
-              minWidth="600.0"
+        <VBox maxHeight="Infinity" maxWidth="Infinity" minWidth="600.0"
               prefHeight="600.0" prefWidth="600.0"
               SplitPane.resizableWithParent="true">
             <children>
-                <Label fx:id="currentContactUserLabel" maxHeight="60.0" minHeight="60.0" prefHeight="60.0"
-                       text="姓名" VBox.vgrow="NEVER">
+                <Label fx:id="currentContactUserLabel"
+                       maxHeight="60.0" minHeight="60.0"
+                       prefHeight="60.0"
+                       text="姓名"
+                       VBox.vgrow="NEVER">
                     <padding>
                         <Insets left="10"/>
                     </padding>
                 </Label>
-                <SplitPane dividerPositions="0.65"
-                           maxHeight="Infinity" orientation="VERTICAL"
+                <SplitPane maxHeight="Infinity"
+                           dividerPositions="0.65"
+                           orientation="VERTICAL"
                            VBox.vgrow="ALWAYS">
                     <items>
                         <ListView fx:id="messageListView"

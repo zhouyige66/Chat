@@ -5,9 +5,11 @@ import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.roy.chat.core.ChatManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -27,18 +29,17 @@ public class NotifyMessageHandler extends SimpleChannelInboundHandler<NotifyMess
         switch (notifyMessageType) {
             case LOGIN_REPLY:
                 final List<Long> ids = JSONArray.parseArray(notifyMessage.getData(), Long.class);
-                if (ids != null && ids.size() > 0) {
+                if (!CollectionUtils.isEmpty(ids)) {
                     for (Long id : ids) {
                         ChatManager.getInstance().addOnlineIds(id);
                     }
                 }
                 break;
             case LOGIN_NOTIFY:
-                final Map map = JSON.parseObject(notifyMessage.getData(), new TypeReference<Map>() {
-                });
-                if (map != null) {
-                    final boolean login = (boolean) map.get("login");
-                    final long id = (Long) map.get("id");
+                final JSONObject jsonObject = JSON.parseObject(notifyMessage.getData());
+                if (jsonObject != null) {
+                    final boolean login = jsonObject.getBoolean("login");
+                    final long id = jsonObject.getLongValue("id");
                     if (login) {
                         ChatManager.getInstance().addOnlineIds(id);
                     } else {

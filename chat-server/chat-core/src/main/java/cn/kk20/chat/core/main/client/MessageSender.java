@@ -4,6 +4,7 @@ import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.ForwardMessage;
 import cn.kk20.chat.base.message.Message;
 import cn.kk20.chat.base.message.MessageType;
+import cn.kk20.chat.base.message.login.ClientType;
 import cn.kk20.chat.core.config.ChatConfigBean;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
@@ -18,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @Description:
  * @Author: Roy Z
@@ -29,18 +33,18 @@ public class MessageSender {
     private final Logger logger = LoggerFactory.getLogger(MessageSender.class);
 
     @Autowired
+    ChatConfigBean chatConfigBean;
+    @Autowired
     RedisUtil redisUtil;
     @Autowired
-    UserChannelManager userChannelManager;
-    @Autowired
-    ChatConfigBean chatConfigBean;
+    ChannelManager channelManager;
 
     public void sendMessage(Long targetUserId, Message message) {
         // 实时发给目标客户
-        UserWrapper userWrapper = userChannelManager.getClient(targetUserId);
+        UserWrapper userWrapper = channelManager.getClient(targetUserId);
         if (null == userWrapper) {
             // 发送给中心主机，由中心主机转发
-            Channel centerChannel = userChannelManager.getCenterChannel();
+            Channel centerChannel = channelManager.getCenterChannel();
             ForwardMessage forwardMessage = new ForwardMessage();
             forwardMessage.setTargetUserId(targetUserId);
             forwardMessage.setMessage(message);
@@ -48,14 +52,18 @@ public class MessageSender {
             return;
         }
 
-        Channel channel = userWrapper.getChannel();
-        if (userWrapper.isWebUser()) {
-            TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(message));
-            channel.writeAndFlush(textWebSocketFrame);
-            return;
+        final Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
+        final Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
+        for (Map.Entry<ClientType, Channel> entry : entries) {
+            ClientType clientType = entry.getKey();
+            Channel channel = entry.getValue();
+            if (clientType == ClientType.WEB) {
+                TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(message));
+                channel.writeAndFlush(textWebSocketFrame);
+            } else {
+                sendMessage(channel, message);
+            }
         }
-
-        sendMessage(channel, message);
     }
 
     public void sendMessage(Channel channel, Message message) {

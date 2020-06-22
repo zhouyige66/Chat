@@ -1,30 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
-<HBox alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" prefHeight="50.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.text.Font?>
+<HBox xmlns="http://javafx.com/javafx/10.0.2-internal"
+      xmlns:fx="http://javafx.com/fxml/1"
+      maxHeight="Infinity" maxWidth="Infinity"
+      prefHeight="50.0" prefWidth="300.0"
+      alignment="CENTER_LEFT">
     <padding>
-        <Insets bottom="10" left="10" right="10" top="10" />
+        <Insets bottom="10" left="10" right="10" top="10"/>
     </padding>
     <children>
-        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="30.0" fitWidth="30.0"
+                   pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@/img/logo.png" />
+                <Image url="@/img/logo.png"/>
             </image>
         </ImageView>
-        <VBox alignment="CENTER_LEFT" fillWidth="true" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <VBox maxWidth="Infinity"
+              fillWidth="true"
+              HBox.hgrow="ALWAYS"
+              alignment="CENTER_LEFT">
             <HBox.margin>
-                <Insets left="10" />
+                <Insets left="10"/>
             </HBox.margin>
             <children>
-                <Label text="姓名" />
+                <Label text="姓名"/>
                 <Label text="消息">
                     <padding>
-                        <Insets top="5" />
+                        <Insets top="5"/>
                     </padding>
                 </Label>
             </children>
@@ -33,7 +41,7 @@
             <children>
                 <Label text="时间">
                     <font>
-                        <Font size="10" />
+                        <Font size="10"/>
                     </font>
                 </Label>
             </children>

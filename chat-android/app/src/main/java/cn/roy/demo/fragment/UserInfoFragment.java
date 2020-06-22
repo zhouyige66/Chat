@@ -1,5 +1,6 @@
 package cn.roy.demo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import java.text.SimpleDateFormat;
 
 import cn.roy.demo.R;
+import cn.roy.demo.activity.LoginActivity;
 import cn.roy.demo.model.User;
 import cn.roy.demo.util.CacheManager;
 
@@ -52,10 +54,15 @@ public class UserInfoFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 hideSoftKeyboard();
+
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getActivity().startActivity(intent);
             }
         });
 
         return view;
     }
+
 }
 

@@ -203,6 +203,8 @@ public class MainController extends BaseController {
                     recentContactEntities.add(entity);
                 }
                 recentContactListView.refresh();
+                // 更新在线或离线状态
+                friendListView.refresh();
             }
         });
         registerNotifyEventReceiver(new NotifyReceiver() {

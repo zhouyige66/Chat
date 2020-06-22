@@ -1,7 +1,12 @@
 package cn.kk20.chat.core.main.client.wrapper;
 
+import cn.kk20.chat.base.message.login.ClientType;
 import cn.kk20.chat.dao.model.UserModel;
 import io.netty.channel.Channel;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Description: 客户端相关信息
@@ -11,8 +16,7 @@ import io.netty.channel.Channel;
  */
 public class UserWrapper {
     private UserModel userModel;
-    private Channel channel;
-    private boolean isWebUser;
+    private Map<ClientType, Channel> channelMap;
 
     public UserModel getUserModel() {
         return userModel;
@@ -22,20 +26,42 @@ public class UserWrapper {
         this.userModel = userModel;
     }
 
-    public Channel getChannel() {
-        return channel;
+    public Long getUserId() {
+        if (userModel == null) {
+            return null;
+        }
+        return userModel.getId();
     }
 
-    public void setChannel(Channel channel) {
-        this.channel = channel;
+    public void addChannel(ClientType clientType, Channel channel) {
+        if (channelMap == null) {
+            channelMap = new HashMap<>(4);
+        }
+        channelMap.put(clientType, channel);
     }
 
-    public boolean isWebUser() {
-        return isWebUser;
+    public void removeChannel(Channel channel) {
+        if (channelMap == null) {
+            return;
+        }
+        final Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
+        for (Map.Entry<ClientType, Channel> entry : entries) {
+            if (entry.getValue() == channel) {
+                channelMap.remove(entry.getKey());
+                break;
+            }
+        }
     }
 
-    public void setIsWebUser(boolean webUser) {
-        isWebUser = webUser;
+    public Channel getChannel(ClientType clientType) {
+        if (channelMap != null) {
+            return channelMap.get(clientType);
+        }
+        return null;
+    }
+
+    public Map<ClientType, Channel> getChannelMap() {
+        return channelMap;
     }
 
 }

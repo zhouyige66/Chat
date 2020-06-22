@@ -44,6 +44,7 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
                 logger.error("捕获异常");
             }
         } else {
+            // TODO 数据解析
             ChatMessage chatMessage;
             if (msg instanceof ChatMessage) {
                 logger.debug("上级传递而来");

@@ -154,7 +154,7 @@ public class ChatClient {
                 failCount = 0;
                 JSONObject map = jsonObject.getJSONObject("map");
                 String host = map.getString("host");
-                if(host.equals("127.0.0.1")){
+                if (host.equals("127.0.0.1")) {
                     host = "10.0.2.2";
                 }
                 config.setHost(host);
