@@ -8,6 +8,8 @@ import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.main.client.ChannelManager;
 import cn.kk20.chat.core.util.RedisUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -70,7 +72,7 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
                 hasDeal = true;
                 if (integer > heartFailMax) {
                     logger.info("客户端：{}，心跳失败，关闭通道", channelId);
-                    cleanWork(channel);
+                    channel.closeFuture();// 最终会执行到channelInactive方法
                 } else {
                     heartFailMap.put(channelId, integer);
                 }
@@ -84,6 +86,7 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("channelInactive：{}", ctx.channel().id().asShortText());
         cleanWork(ctx.channel());
     }
 
@@ -95,31 +98,25 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
     }
 
     private void cleanWork(Channel channel) {
+        // 移除心跳失败计数器
         heartFailMap.remove(channel.id().asShortText());
+        // 移除channel映射
         Long userId = channelManager.remove(channel);
         if (userId == null) {
             return;
         }
         // 通知好友，该用户下线了
-        notifyFriend(userId);
-        channel.close();
-    }
-
-    private void notifyFriend(Long userId) {
-        if (null == userId) {
-            return;
-        }
-        // 查询好友列表
         Set<Long> userIdSet = redisUtil.getLongSetValue(ConstantValue.FRIEND_OF_USER + userId);
         if (CollectionUtils.isEmpty(userIdSet)) {
             return;
         }
-        Map<Long, String> onlineFriendMap = new HashMap<>(userIdSet.size());
+        Map<Long, JSONObject> onlineFriendMap = new HashMap<>(userIdSet.size());
         // 查询在线好友
         for (Long id : userIdSet) {
             String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + id);
             if (!StringUtils.isEmpty(host)) {
-                onlineFriendMap.put(id, host);
+                JSONObject hostJson = JSON.parseObject(host);
+                onlineFriendMap.put(id, hostJson);
             }
         }
         // 通知在线好友，用户掉线了
@@ -132,6 +129,7 @@ public class ReadHeartbeatMessageHandler extends SimpleChannelInboundHandler<Hea
         for (Long friendId : onlineFriendMap.keySet()) {
             messageSender.sendMessage(friendId, notifyMessage);
         }
+        channel.close();
     }
 
 }

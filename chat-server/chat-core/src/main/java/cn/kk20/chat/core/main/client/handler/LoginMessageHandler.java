@@ -68,15 +68,14 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         if (friendIdSet.isEmpty()) {
             return;
         }
-        Set<Long> onlineFriendIdSet = new HashSet<>();
         // 查询在线好友
+        Set<Long> onlineFriendIdSet = new HashSet<>();
         for (Long friendId : friendIdSet) {
             String host = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + friendId);
             if (!StringUtils.isEmpty(host)) {
                 onlineFriendIdSet.add(friendId);
             }
         }
-
         // 回复当前登录用户，好友在线名单
         if (login) {
             NotifyMessage notifyMessage = new NotifyMessage();

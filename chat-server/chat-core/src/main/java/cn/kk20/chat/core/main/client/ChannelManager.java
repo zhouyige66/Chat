@@ -14,7 +14,6 @@ import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -75,16 +74,32 @@ public class ChannelManager {
         String channelId = channel.id().asShortText();
         Long userId = channelIdMap.get(channelId);
         if (userId != null) {
-            UserWrapper userWrapper = userWrapperMap.remove(userId);
+            UserWrapper userWrapper = userWrapperMap.get(userId);
             if (userWrapper != null) {
-                userWrapper.removeChannel(channel);
+                ClientType clientType = userWrapper.removeChannel(channel);
+                if (userWrapper.isOnline()) {
+                    String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
+                    JSONObject hostJson;
+                    if (!StringUtils.isEmpty(hostInfo)) {
+                        hostJson = JSON.parseObject(hostInfo);
+                        if (hostJson.containsKey(clientType.getIdentify())) {
+                            hostJson.remove(clientType.getIdentify());
+                            final int size = hostJson.size();
+                            if (size == 0) {
+                                redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+                            } else {
+                                redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+                            }
+                        }
+                    }
+                }
             }
             // 清除引用
-            userWrapperMap.remove(channelId);
-            redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+            channelIdMap.remove(channelId);
             redisUtil.saveParam(ConstantValue.STATISTIC_OF_HOST + getHost(), userWrapperMap.size());
             return userId;
         }
+
         return null;
     }
 

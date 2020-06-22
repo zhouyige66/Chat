@@ -52,19 +52,13 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessa
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
         cause.printStackTrace();
-        LogUtil.d(this, "发送异常：" + cause.getMessage());
+        LogUtil.d(this, "发生异常：" + cause.getMessage());
     }
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
         LogUtil.d(this, "channelRegistered");
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        super.channelUnregistered(ctx);
-        LogUtil.d(this, "channelUnregistered");
     }
 
     @Override
@@ -78,4 +72,11 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<HeartbeatMessa
         super.channelInactive(ctx);
         LogUtil.d(this, "channelInactive");
     }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        super.channelUnregistered(ctx);
+        LogUtil.d(this, "channelUnregistered");
+    }
+
 }

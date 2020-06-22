@@ -40,17 +40,21 @@ public class UserWrapper {
         channelMap.put(clientType, channel);
     }
 
-    public void removeChannel(Channel channel) {
+    public ClientType removeChannel(Channel channel) {
         if (channelMap == null) {
-            return;
+            return null;
         }
+
+        ClientType clientType = null;
         final Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
         for (Map.Entry<ClientType, Channel> entry : entries) {
             if (entry.getValue() == channel) {
+                clientType = entry.getKey();
                 channelMap.remove(entry.getKey());
                 break;
             }
         }
+        return clientType;
     }
 
     public Channel getChannel(ClientType clientType) {
@@ -64,4 +68,10 @@ public class UserWrapper {
         return channelMap;
     }
 
+    public boolean isOnline() {
+        if (channelMap == null) {
+            return false;
+        }
+        return channelMap.keySet().size() > 0;
+    }
 }
