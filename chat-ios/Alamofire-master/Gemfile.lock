@@ -44,7 +44,7 @@ GEM
     colored2 (3.1.2)
     concurrent-ruby (1.0.5)
     escape (0.0.4)
-    ffi (1.9.18)
+    ffi (1.12.2)
     fourflusher (2.0.1)
     fuzzy_match (2.0.4)
     gh_inspector (1.0.3)
