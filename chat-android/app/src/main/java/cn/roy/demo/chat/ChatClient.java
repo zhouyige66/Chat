@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.Message;
+import cn.kk20.chat.base.message.login.ClientType;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.chat.coder.ConstantValue;
 import cn.roy.demo.chat.coder.ObjectToStringEncoder;
@@ -264,6 +265,7 @@ public class ChatClient {
     private void login(boolean isLogin) {
         LogUtil.d(this, "执行登录：" + isLogin);
         LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setClientType(ClientType.ANDROID);
         loginMessage.setUserId(CacheManager.getInstance().getCurrentUserId());
         loginMessage.setUserName(CacheManager.getInstance().getCurrentUserName());
         loginMessage.setDevice("android");

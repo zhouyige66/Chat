@@ -19,7 +19,7 @@ final public class Constants {
     // 分隔符
     public static final String DELIMITER = "*&v_secretary&*";
     // 编码类型
-    public static final CoderType CODER_TYPE = CoderType.CUSTOM;
+    public static final CoderType CODER_TYPE = CoderType.DELIMITER;
     // 服务器ID
     public static final Long SERVER_ID = 0L;
 }

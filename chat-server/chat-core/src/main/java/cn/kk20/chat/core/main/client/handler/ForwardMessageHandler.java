@@ -24,7 +24,7 @@ public class ForwardMessageHandler extends SimpleChannelInboundHandler<ForwardMe
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ForwardMessage forwardMessage)
             throws Exception {
         Long targetUserId = forwardMessage.getTargetUserId();
-        messageSender.sendMessage2Target(targetUserId, forwardMessage.getMessage());
+        messageSender.send2BindUser(targetUserId, forwardMessage.getMessage());
     }
 
 }

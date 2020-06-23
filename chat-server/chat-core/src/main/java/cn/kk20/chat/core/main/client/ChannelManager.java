@@ -35,7 +35,7 @@ public class ChannelManager {
     @Autowired
     RedisUtil redisUtil;
 
-    public void cache(UserModel userModel, ClientType clientType, Channel channel) {
+    public void add(UserModel userModel, ClientType clientType, Channel channel) {
         Long userId = userModel.getId();
         UserWrapper userWrapper;
         if (userWrapperMap.contains(userId)) {
@@ -58,11 +58,8 @@ public class ChannelManager {
         channelIdMap.put(channelId, userId);
         // 存储到redis，更新当前主机的连接数据量
         String host = getHost();
-        String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
-        JSONObject hostJson;
-        if (!StringUtils.isEmpty(hostInfo)) {
-            hostJson = JSON.parseObject(hostInfo);
-        } else {
+        JSONObject hostJson = getCacheFromRedis(userId);
+        if (hostJson == null) {
             hostJson = new JSONObject();
         }
         hostJson.put(clientType.getIdentify(), host);
@@ -81,18 +78,15 @@ public class ChannelManager {
         if (userWrapper != null) {
             ClientType clientType = userWrapper.removeChannel(channel);
             if (clientType != null) {// 拿到该channel对应的客户端类型
-                String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
-                if (!StringUtils.isEmpty(hostInfo)) {
-                    JSONObject hostJson = JSON.parseObject(hostInfo);
-                    if (hostJson.containsKey(clientType.getIdentify())) {
-                        hostJson.remove(clientType.getIdentify());
-                        final int size = hostJson.size();
-                        if (size == 0) {// 登录的客户端全部下线
-                            userWrapperMap.remove(userId);
-                            redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
-                        } else {
-                            redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, hostJson.toJSONString());
-                        }
+                JSONObject hostJson = getCacheFromRedis(userId);
+                if (hostJson != null && hostJson.containsKey(clientType.getIdentify())) {
+                    hostJson.remove(clientType.getIdentify());
+                    final int size = hostJson.size();
+                    if (size == 0) {// 登录的客户端全部下线
+                        userWrapperMap.remove(userId);
+                        redisUtil.removeStringValue(ConstantValue.HOST_OF_USER + userId);
+                    } else {
+                        redisUtil.setStringValue(ConstantValue.HOST_OF_USER + userId, hostJson.toJSONString());
                     }
                 }
             }
@@ -123,6 +117,15 @@ public class ChannelManager {
                 chatConfigBean.getClient().getCommonServer().getPort(),
                 chatConfigBean.getClient().getWebServer().getPort());
         return host;
+    }
+
+    public JSONObject getCacheFromRedis(Long userId) {
+        String hostInfo = redisUtil.getStringValue(ConstantValue.HOST_OF_USER + userId);
+        if (StringUtils.isEmpty(hostInfo)) {
+            return null;
+        }
+        JSONObject hostJson = JSON.parseObject(hostInfo);
+        return hostJson;
     }
 
     /**********功能：中心服务器通道**********/

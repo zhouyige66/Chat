@@ -52,7 +52,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         userModel.setName(loginMessage.getUserName());
         boolean login = loginMessage.isLogin();
         if (login) {
-            channelManager.cache(userModel, loginMessage.getClientType(), channel);
+            channelManager.add(userModel, loginMessage.getClientType(), channel);
             // TODO 保存登录日志
             LoginLogModel loginLogModel = new LoginLogModel();
             loginLogModel.withUserId(userId)
@@ -91,7 +91,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_NOTIFY);
         notifyMessage.setData(map);
         for (Long friendId : onlineFriendIdSet) {
-            messageSender.sendMessage2Target(friendId, notifyMessage);
+            messageSender.send2Receiver(friendId, notifyMessage);
         }
     }
 }

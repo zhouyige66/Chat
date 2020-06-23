@@ -29,12 +29,15 @@ public class GroupMsgProcessor implements MessageProcessor {
                                boolean isFromWeb) {
         Long fromUserId = chatMessage.getFromUserId();
         Long toUserId = chatMessage.getToUserId();
+        // 同步给同一账号
+        messageSender.send2Sender(fromUserId,channelHandlerContext.channel(),chatMessage);
+        // 发送给群成员
         Set<Long> groupMemberSet = redisUtil.getLongSetValue(ConstantValue.MEMBER_OF_GROUP + toUserId);
         for (Long memberId : groupMemberSet) {
             if (memberId == fromUserId) {
                 continue;
             }
-            messageSender.sendMessage2Target(memberId, chatMessage);
+            messageSender.send2Receiver(memberId, chatMessage);
         }
     }
 

@@ -10,6 +10,7 @@ import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.wrapper.UserWrapper;
 import cn.kk20.chat.core.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -41,45 +42,50 @@ public class MessageSender {
     ChannelManager channelManager;
 
     /**
-     * 同步消息（相同账号在多个平台登录，发送的消息需要同步到其他登录平台）
+     * 消息分配与发送
      *
-     * @param channel
+     * @param targetUserId
      * @param message
      */
-    public void syncMessage(Channel channel, Message message) {
-        Long userId = channelManager.getUserIdByChannel(channel);
-        if (userId == null) {
-            return;
-        }
-
-        UserWrapper userWrapper = channelManager.getClient(userId);
-        Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
-        if (!CollectionUtils.isEmpty(channelMap)) {
+    public void send2Receiver(Long targetUserId, Message message) {
+        JSONObject hostJson = channelManager.getCacheFromRedis(targetUserId);
+        UserWrapper userWrapper = channelManager.getClient(targetUserId);
+        if (userWrapper != null) {// 本服务器有该用户
+            Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
             Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
             for (Map.Entry<ClientType, Channel> entry : entries) {
-                Channel value = entry.getValue();
-                if (channel != value) {
-                    sendMessage(value, message);
+                ClientType clientType = entry.getKey();
+                Channel channel = entry.getValue();
+                if (hostJson != null && hostJson.containsKey(clientType.getIdentify())) {
+                    hostJson.remove(clientType.getIdentify());
+                }
+                // 发送消息
+                if (clientType == ClientType.WEB) {
+                    TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(JSON.toJSONString(message));
+                    channel.writeAndFlush(textWebSocketFrame);
+                } else {
+                    sendMessage(channel, message);
                 }
             }
         }
+        // 判断是否还有未通知的客户端
+        send2CenterServer(hostJson, targetUserId, message);
     }
 
-    public void sendMessage2Target(Long targetUserId, Message message) {
-        // 实时发给目标客户
+    /**
+     * 发送消息给指定用户（绑定到该client server上的用户）
+     *
+     * @param targetUserId
+     * @param message
+     */
+    public void send2BindUser(Long targetUserId, Message message) {
         UserWrapper userWrapper = channelManager.getClient(targetUserId);
-        if (null == userWrapper) {
-            // 发送给中心主机，由中心主机转发
-            Channel centerChannel = channelManager.getCenterChannel();
-            ForwardMessage forwardMessage = new ForwardMessage();
-            forwardMessage.setTargetUserId(targetUserId);
-            forwardMessage.setMessage(message);
-            sendMessage(centerChannel, forwardMessage);
+        if (userWrapper == null || !userWrapper.isOnline()) {
+            logger.error("Client Server上未找到该用户");
             return;
         }
-
-        final Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
-        final Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
+        Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
+        Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
         for (Map.Entry<ClientType, Channel> entry : entries) {
             ClientType clientType = entry.getKey();
             Channel channel = entry.getValue();
@@ -88,6 +94,46 @@ public class MessageSender {
                 channel.writeAndFlush(textWebSocketFrame);
             } else {
                 sendMessage(channel, message);
+            }
+        }
+    }
+
+    /**
+     * 同步消息（相同账号在多个平台登录，发送的消息需要同步到其他登录平台）
+     *
+     * @param channel
+     * @param message
+     */
+    public void send2Sender(Long userId, Channel channel, Message message) {
+        JSONObject hostJson = channelManager.getCacheFromRedis(userId);
+        UserWrapper userWrapper = channelManager.getClient(userId);
+        Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();
+        if (!CollectionUtils.isEmpty(channelMap)) {
+            Set<Map.Entry<ClientType, Channel>> entries = channelMap.entrySet();
+            for (Map.Entry<ClientType, Channel> entry : entries) {
+                ClientType clientType = entry.getKey();
+                if (hostJson != null && hostJson.containsKey(clientType.getIdentify())) {
+                    hostJson.remove(clientType.getIdentify());
+                }
+                Channel value = entry.getValue();
+                if (channel != value) {
+                    sendMessage(value, message);
+                }
+            }
+        }
+        send2CenterServer(hostJson, userId, message);
+    }
+
+    private void send2CenterServer(JSONObject hostJson, Long targetUserId, Message message) {
+        if (hostJson != null && hostJson.size() > 0) {
+            for (Object object : hostJson.values()) {
+                // 发送给中心主机，由中心主机转发
+                Channel centerChannel = channelManager.getCenterChannel();
+                ForwardMessage forwardMessage = new ForwardMessage();
+                forwardMessage.setTargetHost((String) object);
+                forwardMessage.setTargetUserId(targetUserId);
+                forwardMessage.setMessage(message);
+                sendMessage(centerChannel, forwardMessage);
             }
         }
     }

@@ -2,6 +2,7 @@ package cn.roy.chat.core;
 
 import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.Message;
+import cn.kk20.chat.base.message.login.ClientType;
 import cn.roy.chat.Main;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
@@ -197,6 +198,7 @@ public class ChatClient {
     private void login(boolean isLogin) {
         LogUtil.d(this, "执行登录：" + isLogin);
         LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setClientType(ClientType.PC);
         loginMessage.setUserId(Long.valueOf(Main.currentUser.getId()));
         loginMessage.setUserName(Main.currentUser.getName());
         loginMessage.setDevice("android");
