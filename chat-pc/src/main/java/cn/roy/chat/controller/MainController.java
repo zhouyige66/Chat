@@ -295,6 +295,7 @@ public class MainController extends BaseController {
         NotifyManager.getInstance().notifyEvent(notifyEvent);
 
         ChatManager.getInstance().clearRecentContact();
+        ChatClient.getInstance().disConnectServer();
     }
 
     static class RecentContactListCell extends ListCell<ContactEntity> {

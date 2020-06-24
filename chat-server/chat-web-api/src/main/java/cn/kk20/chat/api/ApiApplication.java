@@ -1,6 +1,8 @@
 package cn.kk20.chat.api;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 @EnableScheduling
 @EnableFeignClients
 public class ApiApplication extends SpringBootServletInitializer implements CommandLineRunner {
+    private static final Logger logger = LoggerFactory.getLogger(ApiApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
@@ -24,7 +27,7 @@ public class ApiApplication extends SpringBootServletInitializer implements Comm
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("执行CommandLineRunner的run()方法");
+        logger.info("执行CommandLineRunner的run()方法");
     }
 
     /**
@@ -39,7 +42,7 @@ public class ApiApplication extends SpringBootServletInitializer implements Comm
     }
 
     @Bean
-    public MultipartResolver multipartResolver(){
+    public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
 

@@ -1,5 +1,7 @@
 package cn.kk20.chat.api.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -14,15 +16,16 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AppStartListener implements ApplicationListener<ApplicationContextEvent> {
+    private static final Logger logger = LoggerFactory.getLogger(AppStartListener.class);
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
-            System.out.println("程序启动完成");
+            logger.info("监听到事件：ContextRefreshedEvent");
         } else if (event instanceof ContextClosedEvent) {
-            System.out.println("程序关闭");
+            logger.info("监听到事件：ContextClosedEvent");
         } else {
-            System.out.println("ApplicationContextEvent==" + event.getClass().getSimpleName());
+            logger.info("ApplicationContextEvent=" + event.getClass().getSimpleName());
         }
     }
 

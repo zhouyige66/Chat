@@ -7,8 +7,10 @@ import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.core.main.client.ChannelManager;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.core.util.RedisUtil;
+import cn.kk20.chat.dao.mapper.LoginLogModelMapper;
 import cn.kk20.chat.dao.model.LoginLogModel;
 import cn.kk20.chat.dao.model.UserModel;
+import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -40,6 +42,8 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
     ChannelManager channelManager;
     @Autowired
     MessageSender messageSender;
+    @Autowired
+    LoginLogModelMapper loginLogModelMapper;
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LoginMessage loginMessage)
@@ -59,6 +63,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
                     .withIp(channel.remoteAddress().toString())
                     .withDevice("暂无")
                     .withLocation("暂无");
+            loginLogModelMapper.insertSelective(loginLogModel);
         } else {
             channelManager.remove(channel);
         }
@@ -68,6 +73,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
         if (friendIdSet.isEmpty()) {
             return;
         }
+        logger.info("好友列表：{}", JSON.toJSONString(friendIdSet));
         // 查询在线好友
         Set<Long> onlineFriendIdSet = new HashSet<>();
         for (Long friendId : friendIdSet) {
@@ -76,6 +82,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
                 onlineFriendIdSet.add(friendId);
             }
         }
+        logger.info("在线好友列表：{}", JSON.toJSONString(onlineFriendIdSet));
         // 回复当前登录用户，好友在线名单
         if (login) {
             NotifyMessage notifyMessage = new NotifyMessage();

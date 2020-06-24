@@ -32,50 +32,50 @@ public class SyncUserListJob {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-//    @Scheduled(initialDelay = 5000, fixedRate = 60 * 60 * 1000)
-//    public void sync() {
-//        List<UserModel> userModelList = userService.selectAll();
-//        for (UserModel userModel : userModelList) {
-//            String friendList = userModel.getFriendList();
-//            if (StringUtils.isEmpty(friendList)) {
-//                continue;
-//            }
-//
-//            Set<Long> friendSet = JSON.parseObject(friendList, new TypeReference<Set<Long>>() {
-//            });
-//            if (CollectionUtils.isEmpty(friendSet)) {
-//                continue;
-//            }
-//            Long userId = userModel.getId();
-//            String key = ConstantValue.FRIEND_OF_USER + userId;
-//            redisTemplate.delete(key);
-//            for (Long id : friendSet) {
-//                redisTemplate.opsForSet().add(key, id);
-//            }
-//        }
-//    }
-//
-//    @Scheduled(initialDelay = 5000, fixedRate = 60 * 60 * 1000)
-//    public void syncGroupMember() throws Exception {
-//        List<GroupModel> groupModelList = groupService.selectAll();
-//        for (GroupModel model : groupModelList) {
-//            String memberList = model.getMemberList();
-//            if (StringUtils.isEmpty(memberList)) {
-//                continue;
-//            }
-//            Set<Long> memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
-//            });
-//            if (CollectionUtils.isEmpty(memberSet)) {
-//                continue;
-//            }
-//
-//            Long groupId = model.getId();
-//            String key = ConstantValue.MEMBER_OF_GROUP + groupId;
-//            redisTemplate.delete(key);
-//            for (Long id : memberSet) {
-//                redisTemplate.opsForSet().add(key, id);
-//            }
-//        }
-//    }
+    @Scheduled(initialDelay = 60000, fixedRate = 1000 * 60 * 60)
+    public void sync() {
+        List<UserModel> userModelList = userService.selectAll();
+        for (UserModel userModel : userModelList) {
+            String friendList = userModel.getFriendList();
+            if (StringUtils.isEmpty(friendList)) {
+                continue;
+            }
+
+            Set<Long> friendSet = JSON.parseObject(friendList, new TypeReference<Set<Long>>() {
+            });
+            if (CollectionUtils.isEmpty(friendSet)) {
+                continue;
+            }
+            Long userId = userModel.getId();
+            String key = ConstantValue.FRIEND_OF_USER + userId;
+            redisTemplate.delete(key);
+            for (Long id : friendSet) {
+                redisTemplate.opsForSet().add(key, id);
+            }
+        }
+    }
+
+    @Scheduled(initialDelay = 60000, fixedRate = 1000 * 60 * 60)
+    public void syncGroupMember() throws Exception {
+        List<GroupModel> groupModelList = groupService.selectAll();
+        for (GroupModel model : groupModelList) {
+            String memberList = model.getMemberList();
+            if (StringUtils.isEmpty(memberList)) {
+                continue;
+            }
+            Set<Long> memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
+            });
+            if (CollectionUtils.isEmpty(memberSet)) {
+                continue;
+            }
+
+            Long groupId = model.getId();
+            String key = ConstantValue.MEMBER_OF_GROUP + groupId;
+            redisTemplate.delete(key);
+            for (Long id : memberSet) {
+                redisTemplate.opsForSet().add(key, id);
+            }
+        }
+    }
 
 }
