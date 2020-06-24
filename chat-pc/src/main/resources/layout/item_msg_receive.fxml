@@ -4,8 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <VBox prefHeight="80.0" prefWidth="300.0"
       xmlns="http://javafx.com/javafx/10.0.2-internal"
       xmlns:fx="http://javafx.com/fxml/1">
@@ -33,7 +32,27 @@
                         <Image url="@/img/logo.png"/>
                     </image>
                 </ImageView>
-                <Label fx:id="msgLabel" text="消息内容"/>
+                <VBox alignment="TOP_LEFT">
+                    <children>
+                        <Label fx:id="userLabel" text="名字"/>
+                        <Label fx:id="msgLabel" text="消息内容">
+                            <padding>
+                                <Insets left="5" top="3" right="5" bottom="3"/>
+                            </padding>
+                            <background>
+                                <Background>
+                                    <images>
+                                        <BackgroundImage>
+                                            <image>
+                                                <Image url="@/img/bg_main.png"/>
+                                            </image>
+                                        </BackgroundImage>
+                                    </images>
+                                </Background>
+                            </background>
+                        </Label>
+                    </children>
+                </VBox>
             </children>
         </HBox>
     </children>

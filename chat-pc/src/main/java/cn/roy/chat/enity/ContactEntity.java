@@ -80,6 +80,10 @@ public class ContactEntity implements Serializable {
         return type == 0 ? friendEntity.getName() : groupEntity.getName();
     }
 
+    public String getContactHead() {
+        return type == 0 ? friendEntity.getHead() : null;
+    }
+
     public String getLastContactTime() {
         if (latestChatMessage == null) {
             return "";

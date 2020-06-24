@@ -92,7 +92,7 @@ public class ChatController extends BaseController {
         messageListView.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
             public ListCell call(ListView param) {
-                return new MsgListCell(contactEntity);
+                return new MsgListCell();
             }
         });
         messageListView.setItems(chatMessages);
@@ -193,9 +193,9 @@ public class ChatController extends BaseController {
         }
         recentContactListView.getSelectionModel().select(index);
 
-        final List<ChatMessage> chatMessageList =
-                ChatManager.getInstance().getChatMessageList(contactEntity.getIdentifyKey());
         chatMessages.clear();
+        messageListView.refresh();
+        List<ChatMessage> chatMessageList = ChatManager.getInstance().getChatMessageList(contactEntity.getIdentifyKey());
         if (!CollectionUtils.isEmpty(chatMessageList)) {
             chatMessages.addAll(chatMessageList);
         }
@@ -232,11 +232,16 @@ public class ChatController extends BaseController {
             }
 
             HBox parent = FXMLUtil.loadFXML("item_recent_contact");
+            final ImageView headImageView = (ImageView) parent.getChildren().get(0);
             final VBox vBox = (VBox) parent.getChildren().get(1);
             final VBox vBox2 = (VBox) parent.getChildren().get(2);
             final Label nameLabel = (Label) vBox.getChildren().get(0);
             final Label msgLabel = (Label) vBox.getChildren().get(1);
             final Label onlineLabel = (Label) vBox2.getChildren().get(0);
+            String head = item.getContactHead();
+            if (head != null) {
+                headImageView.setImage(new Image("http://localhost:9001" + head));
+            }
             nameLabel.setText(item.getContactName());
             msgLabel.setText(item.getLatestMessage());
             onlineLabel.setText(item.isOnline() ? "在线" : "离线");
@@ -251,17 +256,15 @@ public class ChatController extends BaseController {
     }
 
     static class MsgListCell extends ListCell<ChatMessage> {
-        ContactEntity contactEntity;
 
-        public MsgListCell(ContactEntity contactEntity) {
-            this.contactEntity = contactEntity;
+        public MsgListCell() {
         }
 
         @Override
         protected void updateItem(ChatMessage item, boolean empty) {
             super.updateItem(item, empty);
 
-            if (empty) {
+            if (empty || item == null) {
                 setGraphic(null);
                 return;
             }
@@ -271,33 +274,39 @@ public class ChatController extends BaseController {
             VBox parent = FXMLUtil.loadFXML(isSend ? "item_msg_send" : "item_msg_receive");
             final Label timeLabel = (Label) parent.getChildren().get(0);
             final HBox hBox = (HBox) parent.getChildren().get(1);
+
             ImageView headImageView;
-            Label msgLabel;
+            Label userLabel, msgLabel;
             String headUrl = null;
+            String sender = null;
             boolean isGroup = item.getChatMessageType() == ChatMessageType.GROUP;
             if (isSend) {
                 headImageView = (ImageView) hBox.getChildren().get(1);
-                msgLabel = (Label) hBox.getChildren().get(0);
+                VBox vBox = (VBox) hBox.getChildren().get(0);
+                userLabel = (Label) vBox.getChildren().get(0);
+                msgLabel = (Label) vBox.getChildren().get(1);
+
                 headUrl = Main.currentUser.getHead();
+                sender = Main.currentUser.getName();
             } else {
                 headImageView = (ImageView) hBox.getChildren().get(0);
-                msgLabel = (Label) hBox.getChildren().get(1);
-                if (isGroup) {
-                    final GroupEntity groupEntity = contactEntity.getGroupEntity();
-                    for (UserEntity userEntity : groupEntity.getMembers()) {
-                        if (userEntity.getId() == item.getFromUserId()) {
-                            headUrl = userEntity.getHead();
-                            break;
-                        }
-                    }
-                } else {
-                    headUrl = contactEntity.getFriendEntity().getHead();
+                VBox vBox = (VBox) hBox.getChildren().get(1);
+                userLabel = (Label) vBox.getChildren().get(0);
+                msgLabel = (Label) vBox.getChildren().get(1);
+                Long groupId = isGroup ? item.getToUserId() : null;
+                UserEntity userEntity = ChatManager.getInstance().searchContact(fromUserId, groupId);
+                if (userEntity != null) {
+                    headUrl = userEntity.getHead();
+                    sender = userEntity.getName();
                 }
             }
+            timeLabel.setText(CommonUtil.getTimeStr(item.getSendTimestamp()));
             if (headUrl != null) {
                 headImageView.setImage(new Image("http://localhost:9001" + headUrl));
             }
-            timeLabel.setText(CommonUtil.getTimeStr(item.getSendTimestamp()));
+            if (sender != null) {
+                userLabel.setText(sender);
+            }
             msgLabel.setText(ChatMessageUtil.getMsg(item));
 
             setGraphic(parent);

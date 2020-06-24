@@ -10,6 +10,7 @@ import cn.roy.chat.core.util.LogUtil;
 import cn.roy.chat.enity.ContactEntity;
 import cn.roy.chat.enity.FriendEntity;
 import cn.roy.chat.enity.GroupEntity;
+import cn.roy.chat.enity.UserEntity;
 import cn.roy.chat.util.FXMLUtil;
 import javafx.stage.Stage;
 
@@ -91,7 +92,7 @@ public class ChatManager {
     }
 
     public void bindFriendList(List<FriendEntity> friendEntityList) {
-        LogUtil.d(this,"绑定好友列表");
+        LogUtil.d(this, "绑定好友列表");
         for (FriendEntity friendEntity : friendEntityList) {
             if (onlineSet.contains(friendEntity.getId())) {
                 friendEntity.setOnline(true);
@@ -102,10 +103,46 @@ public class ChatManager {
     }
 
     public void bindGroupList(List<GroupEntity> groupEntityList) {
-        LogUtil.d(this,"绑定群组列表");
+        LogUtil.d(this, "绑定群组列表");
         for (GroupEntity groupEntity : groupEntityList) {
             final ContactEntity contactEntity = new ContactEntity(groupEntity);
             contactManager.add(contactEntity);
+        }
+    }
+
+    public UserEntity searchContact(Long userId, Long groupId) {
+        if (userId == null) {
+            return null;
+        }
+        ContactEntity contactEntity = contactManager.get("friend_" + userId);
+        if (contactEntity != null) {
+            UserEntity entity = new UserEntity();
+            entity.setId(contactEntity.getFriendEntity().getId());
+            entity.setName(contactEntity.getFriendEntity().getName());
+            entity.setHead(contactEntity.getFriendEntity().getHead());
+            return entity;
+        }
+        if (groupId == null) {
+            return null;
+        }
+        ContactEntity group = contactManager.get("group_" + groupId);
+        if (group != null) {
+            GroupEntity groupEntity = group.getGroupEntity();
+            List<UserEntity> members = groupEntity.getMembers();
+            if (members == null) {
+                return null;
+            } else {
+                UserEntity userEntity = null;
+                for (UserEntity entity : members) {
+                    if (entity.getId() == userId) {
+                        userEntity = entity;
+                        break;
+                    }
+                }
+                return userEntity;
+            }
+        } else {
+            return null;
         }
     }
 
