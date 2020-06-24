@@ -2,6 +2,8 @@ server:
   port: 9001
   tomcat:
     max-http-post-size: 32
+web:
+  upload-path: /Users/zzy/Desktop/Server/chat
 
 spring:
   profiles:
@@ -9,6 +11,8 @@ spring:
   redis:
     host: localhost
     port: 6379
+  resources:
+    static-locations: file:${web.upload-path}
   servlet:
     multipart:
       # 单个文件大小

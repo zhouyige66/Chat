@@ -1,5 +1,7 @@
 package cn.roy.chat.broadcast;
 
+import javafx.application.Platform;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -49,7 +51,14 @@ public class NotifyManager {
         final String type = event.getType();
         CopyOnWriteArrayList<NotifyReceiver> notifyReceivers = receiverMap.get(type);
         if (notifyReceivers != null && notifyReceivers.size() > 0) {
-            notifyReceivers.stream().forEach(e -> e.onReceiveEvent(event));
+            notifyReceivers.stream().forEach(e -> {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        e.onReceiveEvent(event);
+                    }
+                });
+            });
         }
     }
 

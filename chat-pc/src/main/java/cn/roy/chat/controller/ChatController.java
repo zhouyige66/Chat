@@ -13,6 +13,7 @@ import cn.roy.chat.core.util.CommonUtil;
 import cn.roy.chat.enity.ContactEntity;
 import cn.roy.chat.enity.FriendEntity;
 import cn.roy.chat.enity.GroupEntity;
+import cn.roy.chat.enity.UserEntity;
 import cn.roy.chat.util.FXMLUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -90,7 +92,7 @@ public class ChatController extends BaseController {
         messageListView.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
             public ListCell call(ListView param) {
-                return new MsgListCell();
+                return new MsgListCell(contactEntity);
             }
         });
         messageListView.setItems(chatMessages);
@@ -249,6 +251,12 @@ public class ChatController extends BaseController {
     }
 
     static class MsgListCell extends ListCell<ChatMessage> {
+        ContactEntity contactEntity;
+
+        public MsgListCell(ContactEntity contactEntity) {
+            this.contactEntity = contactEntity;
+        }
+
         @Override
         protected void updateItem(ChatMessage item, boolean empty) {
             super.updateItem(item, empty);
@@ -265,12 +273,29 @@ public class ChatController extends BaseController {
             final HBox hBox = (HBox) parent.getChildren().get(1);
             ImageView headImageView;
             Label msgLabel;
+            String headUrl = null;
+            boolean isGroup = item.getChatMessageType() == ChatMessageType.GROUP;
             if (isSend) {
                 headImageView = (ImageView) hBox.getChildren().get(1);
                 msgLabel = (Label) hBox.getChildren().get(0);
+                headUrl = Main.currentUser.getHead();
             } else {
                 headImageView = (ImageView) hBox.getChildren().get(0);
                 msgLabel = (Label) hBox.getChildren().get(1);
+                if (isGroup) {
+                    final GroupEntity groupEntity = contactEntity.getGroupEntity();
+                    for (UserEntity userEntity : groupEntity.getMembers()) {
+                        if (userEntity.getId() == item.getFromUserId()) {
+                            headUrl = userEntity.getHead();
+                            break;
+                        }
+                    }
+                } else {
+                    headUrl = contactEntity.getFriendEntity().getHead();
+                }
+            }
+            if (headUrl != null) {
+                headImageView.setImage(new Image("http://localhost:9001" + headUrl));
             }
             timeLabel.setText(CommonUtil.getTimeStr(item.getSendTimestamp()));
             msgLabel.setText(ChatMessageUtil.getMsg(item));

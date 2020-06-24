@@ -1,3 +1,8 @@
+web:
+  upload-path: /Users/zzy/Desktop/Server/chat
+
 spring:
   profiles:
     include: service
+  resources:
+    static-locations: file:${web.upload-path}

@@ -90,8 +90,21 @@ public class GroupServiceImpl implements GroupService {
         Set<Long> groupSet = JSON.parseObject(groupList, new TypeReference<Set<Long>>() {
         });
         GroupModelQuery query = new GroupModelQuery();
-        query.createCriteria().andIdIn(groupSet.stream().collect(Collectors.toList()));
-        List<GroupModel> groupModelList = groupModelMapper.selectByCondition(query);
+        query.createCriteria().andIdIn(new ArrayList<>(groupSet));
+        List<GroupModel> groupModelList = groupModelMapper.selectByConditionWithBLOBs(query);
+        // 查找群成员
+        for (GroupModel model : groupModelList) {
+            String memberList = model.getMemberList();
+            if (StringUtils.isEmpty(memberList)) {
+                continue;
+            }
+            UserModelQuery userModelQuery = new UserModelQuery();
+            List<Long> ids = JSON.parseArray(memberList, Long.class);
+            userModelQuery.createCriteria().andIdIn(ids);
+            List<UserModel> userModels = userModelMapper.selectByCondition(userModelQuery);
+            model.setMemberList(JSON.toJSONString(userModels));
+        }
+
         return groupModelList;
     }
 

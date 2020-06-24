@@ -13,11 +13,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @Description:
@@ -42,8 +40,6 @@ public class FriendController {
         if (applyBean == null || applyBean.getApplyUserId() == null || applyBean.getTargetUserId() == null) {
             return ResultData.requestError();
         }
-
-        final Properties properties = System.getProperties();
 
         ApplyLogModel applyLogModel = new ApplyLogModel();
         applyLogModel.setType(ApplyLogTypeEnum.ADD_FRIEND.getType());

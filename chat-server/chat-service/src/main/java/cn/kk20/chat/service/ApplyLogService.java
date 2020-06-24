@@ -1,6 +1,5 @@
 package cn.kk20.chat.service;
 
-import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 
 import java.util.List;

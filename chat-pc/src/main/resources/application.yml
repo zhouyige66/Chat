@@ -1,3 +1,6 @@
+server:
+  port: 8012
+
 logging:
   level:
     cn.roy.chat.call.CallChatServer: debug

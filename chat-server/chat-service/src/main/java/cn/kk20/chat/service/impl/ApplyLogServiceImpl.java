@@ -9,10 +9,15 @@ import cn.kk20.chat.dao.model.ApplyLogModelQuery;
 import cn.kk20.chat.dao.model.GroupModel;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.ApplyLogService;
+import cn.kk20.chat.service.MessageService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -29,6 +34,8 @@ import java.util.Set;
  */
 @Service
 public class ApplyLogServiceImpl implements ApplyLogService {
+    private static final Logger logger = LoggerFactory.getLogger(ApplyLogServiceImpl.class);
+
     @Autowired
     UserModelMapper userModelMapper;
     @Autowired
@@ -140,6 +147,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     }
 
     @Override
+    @Transactional
     public void verifyApply(ApplyLogModel model) throws Exception {
         ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
         if (existModel == null) {
@@ -205,6 +213,11 @@ public class ApplyLogServiceImpl implements ApplyLogService {
             }
         }
     }
+
+    @Autowired
+    MessageService messageService;
+    @Autowired
+    ApplicationEventPublisher publisher;
 
     private void updateUserFriends(UserModel userModel, Long friendId, boolean add) {
         String friendList = userModel.getFriendList();

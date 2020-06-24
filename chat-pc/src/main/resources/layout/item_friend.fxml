@@ -15,7 +15,8 @@
         <Insets top="10" right="15" left="15" bottom="10"/>
     </padding>
     <children>
-        <ImageView fitHeight="60.0" fitWidth="60.0"
+        <ImageView fx:id="headImageView"
+                   fitHeight="60.0" fitWidth="60.0"
                    pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@/img/logo.png"/>

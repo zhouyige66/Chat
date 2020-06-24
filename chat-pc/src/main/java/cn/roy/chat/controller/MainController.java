@@ -13,6 +13,7 @@ import cn.roy.chat.util.FXMLUtil;
 import cn.roy.chat.util.HttpUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -22,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -30,6 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -258,6 +261,15 @@ public class MainController extends BaseController {
                 final List<GroupEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
                         GroupEntity.class);
                 if (!CollectionUtils.isEmpty(list)) {
+                    for (GroupEntity entity : list) {
+                        String memberList = entity.getMemberList();
+                        if (StringUtils.isEmpty(memberList)) {
+                            continue;
+                        }
+                        List<UserEntity> userEntities = JSONArray.parseArray(memberList, UserEntity.class);
+                        entity.setMembers(userEntities);
+                    }
+
                     ChatManager.getInstance().bindGroupList(list);
                     groupEntities.addAll(list);
                 }
@@ -296,6 +308,10 @@ public class MainController extends BaseController {
             }
 
             HBox parent = FXMLUtil.loadFXML("item_friend");
+            if (item.getType() == 0) {
+                ImageView headImageView = (ImageView) parent.getChildren().get(0);
+                headImageView.setImage(new Image("http://localhost:9001" + item.getFriendEntity().getHead()));
+            }
             VBox vBox = (VBox) parent.getChildren().get(1);
             final Label label = (Label) vBox.getChildren().get(0);
             final Label msgLabel = (Label) vBox.getChildren().get(1);
@@ -323,6 +339,8 @@ public class MainController extends BaseController {
             }
 
             HBox parent = FXMLUtil.loadFXML("item_friend");
+            ImageView headImageView = (ImageView) parent.getChildren().get(0);
+            headImageView.setImage(new Image("http://localhost:9001" + item.getHead()));
             VBox vBox = (VBox) parent.getChildren().get(1);
             final Label label = (Label) vBox.getChildren().get(0);
             final Label label2 = (Label) vBox.getChildren().get(1);

@@ -1,6 +1,9 @@
 package cn.roy.chat.enity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description:
@@ -30,6 +33,9 @@ public class GroupEntity implements Serializable {
     private String createDate;
     private String modifyDate;
     private String memberList;
+
+    @JsonIgnore
+    private List<UserEntity> members;
 
     public int getId() {
         return id;
@@ -101,5 +107,13 @@ public class GroupEntity implements Serializable {
 
     public void setMemberList(String memberList) {
         this.memberList = memberList;
+    }
+
+    public List<UserEntity> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<UserEntity> members) {
+        this.members = members;
     }
 }
