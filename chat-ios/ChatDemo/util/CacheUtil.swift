@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 final class CacheManager: NSObject {
     static let shared = CacheManager()
@@ -23,11 +24,11 @@ final class CacheManager: NSObject {
         return UserDefaults.standard.object(forKey: "userInfo") as! JSON
     }
     
-    public func getUserId()->String{
+    public func getUserId()->Int64{
         if(user != nil){
-            return user!["id"].string!
+            return user!["id"].int64!
         }else{
-            return ""
+            return -1
         }
     }
     

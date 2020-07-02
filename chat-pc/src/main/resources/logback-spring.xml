@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="10 seconds">
 
     <springProperty scope="context" name="logHome" source="log.home" defaultValue="zdir/logs"/>
-    <springProperty scope="context" name="logPath" source="log.path" defaultValue="chat"/>
+    <springProperty scope="context" name="logPath" source="log.path" defaultValue="pc"/>
     <property name="logDir" value="${logHome}/${logPath}"/>
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">

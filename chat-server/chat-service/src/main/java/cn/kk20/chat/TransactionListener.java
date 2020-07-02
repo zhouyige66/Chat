@@ -17,12 +17,12 @@ public class TransactionListener {
     private static final Logger logger = LoggerFactory.getLogger(TransactionListener.class);
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void receive(PublishEvent event) {
+    public void receive(TransactionEvent event) {
         logger.info("收到commit通知：{}", event.getMsg());
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
-    public void rollback(PublishEvent event) {
+    public void rollback(TransactionEvent event) {
         logger.info("收到rollback通知：{}", event.getMsg());
     }
 

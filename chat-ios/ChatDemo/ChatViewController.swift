@@ -14,20 +14,20 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     @IBOutlet weak var tf_input: UITextField!
     @IBAction func sendMessage(_ sender: Any) {
         if let msg = tf_input.text{
-            var chatMessage:ChatMessage<TextBody> = ChatMessage<TextBody>()
-            chatMessage.fromUserId = CacheManager.shared.getUserId()
-            chatMessage.toUserId = chatUser!.id
-            chatMessage.id = UUID.init().uuidString
-            chatMessage.type = ChatType.SINGLE.rawValue
-            let textBody = TextBody()
-            textBody.text = msg
-            chatMessage.body = textBody
-            chatClient.send(chatMessage)
-            
-            // 存储
-            let jsonData:Data = (chatMessage.toJSONString()?.data(using: String.Encoding.utf8))!
-            let json:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: jsonData, options: []) as! Dictionary<String, Any>
-            MessageManager.shared.store(chatMessage: json)
+//            var chatMessage:ChatMessage<TextBody> = ChatMessage<TextBody>()
+//            chatMessage.fromUserId = CacheManager.shared.getUserId()
+//            chatMessage.toUserId = chatUser!.id
+//            chatMessage.id = UUID.init().uuidString
+//            chatMessage.type = ChatType.SINGLE
+//            let textBody = TextBody()
+//            textBody.text = msg
+//            chatMessage.body = textBody
+//            chatClient.send(chatMessage)
+//            
+//            // 存储
+//            let jsonData:Data = (chatMessage.toJSONString()?.data(using: String.Encoding.utf8))!
+//            let json:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: jsonData, options: []) as! Dictionary<String, Any>
+//            MessageManager.shared.store(chatMessage: json)
             
             tf_input.text = ""
         }else{
@@ -80,19 +80,20 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let messageDic = messageManager.messageDic
-        let array:Array<Any> = messageDic[chatUser!.id]!
-        let dic:Dictionary<String,Any> = array[indexPath.row] as! Dictionary<String, Any>
-        let fromUserId:String = dic["fromUserId"] as! String
-        let isMe = fromUserId == CacheManager.shared.getUserId()
-        let bodyJson:Dictionary<String, Any> = dic["body"] as! Dictionary<String, Any>
-        let msg:String = bodyJson["text"] as! String
-        
-        // 根据发送者加载不同cell
+//        let messageDic = messageManager.messageDic
+//        let array:Array<Any> = messageDic[chatUser!.id]!
+//        let dic:Dictionary<String,Any> = array[indexPath.row] as! Dictionary<String, Any>
+//        let fromUserId:Int64 = dic["fromUserId"] as! String
+//        let isMe = fromUserId == CacheManager.shared.getUserId()
+//        let bodyJson:Dictionary<String, Any> = dic["body"] as! Dictionary<String, Any>
+//        let msg:String = bodyJson["text"] as! String
+//
+//        // 根据发送者加载不同cell
+        let isMe = true
         let identifier:String = isMe ? "cell2": "cell"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier,for: indexPath)
-        let label_msg:UILabel = cell.viewWithTag(1) as! UILabel
-        label_msg.text = msg
+//        let label_msg:UILabel = cell.viewWithTag(1) as! UILabel
+//        label_msg.text = msg
         
         return cell;
     }

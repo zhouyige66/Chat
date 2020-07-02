@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import SwiftyJSON
 
 protocol HttpRequestCallback {
     func onSuccess(data:JSON)
@@ -16,10 +17,10 @@ protocol HttpRequestCallback {
 
 class BaseModel{
     // 基本配置
-    static let sharedSessionManager: Alamofire.SessionManager = {
+    static let sharedSessionManager: AlamofireExtension<URLSessionConfiguration> = {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 5
-        return Alamofire.SessionManager(configuration: configuration)
+        return AlamofireExtension(configuration)
     }()
     
     var delegate:HttpRequestCallback?
@@ -42,15 +43,12 @@ class BaseModel{
     private func request(httpMethod method:HTTPMethod,url urlString:String,requestParam requestData:Dictionary<String,Any>,
                          logTip logText:String){
         // 添加默认参数（公有body部分等）
-        //        let params:Dictionary<String,Any> = addBaseParams(requestData)
+        // let params:Dictionary<String,Any> = addBaseParams(requestData)
         // 输出提交参数
         print("\(logText)-->API:\(urlString)")
         print("\(logText)-->提交参数：\(requestData)")
-        // 设置超时时间
-        let manager = Alamofire.SessionManager.default
-        manager.session.configuration.timeoutIntervalForRequest = 5
         let encode:ParameterEncoding = method == .post ? JSONEncoding.default: URLEncoding.default
-        Alamofire.request(urlString,method: method,parameters:requestData,encoding:encode).response { (result) in
+        AF.request(urlString,method: method,parameters:requestData,encoding:encode).response { (result) in
             guard result.response != nil else {
                 let error = result.error?.localizedDescription ?? ""
                 print("错误原因：\(error)")

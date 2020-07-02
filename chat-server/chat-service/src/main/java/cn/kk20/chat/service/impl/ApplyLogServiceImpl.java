@@ -1,5 +1,6 @@
 package cn.kk20.chat.service.impl;
 
+import cn.kk20.chat.TransactionEvent;
 import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.dao.mapper.ApplyLogModelMapper;
 import cn.kk20.chat.dao.mapper.GroupModelMapper;
@@ -10,6 +11,7 @@ import cn.kk20.chat.dao.model.GroupModel;
 import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.service.ApplyLogService;
 import cn.kk20.chat.service.MessageService;
+import cn.kk20.chat.service.TransactionEventPublishService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import org.slf4j.Logger;
@@ -146,9 +148,16 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         applyLogModelMapper.insertSelective(model);
     }
 
+    @Autowired
+    MessageService messageService;
+    @Autowired
+    TransactionEventPublishService transactionEventPublishService;
+
     @Override
     @Transactional
     public void verifyApply(ApplyLogModel model) throws Exception {
+        transactionEventPublishService.publish("主事务发送");
+
         ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
         if (existModel == null) {
             String msg = String.format("审批申请：id=%d的申请申请记录不存在", model.getId());
@@ -176,6 +185,10 @@ public class ApplyLogServiceImpl implements ApplyLogService {
 
         // 同意添加好友或加入群
         if (isAgree) {
+            transactionEventPublishService.publish("主事务发送2");
+            int i = 0;
+            System.out.println("跑出异常：" + 100 / i);
+
             UserModel applyUserModel = userModelMapper.selectByPrimaryKey(applyUserId);
             if (model.getType() == 0) {
                 // 更新用户的好友信息
@@ -213,11 +226,6 @@ public class ApplyLogServiceImpl implements ApplyLogService {
             }
         }
     }
-
-    @Autowired
-    MessageService messageService;
-    @Autowired
-    ApplicationEventPublisher publisher;
 
     private void updateUserFriends(UserModel userModel, Long friendId, boolean add) {
         String friendList = userModel.getFriendList();

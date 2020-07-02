@@ -18,23 +18,23 @@ final class MessageManager:NSObject {
     }
  
     public func store(chatMessage chatMessage:Dictionary<String,Any>){
-        let fromUserId:String = chatMessage["fromUserId"] as! String
-        let toUserId:String = chatMessage["toUserId"] as! String
-        
-        var key:String
-        if(fromUserId == CacheManager.shared.getUserId()){// 发送人是自己
-            key = toUserId
-        } else {
-            key = fromUserId
-        }
-        var messageList:Array<Any>
-        if(messageDic[key] != nil ){
-            messageList = messageDic[key]!
-        }else{
-            messageList = Array<Any>()
-        }
-        messageList.append(chatMessage)
-        messageDic[key] = messageList
+//        let fromUserId:Int64 = chatMessage["fromUserId"] as! String
+//        let toUserId:Int64 = chatMessage["toUserId"] as! String
+//        
+//        var key:String
+//        if(fromUserId == CacheManager.shared.getUserId()){// 发送人是自己
+//            key = ""+toUserId
+//        } else {
+//            key = ""+fromUserId
+//        }
+//        var messageList:Array<Any>
+//        if(messageDic[key] != nil ){
+//            messageList = messageDic[key]!
+//        }else{
+//            messageList = Array<Any>()
+//        }
+//        messageList.append(chatMessage)
+//        messageDic[key] = messageList
     }
     
 }

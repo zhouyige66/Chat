@@ -7,19 +7,26 @@
 //
 
 import UIKit
+import Toast_Swift
 
 class LoginViewController: BaseUIViewController {
     @IBOutlet weak var utf_user_name: UITextField!
     @IBOutlet weak var utf_user_password: UITextField!
+    @IBAction func register(_ sender: UIButton) {
+        self.view.makeToast("该功能还在开发中")
+    }
+    @IBAction func forgetPassword(_ sender: Any) {
+        self.view.makeToast("该功能还在开发中")
+    }
     @IBAction func login(_ sender: Any) {
         let userName = utf_user_name.text
         if (userName?.isEmpty)!{
-            print("用户名不能为空！")
+            self.view.makeToast("用户名不能为空！")
             return
         }
         let userPassword = utf_user_password.text
         if (userPassword?.isEmpty)!{
-            print("密码不能为空！")
+            self.view.makeToast("密码不能为空！")
             return
         }
         
@@ -35,7 +42,7 @@ class LoginViewController: BaseUIViewController {
             self.showToast("错误码:\(code)，错误信息：\(msg)")
         })
         var requestData:Dictionary<String,Any> = [:]
-        requestData["name"] = userName
+        requestData["userName"] = userName
         requestData["password"] = userPassword
         loginRequest.doPost(ApiConfig.login, requestData, "登录验证")
     }
@@ -46,6 +53,5 @@ class LoginViewController: BaseUIViewController {
         utf_user_name.text = UserDefaults.standard.string(forKey: "loginName")
         utf_user_password.text = UserDefaults.standard.string(forKey: "loginPassword")
     }
-    
 
 }

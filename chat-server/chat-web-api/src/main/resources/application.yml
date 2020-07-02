@@ -35,7 +35,7 @@ logging:
   file:
     max-history: 10
     max-size: 10MB
-  path: log/log.log
+  path: zdir/logs/web-api
 
 feign:
   okhttp:
