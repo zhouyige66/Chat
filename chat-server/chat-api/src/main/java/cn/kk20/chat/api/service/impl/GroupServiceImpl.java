@@ -1,5 +1,7 @@
 package cn.kk20.chat.api.service.impl;
 
+import cn.kk20.chat.api.entity.vo.GroupVo;
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.base.util.ListUtil;
 import cn.kk20.chat.dao.mapper.GroupModelMapper;
@@ -11,9 +13,11 @@ import cn.kk20.chat.dao.model.UserModelQuery;
 import cn.kk20.chat.api.service.GroupService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -84,32 +88,43 @@ public class GroupServiceImpl implements GroupService {
         }
         String groupList = userModel.getGroupList();
         if (StringUtils.isEmpty(groupList)) {
-            return new ArrayList<>(0);
+            return ListUtil.emptyList();
         }
-
         Set<Long> groupSet = JSON.parseObject(groupList, new TypeReference<Set<Long>>() {
         });
         GroupModelQuery query = new GroupModelQuery();
         query.createCriteria().andIdIn(new ArrayList<>(groupSet));
         List<GroupModel> groupModelList = groupModelMapper.selectByConditionWithBLOBs(query);
-        // 查找群成员
-        for (GroupModel model : groupModelList) {
-            String memberList = model.getMemberList();
-            if (StringUtils.isEmpty(memberList)) {
-                continue;
-            }
-            UserModelQuery userModelQuery = new UserModelQuery();
-            List<Long> ids = JSON.parseArray(memberList, Long.class);
-            userModelQuery.createCriteria().andIdIn(ids);
-            List<UserModel> userModels = userModelMapper.selectByCondition(userModelQuery);
-            model.setMemberList(JSON.toJSONString(userModels));
-        }
-
         return groupModelList;
     }
 
     @Override
-    public List<UserModel> getGroupMemberList(Long groupId) throws Exception {
+    public List<GroupVo> getGroupListWithMember(Long userId) throws Exception {
+        List<GroupModel> groupModelList = getGroupList(userId);
+        if (CollectionUtils.isEmpty(groupModelList)) {
+            return ListUtil.emptyList();
+        }
+        List<GroupVo> groupVoList = new ArrayList<>();
+        // 查找群成员
+        for (GroupModel model : groupModelList) {
+            GroupVo groupVo = new GroupVo();
+            BeanUtils.copyProperties(model,groupVo);
+            groupVoList.add(groupVo);
+
+            String memberList = model.getMemberList();
+            if (StringUtils.isEmpty(memberList)) {
+                continue;
+            }
+
+            List<UserVo> userVoList = getGroupMemberList(model.getId());
+            groupVo.setMemberList(userVoList);
+        }
+
+        return groupVoList;
+    }
+
+    @Override
+    public List<UserVo> getGroupMemberList(Long groupId) throws Exception {
         if (groupId == null) {
             throw new RequestParamException("群组ID不能为空");
         }
@@ -117,25 +132,23 @@ public class GroupServiceImpl implements GroupService {
         if (groupModel == null) {
             throw new RequestParamException("该群组ID不存在");
         }
-
         String memberList = groupModel.getMemberList();
         if (StringUtils.isEmpty(memberList)) {
             return ListUtil.emptyList();
         }
+
         Set<Long> memberSet = JSON.parseObject(memberList, new TypeReference<Set<Long>>() {
         });
         UserModelQuery query = new UserModelQuery();
         query.createCriteria().andIdIn(memberSet.stream().collect(Collectors.toList()));
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
-        return userModelList.stream().map(e -> {
-            // 去除不必要属性
-            e.setPassword(null);
-            e.setGroupList(null);
-            e.setFriendList(null);
-            e.setCreateDate(null);
-            e.setModifyDate(null);
-            return e;
-        }).collect(Collectors.toList());
+        List<UserVo> userVoList = new ArrayList<>();
+        for (UserModel userModel : userModelList) {
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(userModel, userModel);
+            userVoList.add(userVo);
+        }
+        return userVoList;
     }
 
 }

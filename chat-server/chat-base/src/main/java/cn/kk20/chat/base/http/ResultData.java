@@ -1,6 +1,7 @@
 package cn.kk20.chat.base.http;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 
@@ -49,6 +50,13 @@ public class ResultData<T> implements Serializable {
         resultData.setCode(ResultCode.SUCCESS.code);
         resultData.setMsg("操作成功");
         resultData.setData(data);
+        return resultData;
+    }
+
+    public static ResultData successWithMsg(String msg) {
+        ResultData resultData = new ResultData();
+        resultData.setCode(ResultCode.SUCCESS.code);
+        resultData.setMsg(StringUtils.isEmpty(msg) ? "操作成功" : msg);
         return resultData;
     }
 

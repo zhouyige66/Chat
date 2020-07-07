@@ -1,7 +1,8 @@
 package cn.kk20.chat.api.service;
 
+import cn.kk20.chat.api.entity.vo.GroupVo;
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.dao.model.GroupModel;
-import cn.kk20.chat.dao.model.UserModel;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface GroupService {
 
     List<GroupModel> getGroupList(Long userId) throws Exception;
 
-    List<UserModel> getGroupMemberList(Long groupId) throws Exception;
+    List<GroupVo> getGroupListWithMember(Long userId) throws Exception;
+
+    List<UserVo> getGroupMemberList(Long groupId) throws Exception;
 
 }

@@ -3,13 +3,14 @@ package cn.kk20.chat.api.controller;
 import cn.kk20.chat.api.entity.request.ApplyBean;
 import cn.kk20.chat.api.entity.request.CreateGroupBean;
 import cn.kk20.chat.api.entity.request.VerifyBean;
+import cn.kk20.chat.api.entity.vo.GroupVo;
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.api.enums.ApplyLogTypeEnum;
 import cn.kk20.chat.api.service.ApplyLogService;
 import cn.kk20.chat.api.service.GroupService;
 import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.dao.model.GroupModel;
-import cn.kk20.chat.dao.model.UserModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +43,7 @@ public class GroupController {
         model.setName(createGroupBean.getName());
         model.setDescription(createGroupBean.getDescription());
         groupService.create(model);
-        return ResultData.success(model);
+        return ResultData.successWithMsg("创建成功");
     }
 
     @PostMapping("apply")
@@ -59,7 +60,7 @@ public class GroupController {
         applyLogModel.setTargetUserId(applyBean.getTargetUserId());
         applyLogModel.setApplyRemark(applyBean.getRemark());
         applyLogService.addApply(applyLogModel);
-        return ResultData.success("申请已提交");
+        return ResultData.successWithMsg("申请已提交");
     }
 
     @PostMapping("verify")
@@ -78,22 +79,22 @@ public class GroupController {
         applyLogModel.setIsAgree(verifyBean.getAgree());
         applyLogModel.setVerifyRemark(verifyBean.getRemark());
         applyLogService.verifyApply(applyLogModel);
-        return ResultData.success("操作成功");
+        return ResultData.successWithMsg("操作成功");
     }
 
     @GetMapping("list")
     @ApiOperation(value = "查询用户群列表", notes = "功能：根据用户ID查询用户群组列表")
     @ApiImplicitParam(name = "userId", value = "用户ID")
     public ResultData getGroupList(@RequestParam Long userId) throws Exception {
-        List<GroupModel> groupList = groupService.getGroupList(userId);
-        return ResultData.success(groupList);
+        List<GroupVo> groupListWithMember = groupService.getGroupListWithMember(userId);
+        return ResultData.success(groupListWithMember);
     }
 
     @GetMapping("members")
     @ApiOperation(value = "查询群成员列表", notes = "功能：根据群ID查询成员列表")
     @ApiImplicitParam(name = "groupId", value = "群组ID")
     public ResultData getGroupMemberList(@RequestParam Long groupId) throws Exception {
-        List<UserModel> groupList = groupService.getGroupMemberList(groupId);
-        return ResultData.success(groupList);
+        List<UserVo> groupMemberList = groupService.getGroupMemberList(groupId);
+        return ResultData.success(groupMemberList);
     }
 }

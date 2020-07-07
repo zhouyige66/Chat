@@ -2,6 +2,7 @@ package cn.kk20.chat.api.controller;
 
 import cn.kk20.chat.api.entity.request.LoginBean;
 import cn.kk20.chat.api.entity.request.RegisterBean;
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.api.service.UserService;
 import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.dao.model.UserModel;
@@ -62,9 +63,8 @@ public class LoginController {
         if (!userModel.getPassword().equals(password)) {
             return ResultData.requestError("登录密码错误");
         }
-        userModel.setPassword(null);
-        userModel.setGroupList(null);
-        userModel.setFriendList(null);
-        return ResultData.success(userModel);
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(userModel,userVo);
+        return ResultData.success(userVo);
     }
 }

@@ -77,7 +77,6 @@ public class UserServiceImpl implements UserService {
                 throw new RequestParamException("该邮箱已被注册，请检查后重试");
             }
         }
-
         userModelMapper.insertSelective(model);
         return model;
     }
@@ -95,7 +94,6 @@ public class UserServiceImpl implements UserService {
         if (CollectionUtils.isEmpty(userModels)) {
             throw new RequestParamException("登录用户不存在，请先注册");
         }
-
         return userModels.get(0);
     }
 
@@ -127,17 +125,7 @@ public class UserServiceImpl implements UserService {
         UserModelQuery.Criteria criteria = query.createCriteria();
         criteria.andIdIn(friendSet.stream().collect(Collectors.toList()));
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
-        List<UserModel> friendList = userModelList.stream().map(e -> {
-            // 去除不必要属性
-            e.setPassword(null);
-            e.setGroupList(null);
-            e.setFriendList(null);
-            e.setCreateDate(null);
-            e.setModifyDate(null);
-            return e;
-        }).collect(Collectors.toList());
-
-        return friendList;
+        return userModelList;
     }
 
 }

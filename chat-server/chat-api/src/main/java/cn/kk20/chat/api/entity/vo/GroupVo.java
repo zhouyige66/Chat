@@ -11,22 +11,14 @@ import java.util.List;
  */
 public class GroupVo {
     private Long id;
-
     private String name;
-
     private String description;
-
     private Long creatorId;
-
     private String managerList;
-
     private Boolean isDelete;
-
     private Date createDate;
-
     private Date modifyDate;
-
-    private List<Member> memberList;
+    private List<UserVo> memberList;
 
     public Long getId() {
         return id;
@@ -92,94 +84,12 @@ public class GroupVo {
         this.modifyDate = modifyDate;
     }
 
-    public List<Member> getMemberList() {
+    public List<UserVo> getMemberList() {
         return memberList;
     }
 
-    public void setMemberList(List<Member> memberList) {
+    public void setMemberList(List<UserVo> memberList) {
         this.memberList = memberList;
-    }
-
-    public static class Member{
-        private Long id;
-
-        private String name;
-
-        private String phone;
-
-        private String email;
-
-        private String head;
-
-        private Boolean isDelete;
-
-        private Date createDate;
-
-        private Date modifyDate;
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getHead() {
-            return head;
-        }
-
-        public void setHead(String head) {
-            this.head = head;
-        }
-
-        public Boolean getDelete() {
-            return isDelete;
-        }
-
-        public void setDelete(Boolean delete) {
-            isDelete = delete;
-        }
-
-        public Date getCreateDate() {
-            return createDate;
-        }
-
-        public void setCreateDate(Date createDate) {
-            this.createDate = createDate;
-        }
-
-        public Date getModifyDate() {
-            return modifyDate;
-        }
-
-        public void setModifyDate(Date modifyDate) {
-            this.modifyDate = modifyDate;
-        }
     }
 
 }
