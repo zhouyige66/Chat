@@ -1,9 +1,8 @@
 package cn.kk20.chat.api.controller;
 
-import cn.kk20.chat.base.http.ResultData;
-import cn.kk20.chat.base.http.dto.ListDto;
-import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.api.service.ApplyLogService;
+import cn.kk20.chat.base.http.ResultData;
+import cn.kk20.chat.dao.model.ApplyLogModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -33,8 +32,7 @@ public class ChatController {
     @ApiImplicitParam(name = "userId", value = "审批者ID")
     public ResultData getVerifyList(@RequestParam Long userId) throws Exception {
         List<ApplyLogModel> applyLogList = applyLogService.getApplyLogList(userId);
-        ListDto<ApplyLogModel> applyLogModelListDto = new ListDto<>(applyLogList);
-        return ResultData.success(applyLogModelListDto);
+        return ResultData.success(applyLogList);
     }
 
 }

@@ -2,14 +2,13 @@ package cn.kk20.chat.api.controller;
 
 import cn.kk20.chat.api.ConstantValue;
 import cn.kk20.chat.api.call.CallCenterServerService;
+import cn.kk20.chat.api.service.GroupMessageService;
+import cn.kk20.chat.api.service.MessageService;
 import cn.kk20.chat.base.http.ResultData;
-import cn.kk20.chat.base.http.dto.MapDto;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.chat.ChatMessageType;
 import cn.kk20.chat.dao.model.GroupMessageModel;
 import cn.kk20.chat.dao.model.MessageModel;
-import cn.kk20.chat.api.service.GroupMessageService;
-import cn.kk20.chat.api.service.MessageService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import io.swagger.annotations.Api;
@@ -20,6 +19,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -78,10 +79,10 @@ public class NettyRelateController {
         String[] ports = split[1].split("&");
         String host = split[0];
         int port = Integer.valueOf(ports[0]);
-        MapDto mapDto = new MapDto();
-        mapDto.add("host", host);
-        mapDto.add("port", port);
-        return ResultData.success(mapDto);
+        Map<String,Object> map = new HashMap<>();
+        map.put("host", host);
+        map.put("port", port);
+        return ResultData.success(map);
     }
 
     @PostMapping("sendMessage")
@@ -113,13 +114,13 @@ public class NettyRelateController {
             newId = messageModel.getId();
         }
         // 保存成功，回复客户端，数据库ID
-        MapDto mapDto = new MapDto();
-        mapDto.add("originId", originId);
-        mapDto.add("currentId", newId);
-        mapDto.add("timestamp", System.currentTimeMillis());
+        Map<String, Object> map = new HashMap<>();
+        map.put("originId", originId);
+        map.put("currentId", newId);
+        map.put("timestamp", System.currentTimeMillis());
         ResultData resultData = callCenterServerService.sendChatMessage(chatMessage);
-        mapDto.add("success", resultData.isSuccess());
-        return ResultData.success(mapDto);
+        map.put("success", resultData.isSuccess());
+        return ResultData.success(map);
     }
 
 }

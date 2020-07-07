@@ -1,14 +1,13 @@
 package cn.kk20.chat.api.controller;
 
-import cn.kk20.chat.api.model.request.ApplyBean;
-import cn.kk20.chat.api.model.request.VerifyBean;
-import cn.kk20.chat.base.http.ResultData;
-import cn.kk20.chat.base.http.dto.ListDto;
+import cn.kk20.chat.api.entity.request.ApplyBean;
+import cn.kk20.chat.api.entity.request.VerifyBean;
 import cn.kk20.chat.api.enums.ApplyLogTypeEnum;
-import cn.kk20.chat.dao.model.ApplyLogModel;
-import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.api.service.ApplyLogService;
 import cn.kk20.chat.api.service.UserService;
+import cn.kk20.chat.base.http.ResultData;
+import cn.kk20.chat.dao.model.ApplyLogModel;
+import cn.kk20.chat.dao.model.UserModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -80,8 +79,7 @@ public class FriendController {
     public ResultData getFriendList(@RequestParam Long userId) {
         try {
             List<UserModel> friendList = userService.getFriendList(userId);
-            ListDto<UserModel> userModelListDto = new ListDto<UserModel>(friendList);
-            return ResultData.success(userModelListDto);
+            return ResultData.success(friendList);
         } catch (Exception e) {
             return ResultData.fail(ResultData.ResultCode.SERVER_ERROR, e.getMessage());
         }

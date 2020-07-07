@@ -1,4 +1,4 @@
-package cn.kk20.chat.api.controller;
+package cn.kk20.chat.api.controller.advice;
 
 import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.base.http.ResultData;

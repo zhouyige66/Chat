@@ -1,4 +1,4 @@
-package cn.kk20.chat.api.model.request;
+package cn.kk20.chat.api.entity.request;
 
 import io.swagger.annotations.ApiModelProperty;
 

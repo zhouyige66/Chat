@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @Date: 2019-10-25 09:47
  * @Version: v1.0
  */
-public class ResultData implements Serializable {
+public class ResultData<T> implements Serializable {
 
     public enum ResultCode {
         SUCCESS(200, "操作成功"),
@@ -42,15 +42,13 @@ public class ResultData implements Serializable {
     // 该属性用于开发测试阶段，用于定位问题
     private String exception;
     // 返回实体必须是BaseDto及其子类
-    private Serializable data;
+    private T data;
 
-    public static ResultData success(String msg) {
-        return createResultData(ResultCode.SUCCESS, msg);
-    }
-
-    public static ResultData success(Serializable data) {
-        ResultData resultData = new ResultData().setCode(ResultCode.SUCCESS.code).setMsg("操作成功")
-                .setData(data);
+    public static <T> ResultData success(T data) {
+        ResultData resultData = new ResultData();
+        resultData.setCode(ResultCode.SUCCESS.code);
+        resultData.setMsg("操作成功");
+        resultData.setData(data);
         return resultData;
     }
 
@@ -113,11 +111,11 @@ public class ResultData implements Serializable {
         return this;
     }
 
-    public Serializable getData() {
+    public T getData() {
         return data;
     }
 
-    public ResultData setData(Serializable data) {
+    public ResultData setData(T data) {
         this.data = data;
         return this;
     }
@@ -126,4 +124,5 @@ public class ResultData implements Serializable {
     public boolean isSuccess() {
         return code == ResultCode.SUCCESS.getCode();
     }
+
 }
