@@ -8,8 +8,6 @@ import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
 import cn.kk20.chat.dao.model.GroupMessageModel;
 import cn.kk20.chat.dao.model.MessageModel;
-import cn.kk20.chat.service.GroupMessageService;
-import cn.kk20.chat.service.MessageService;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +32,6 @@ public class ProcessorManager {
 
     @Autowired
     ApplicationContext applicationContext;
-    @Autowired
-    MessageService messageService;
-    @Autowired
-    GroupMessageService groupMessageService;
     @Autowired
     MessageSender messageSender;
 
@@ -69,7 +63,7 @@ public class ProcessorManager {
             groupMessageModel.setGroupId(chatMessage.getToUserId());
             groupMessageModel.setContentType(chatMessage.getBodyType().getCode());
             groupMessageModel.setContent(chatMessage.getBody());
-            groupMessageService.insert(groupMessageModel);
+//            groupMessageService.insert(groupMessageModel);
             currentId = groupMessageModel.getId();
         } else {
             MessageModel messageModel = new MessageModel();
@@ -77,7 +71,7 @@ public class ProcessorManager {
             messageModel.setToUserId(chatMessage.getToUserId());
             messageModel.setContent(chatMessage.getBody());
             messageModel.setContentType(chatMessage.getBodyType().getCode());
-            messageService.insert(messageModel);
+//            messageService.insert(messageModel);
             currentId = messageModel.getId();
         }
         // 保存成功，回复客户端，数据库ID
