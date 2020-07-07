@@ -23,14 +23,14 @@ import java.util.List;
 @RestController
 @RequestMapping("chat")
 @Api(tags = "聊天controller")
-public class ChatController {
+public class ApplyLogController {
     @Autowired
     ApplyLogService applyLogService;
 
     @GetMapping("list")
-    @ApiOperation(value = "查询聊天列表", notes = "功能：根据用户ID查询待用户聊天列表")
+    @ApiOperation(value = "查询申请记录", notes = "功能：根据用户ID查询待用户申请记录")
     @ApiImplicitParam(name = "userId", value = "审批者ID")
-    public ResultData getVerifyList(@RequestParam Long userId) throws Exception {
+    public ResultData getApplyList(@RequestParam Long userId) throws Exception {
         List<ApplyLogModel> applyLogList = applyLogService.getApplyLogList(userId);
         return ResultData.success(applyLogList);
     }
