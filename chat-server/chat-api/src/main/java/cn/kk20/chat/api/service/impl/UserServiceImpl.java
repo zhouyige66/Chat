@@ -1,5 +1,6 @@
 package cn.kk20.chat.api.service.impl;
 
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.base.util.ListUtil;
 import cn.kk20.chat.dao.mapper.UserModelMapper;
@@ -8,11 +9,13 @@ import cn.kk20.chat.dao.model.UserModelQuery;
 import cn.kk20.chat.api.service.UserService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -98,7 +101,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserModel> search(String key) {
+    public List<UserVo> search(String key) {
         UserModelQuery query = new UserModelQuery();
         query.createCriteria().andNameLike("%" + key + "%");
         query.or().andPhoneLike("%" + key + "%");
@@ -107,13 +110,24 @@ public class UserServiceImpl implements UserService {
             query.or().andIdEqualTo(l);
         } catch (Exception e) {
             // 不能转换
+            throw e;
         }
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
-        return userModelList;
+        if(CollectionUtils.isEmpty(userModelList)){
+            return ListUtil.emptyList();
+        }
+
+        List<UserVo> userVoList = new ArrayList<>();
+        userModelList.forEach(e->{
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(e,userVo);
+            userVoList.add(userVo);
+        });
+        return userVoList;
     }
 
     @Override
-    public List<UserModel> getFriendList(Long userId) {
+    public List<UserVo> getFriendList(Long userId) {
         UserModel userModel = userModelMapper.selectByPrimaryKey(userId);
         String friend = userModel.getFriendList();
         Set<Long> friendSet = JSON.parseObject(friend, new TypeReference<Set<Long>>() {
@@ -125,7 +139,17 @@ public class UserServiceImpl implements UserService {
         UserModelQuery.Criteria criteria = query.createCriteria();
         criteria.andIdIn(friendSet.stream().collect(Collectors.toList()));
         List<UserModel> userModelList = userModelMapper.selectByCondition(query);
-        return userModelList;
+        if (CollectionUtils.isEmpty(userModelList)) {
+            return ListUtil.emptyList();
+        }
+
+        List<UserVo> userVoList = new ArrayList<>();
+        userModelList.forEach(e->{
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(e,userVo);
+            userVoList.add(userVo);
+        });
+        return userVoList;
     }
 
 }

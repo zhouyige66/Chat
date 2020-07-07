@@ -1,5 +1,6 @@
 package cn.kk20.chat.api.controller;
 
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.api.service.UserService;
 import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.dao.model.UserModel;
@@ -35,7 +36,7 @@ public class UserController {
             return ResultData.requestError("参数错误");
         }
 
-        List<UserModel> searchResult = userService.search(key);
+        List<UserVo> searchResult = userService.search(key);
         if (CollectionUtils.isEmpty(searchResult)) {
             return ResultData.success("暂无相关用户");
         }

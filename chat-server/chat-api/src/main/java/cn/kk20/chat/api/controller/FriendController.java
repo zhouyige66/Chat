@@ -2,12 +2,12 @@ package cn.kk20.chat.api.controller;
 
 import cn.kk20.chat.api.entity.request.ApplyBean;
 import cn.kk20.chat.api.entity.request.VerifyBean;
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.api.enums.ApplyLogTypeEnum;
 import cn.kk20.chat.api.service.ApplyLogService;
 import cn.kk20.chat.api.service.UserService;
 import cn.kk20.chat.base.http.ResultData;
 import cn.kk20.chat.dao.model.ApplyLogModel;
-import cn.kk20.chat.dao.model.UserModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +47,7 @@ public class FriendController {
         applyLogModel.setApplyRemark(applyBean.getRemark());
         applyLogService.addApply(applyLogModel);
 
-        return ResultData.success("申请已提交");
+        return ResultData.successWithMsg("申请已提交");
     }
 
     @PostMapping("verify")
@@ -69,7 +69,7 @@ public class FriendController {
             return ResultData.success("操作成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResultData.requestError(e.getMessage());
+            return ResultData.serverError(e.getMessage());
         }
     }
 
@@ -78,10 +78,10 @@ public class FriendController {
     @ApiImplicitParam(name = "userId", value = "用户ID")
     public ResultData getFriendList(@RequestParam Long userId) {
         try {
-            List<UserModel> friendList = userService.getFriendList(userId);
+            List<UserVo> friendList = userService.getFriendList(userId);
             return ResultData.success(friendList);
         } catch (Exception e) {
-            return ResultData.fail(ResultData.ResultCode.SERVER_ERROR, e.getMessage());
+            return ResultData.serverError(e.getMessage());
         }
     }
 }

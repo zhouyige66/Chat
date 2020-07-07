@@ -1,5 +1,6 @@
 package cn.kk20.chat.api.service;
 
+import cn.kk20.chat.api.entity.vo.UserVo;
 import cn.kk20.chat.dao.model.UserModel;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public interface UserService {
 
     UserModel login(String name, String password) throws Exception;
 
-    List<UserModel> search(String key);
+    List<UserVo> search(String key);
 
-    List<UserModel> getFriendList(Long userId);
+    List<UserVo> getFriendList(Long userId);
 
 }
