@@ -31,7 +31,7 @@ class LoginViewController: BaseUIViewController {
         }
         
         showLoadingDialog(tipMessage: "正在登录...")
-        let loginRequest:Model = Model(success: {data in
+        let loginRequest:HttpBlockModel = HttpBlockModel(success: {data in
             self.hideLoadingDialog()
             UserDefaults.standard.set(self.utf_user_name.text, forKey: "loginName")
             UserDefaults.standard.set(self.utf_user_password.text, forKey: "loginPassword")
@@ -47,11 +47,19 @@ class LoginViewController: BaseUIViewController {
         loginRequest.doPost(ApiConfig.login, requestData, "登录验证")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         utf_user_name.text = UserDefaults.standard.string(forKey: "loginName")
         utf_user_password.text = UserDefaults.standard.string(forKey: "loginPassword")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = false
     }
 
 }

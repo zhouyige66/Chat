@@ -7,17 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A04295324B4181F008D7DC4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A04295224B4181F008D7DC4 /* MainViewController.swift */; };
+		5A04295524B43F62008D7DC4 /* FriendListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A04295424B43F62008D7DC4 /* FriendListViewController.swift */; };
 		5A4F0F2721F7FB05002915ED /* CommonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4F0F2621F7FB05002915ED /* CommonUtil.swift */; };
 		5A9C05AF21E82C5300BB51EF /* CGYJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9C05AE21E82C5300BB51EF /* CGYJSON.swift */; };
 		5A9C05B321E8853C00BB51EF /* ChatUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9C05B221E8853C00BB51EF /* ChatUserManager.swift */; };
 		5A9C05B521E8963600BB51EF /* MessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9C05B421E8963600BB51EF /* MessageManager.swift */; };
 		5A9D7C8922164FEB0014366A /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A9D7C8722164FEB0014366A /* MBProgressHUD.m */; };
 		5A9D7C8C221650620014366A /* BaseUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9D7C8B221650620014366A /* BaseUIViewController.swift */; };
+		5AB5171424B31E0D00E365A2 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB5171324B31E0D00E365A2 /* Model.swift */; };
+		5AB5171624B40EB500E365A2 /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB5171524B40EB500E365A2 /* JsonUtil.swift */; };
 		5AB7A1F821E7469A009A03BF /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7A1F721E7469A009A03BF /* ChatClient.swift */; };
 		5AB7A1FC21E7491A009A03BF /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7A1FB21E7491A009A03BF /* ChatMessage.swift */; };
 		5AB7A1FE21E74BE7009A03BF /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7A1FD21E74BE7009A03BF /* ChatViewController.swift */; };
 		5AC87EE621E5C3FE004FD829 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC87EE521E5C3FE004FD829 /* AppDelegate.swift */; };
-		5AC87EE821E5C3FE004FD829 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC87EE721E5C3FE004FD829 /* MainViewController.swift */; };
+		5AC87EE821E5C3FE004FD829 /* RecentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC87EE721E5C3FE004FD829 /* RecentChatViewController.swift */; };
 		5AC87EEB21E5C3FE004FD829 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AC87EE921E5C3FE004FD829 /* Main.storyboard */; };
 		5AC87EED21E5C3FF004FD829 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AC87EEC21E5C3FF004FD829 /* Assets.xcassets */; };
 		5AC87EF021E5C3FF004FD829 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AC87EEE21E5C3FF004FD829 /* LaunchScreen.storyboard */; };
@@ -33,6 +37,8 @@
 /* Begin PBXFileReference section */
 		10509C0BC84A9ACD559E5676 /* Pods-ChatDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatDemo.release.xcconfig"; path = "Target Support Files/Pods-ChatDemo/Pods-ChatDemo.release.xcconfig"; sourceTree = "<group>"; };
 		1C51A5BAF6D7DD99D73971CA /* Pods_ChatDemo_ChatDemoUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatDemo_ChatDemoUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A04295224B4181F008D7DC4 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		5A04295424B43F62008D7DC4 /* FriendListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListViewController.swift; sourceTree = "<group>"; };
 		5A4F0F2621F7FB05002915ED /* CommonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUtil.swift; sourceTree = "<group>"; };
 		5A74167724AB203A0027F461 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7416B624AB247D0027F461 /* ChatDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,11 +48,13 @@
 		5A9D7C8722164FEB0014366A /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		5A9D7C8822164FEB0014366A /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		5A9D7C8B221650620014366A /* BaseUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUIViewController.swift; sourceTree = "<group>"; };
+		5AB5171324B31E0D00E365A2 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		5AB5171524B40EB500E365A2 /* JsonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
 		5AB7A1F721E7469A009A03BF /* ChatClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
 		5AB7A1FB21E7491A009A03BF /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		5AB7A1FD21E74BE7009A03BF /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		5AC87EE521E5C3FE004FD829 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5AC87EE721E5C3FE004FD829 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		5AC87EE721E5C3FE004FD829 /* RecentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatViewController.swift; sourceTree = "<group>"; };
 		5AC87EEA21E5C3FE004FD829 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5AC87EEC21E5C3FF004FD829 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5AC87EEF21E5C3FF004FD829 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -93,6 +101,7 @@
 				5A9C05AE21E82C5300BB51EF /* CGYJSON.swift */,
 				5A4F0F2621F7FB05002915ED /* CommonUtil.swift */,
 				5AEB6AB322156AC30048E421 /* CacheUtil.swift */,
+				5AB5171524B40EB500E365A2 /* JsonUtil.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -140,7 +149,9 @@
 				5AC87EE521E5C3FE004FD829 /* AppDelegate.swift */,
 				5A9D7C8B221650620014366A /* BaseUIViewController.swift */,
 				5AEB655D22155A620048E421 /* LoginViewController.swift */,
-				5AC87EE721E5C3FE004FD829 /* MainViewController.swift */,
+				5A04295224B4181F008D7DC4 /* MainViewController.swift */,
+				5AC87EE721E5C3FE004FD829 /* RecentChatViewController.swift */,
+				5A04295424B43F62008D7DC4 /* FriendListViewController.swift */,
 				5AB7A1FD21E74BE7009A03BF /* ChatViewController.swift */,
 				5AC87EEC21E5C3FF004FD829 /* Assets.xcassets */,
 				5AC87EE921E5C3FE004FD829 /* Main.storyboard */,
@@ -164,6 +175,7 @@
 			children = (
 				5AEB6AA7221562DA0048E421 /* HttpUtil.swift */,
 				5AEB6AB52215724F0048E421 /* User.swift */,
+				5AB5171324B31E0D00E365A2 /* Model.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -297,14 +309,18 @@
 				5AC87F1821E5CA97004FD829 /* GCDAsyncSocket.m in Sources */,
 				5A9C05AF21E82C5300BB51EF /* CGYJSON.swift in Sources */,
 				5A9C05B321E8853C00BB51EF /* ChatUserManager.swift in Sources */,
+				5A04295324B4181F008D7DC4 /* MainViewController.swift in Sources */,
 				5AEB6AB62215724F0048E421 /* User.swift in Sources */,
 				5AEB6AB422156AC30048E421 /* CacheUtil.swift in Sources */,
-				5AC87EE821E5C3FE004FD829 /* MainViewController.swift in Sources */,
+				5AC87EE821E5C3FE004FD829 /* RecentChatViewController.swift in Sources */,
 				5A9D7C8922164FEB0014366A /* MBProgressHUD.m in Sources */,
 				5AB7A1F821E7469A009A03BF /* ChatClient.swift in Sources */,
+				5AB5171424B31E0D00E365A2 /* Model.swift in Sources */,
+				5A04295524B43F62008D7DC4 /* FriendListViewController.swift in Sources */,
 				5AEB6AA8221562DA0048E421 /* HttpUtil.swift in Sources */,
 				5AB7A1FC21E7491A009A03BF /* ChatMessage.swift in Sources */,
 				5AB7A1FE21E74BE7009A03BF /* ChatViewController.swift in Sources */,
+				5AB5171624B40EB500E365A2 /* JsonUtil.swift in Sources */,
 				5A4F0F2721F7FB05002915ED /* CommonUtil.swift in Sources */,
 				5AC87EE621E5C3FE004FD829 /* AppDelegate.swift in Sources */,
 				5A9D7C8C221650620014366A /* BaseUIViewController.swift in Sources */,

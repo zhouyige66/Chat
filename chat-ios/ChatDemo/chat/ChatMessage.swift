@@ -9,7 +9,7 @@
 import Foundation
 
 // 消息类型
-enum MessageType:String,Codable {
+enum MessageType:String,Codable,CGYJSON {
     case HEARTBEAT,LOGIN,NOTIFY,APPLY,CHAT,FORWARD
     
     var code:Int{
@@ -45,15 +45,14 @@ enum MessageType:String,Codable {
             return "转发";
         }
     }
-}
-
-// 消息基类
-class Message: NSObject,Codable {
-    var messageType: MessageType!
+    
+    func toJSONModel() -> AnyObject? {
+        return self.rawValue as AnyObject
+    }
 }
 
 // 登录客户端类型
-enum ClientType:String,Codable {
+enum ClientType:String,Codable,CGYJSON {
     case ANDROID,IOS,PC,WEB
     
     var code:Int{
@@ -81,71 +80,36 @@ enum ClientType:String,Codable {
             return "web";
         }
     }
-}
-
-// 登录消息
-class LoginMessage:Message{
-    var clientType:ClientType!
-    var userId:Int64!
-    var userName:String!
-    var device:String!
-    var location:String?
-    var login:Bool!
     
-    override init() {
-        super.init()
-        self.messageType = MessageType.LOGIN
-    }
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
-    }
-}
-
-// 心跳消息
-class HeartbeatMessage: Message {
-    var data:String?
-    
-    override init() {
-        super.init()
-        self.messageType = MessageType.HEARTBEAT
-    }
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    func toJSONModel() -> AnyObject? {
+        return self.rawValue as AnyObject
     }
 }
 
 // 通知消息类型
-enum NotifyMessageType {
+enum NotifyMessageType:String,Codable,CGYJSON{
     case LOGIN_REPLY      // 登录回复
     case LOGIN_NOTIFY     // 登录通知
     case CHAT_MESSAGE_ID  // 消息ID通知
     case IMPORTANT        // 重要通知
-}
-
-class NotifyMessage:Message{
-    var notifyMessageType:NotifyMessageType!
-    var data:String?
     
-    override init() {
-        super.init()
-        self.messageType = MessageType.NOTIFY
-    }
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    func toJSONModel() -> AnyObject? {
+        return self.rawValue as AnyObject
     }
 }
 
 // 聊天信息类别
-enum ChatMessageType:String,Codable{
+enum ChatMessageType:String,Codable,CGYJSON{
     case SINGLE
     case GROUP
+    
+    func toJSONModel() -> AnyObject? {
+        return self.rawValue as AnyObject
+    }
 }
 
 // 聊天信息格式
-enum BodyType:String,Codable{
+enum BodyType:String,Codable,CGYJSON{
     case TEXT,IMG,VIDEO,AUDIO,FILE,LINK,HYBRID
     
     var code:Int{
@@ -185,24 +149,172 @@ enum BodyType:String,Codable{
             return "hybrid";
         }
     }
+    
+    func toJSONModel() -> AnyObject? {
+        return self.rawValue as AnyObject
+    }
 }
 
-class ChatMessage<T:Codable>:Message {
+// 消息基类
+class Message: NSObject,Codable,CGYJSON {
+    var messageType: MessageType!
+}
+
+// 登录消息
+class LoginMessage:Message{
+    var clientType:ClientType!
+    var userId:Int64!
+    var userName:String!
+    var device:String!
+    var location:String?
+    var login:Bool!
+    
+    private enum CodingKeys:String, CodingKey {
+        // case messageType = "messageType"
+        case clientType = "clientType"
+        case userId = "userId"
+        case userName = "userName"
+        case device = "device"
+        case location = "location"
+        case login = "login"
+    }
+    
+    override init() {
+        super.init()
+        self.messageType = MessageType.LOGIN
+    }
+    
+    // 如果要 JSON -> Model 必须实现这个方法
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        clientType = try container.decode(ClientType.self, forKey: .clientType)
+        userId = try container.decode(Int64.self, forKey: .userId)
+        userName = try container.decode(String.self, forKey: .userName)
+        device = try container.decode(String.self, forKey: .device)
+        location = try container.decode(String.self, forKey: .location)
+        login = try container.decode(Bool.self, forKey: .login)
+        try super.init(from: decoder)
+    }
+    // 如果要 Model -> JSON 必须实现这个方法
+    override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(clientType, forKey: .clientType)
+        try container.encode(userId, forKey: .userId)
+        try container.encode(userName, forKey: .userName)
+        try container.encode(device, forKey: .device)
+        try container.encode(location, forKey: .location)
+        try container.encode(login, forKey: .login)
+        try super.encode(to: encoder)
+    }
+}
+
+// 心跳消息
+class HeartbeatMessage: Message {
+    var data:String?
+    
+    private enum CodingKeys:String, CodingKey {
+        case data = "data"
+    }
+    
+    override init() {
+        super.init()
+        self.messageType = MessageType.HEARTBEAT
+    }
+    
+    // 如果要 JSON -> Model 必须实现这个方法
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        data = try container.decode(String.self, forKey: .data)
+        try super.init(from: decoder)
+    }
+    // 如果要 Model -> JSON 必须实现这个方法
+    override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(data, forKey: .data)
+        try super.encode(to: encoder)
+    }
+}
+
+// 通知消息
+class NotifyMessage:Message{
+    var notifyMessageType:NotifyMessageType!
+    var data:String?
+    
+    private enum CodingKeys:String, CodingKey {
+        case notifyMessageType = "notifyMessageType"
+        case data = "data"
+    }
+    
+    override init() {
+        super.init()
+        self.messageType = MessageType.LOGIN
+    }
+    
+    // 如果要 JSON -> Model 必须实现这个方法
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        notifyMessageType = try container.decode(NotifyMessageType.self, forKey: .notifyMessageType)
+        data = try container.decode(String.self, forKey: .data)
+        try super.init(from: decoder)
+    }
+    // 如果要 Model -> JSON 必须实现这个方法
+    override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(notifyMessageType, forKey: .notifyMessageType)
+        try container.encode(data, forKey: .data)
+        try super.encode(to: encoder)
+    }
+}
+
+// 聊天消息
+class ChatMessage:Message{
     var chatMessageType:ChatMessageType!
-    var id:String!
-    var fromUserId:String!
-    var toUserId:String!
+    var id:Int64!
+    var fromUserId:Int64!
+    var toUserId:Int64!
     var bodyType:BodyType!
     var body:String!
-    var sendTimestamp:Data!
+    var sendTimestamp:Date!
+    
+    private enum CodingKeys:String, CodingKey {
+        case chatMessageType = "chatMessageType"
+        case id = "id"
+        case fromUserId = "fromUserId"
+        case toUserId = "toUserId"
+        case bodyType = "bodyType"
+        case body = "body"
+        case sendTimestamp = "sendTimestamp"
+    }
     
     override init() {
         super.init()
         self.messageType = MessageType.CHAT
     }
     
+    // 如果要 JSON -> Model 必须实现这个方法
     required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        chatMessageType = try container.decode(ChatMessageType.self,forKey: .chatMessageType)
+        id = try container.decode(Int64.self,forKey: .id)
+        fromUserId = try container.decode(Int64.self,forKey: .fromUserId)
+        toUserId = try container.decode(Int64.self,forKey: .toUserId)
+        bodyType = try container.decode(BodyType.self,forKey: .bodyType)
+        body = try container.decode( String.self,forKey: .body)
+        sendTimestamp = try container.decode(Date.self,forKey: .sendTimestamp)
+        
+        try super.init(from: decoder)
+    }
+    // 如果要 Model -> JSON 必须实现这个方法
+    override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(chatMessageType,forKey: .chatMessageType)
+        try container.encode(id ,forKey: .id)
+        try container.encode(fromUserId ,forKey: .fromUserId)
+        try container.encode(toUserId ,forKey: .toUserId)
+        try container.encode(bodyType,forKey: .bodyType)
+        try container.encode(body ,forKey: .body)
+        try container.encode(sendTimestamp,forKey: .sendTimestamp)
+        try super.encode(to: encoder)
     }
     
     func setBody(bodyData:BodyData){
@@ -211,10 +323,12 @@ class ChatMessage<T:Codable>:Message {
     }
 }
 
+// 聊天消息体
 class BodyData:NSObject,CGYJSON,Codable {
     var bodyType:BodyType!
 }
 
+// 聊天消息体-》文本t消息
 class TextBody: BodyData{
     var text:String!
     
@@ -233,6 +347,5 @@ class TextBody: BodyData{
         try super.init(from: decoder)
         text = try container.decode(String.self, forKey: .text)
     }
-    
 }
 
