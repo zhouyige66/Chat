@@ -8,12 +8,12 @@
 
 import UIKit
 
-class RecentChatViewController: BaseUIViewController,UITableViewDataSource,UITableViewDelegate{
-    @IBOutlet weak var tv_user_list:UITableView!
-
+class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITableViewDelegate{
+    @IBOutlet weak var tableView: UITableView!
+    
     private var chatClient = ChatClient.shared
     private var chatUserManager = ChatUserManager.shared
-    private var toUser:User?
+    private var currentContact:Contact?
     
     deinit {
         chatUserManager.removeObserver(self, forKeyPath: "userList")
@@ -22,12 +22,12 @@ class RecentChatViewController: BaseUIViewController,UITableViewDataSource,UITab
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        tv_user_list.dataSource = self
-        tv_user_list.delegate = self
-        tv_user_list.tableFooterView = UIView.init(frame: CGRect.zero)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.tableFooterView = UIView.init(frame: CGRect.zero)
         
         // kvo
-        chatUserManager.addObserver(self, forKeyPath: "userList", options: .new, context: nil)
+        chatUserManager.addObserver(self, forKeyPath: "contactList", options: .new, context: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -37,8 +37,9 @@ class RecentChatViewController: BaseUIViewController,UITableViewDataSource,UITab
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
+        print("收到更新通知")
         DispatchQueue.main.async {
-            self.tv_user_list.reloadData()
+            self.tableView.reloadData()
         }
     }
     
@@ -46,31 +47,31 @@ class RecentChatViewController: BaseUIViewController,UITableViewDataSource,UITab
         if(segue.identifier == "jump"){
             // 跳转传值
             let controller:ChatViewController = segue.destination as! ChatViewController
-            controller.chatUser = toUser
+            controller.contact = currentContact
         }
     }
- 
+    
     /**tableView相关**/
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatUserManager.userList.count
+        return chatUserManager.contactList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
-        cell.textLabel?.text = chatUserManager.userList[indexPath.row].name
+        cell.textLabel?.text = chatUserManager.contactList[indexPath.row].getContactName()
         return cell;
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        toUser = chatUserManager.userList[indexPath.row]
+        currentContact = chatUserManager.contactList[indexPath.row]
         self.navigationItem.title = "返回"
         self.performSegue(withIdentifier: "jump", sender: self)
     }
-        
+    
 }
 

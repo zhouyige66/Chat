@@ -38,15 +38,8 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
     /**以下是协议的代理方法**/
     func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
         print("socket连接成功")
-        // 发送登录消息
-        let loginMessage:LoginMessage = LoginMessage()
-        loginMessage.clientType = ClientType.IOS
-        loginMessage.userId = CacheManager.shared.getUserId()
-        loginMessage.userName = CacheManager.shared.getUserName()
-        loginMessage.device = UUID.init().uuidString
-        loginMessage.location = "暂无"
-        loginMessage.login = true
-        send(loginMessage)
+        // 登录
+        login(true)
         
         sock.readData(withTimeout: -1, tag: 0)
         startHeartbeat()
@@ -54,8 +47,6 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
     
     func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
         print("socket连接断开：\(err.debugDescription)")
-        
-        ChatUserManager.shared.clear()
         connectServerSuccess = false
     }
     
@@ -66,6 +57,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
         heartBeatFail = 0
         var jsonData:Data
         
+        // 按编码类型解码数据
         switch coderType {
         case .STRING:// 方式一：原字符串
             jsonData = data
@@ -97,22 +89,18 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
             jsonData = data.subdata(in: data.startIndex.advanced(by: 8) ..< data.startIndex.advanced(by: Int(length)))
             break
         }
-//        // 解析消息
-//        let dic:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: jsonData, options: []) as! Dictionary<String, Any>
-//        let messagetType:String = dic["messageType"] as! String
-//        if(messagetType != MessageType.HEARTBEAT.rawValue){
-//            print("收到消息：\(dic)")
-//        }
+
         // 按消息类型解析具体消息
         do{
             let json = try JSON(data: jsonData,options: [])
             let dic = json.dictionaryObject!
             let messagetTypeStr:String = dic["messageType"] as! String
-            let decoder = JSONDecoder()
             let messagetType:MessageType = MessageType(rawValue: messagetTypeStr)!
             if(messagetType != .HEARTBEAT){
                 print("SwiftyJson解析数据\(json)")
             }
+            
+            let decoder = JSONDecoder()
             switch (messagetType){
             case MessageType.HEARTBEAT:
                 // 消息消息，暂不处理
@@ -128,22 +116,16 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
                 case .LOGIN_REPLY:
                     let onlineIds:[Int64] = try! JSONSerialization.jsonObject(with: notifyData, options: .mutableContainers) as! [Int64]
                     print("在线名单\(onlineIds)")
+                    ChatUserManager.shared.onlineUserIdSet = ChatUserManager.shared.onlineUserIdSet.union(onlineIds)
                     break
                 case .LOGIN_NOTIFY:
                     let dict:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: notifyData, options: .mutableContainers) as! Dictionary
                     print("登录通知\(dict)")
-                    //            let user:User = User()
-                    //            user.id = loginBody.userId
-                    //            user.name = loginBody.userName
-                    //            if(loginBody.login){
-                    //                ChatUserManager.shared.addUser(user)
-                    //            }else{
-                    //                ChatUserManager.shared.removeUser(user)
-                    //            }
+                    let userId:Int64 = dic["id"] as! Int64
                     if(dic["login"] as! Bool == true){
-                        
+                        ChatUserManager.shared.onlineUserIdSet.remove(userId)
                     }else{
-                        
+                        ChatUserManager.shared.onlineUserIdSet.insert(userId)
                     }
                     break
                 case .CHAT_MESSAGE_ID:
@@ -156,29 +138,17 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
                 break
             case MessageType.CHAT:
                 let chatMessage:ChatMessage = try! decoder.decode(ChatMessage.self, from: jsonData)
-                let fromUserId = chatMessage.fromUserId!
-                let toUserId = chatMessage.toUserId!
-                print("发送者\(fromUserId),接收者\(toUserId)")
-//                let body:Dictionary<String,Any> = json["body"] as! Dictionary<String, Any>
-//                let userList:Array<Dictionary<String,Any>> = json["body"] as! Array<Dictionary<String,Any>>
-//                for user in userList{
-//                    let userId:String = user["id"] as! String
-//                    if(userId == CacheManager.shared.getUserId()){
-//                        continue
-//                    }
-//                    let u:User = User()
-//                    u.id = userId
-//                    u.name = user["name"] as! String
-//                    ChatUserManager.shared.addUser(u)
-//                }
-//                MessageManager.shared.store(chatMessage: json)
+                print("收到聊天消息\(chatMessage)")
+                // 更新最近联系人
+                ChatUserManager.shared.addContact(chatMessage: chatMessage)
+                // 存储聊天消息
+                MessageManager.shared.cache(chatMessage)
                 break
             default:
                 break
             }
         }catch{
             print("解析异常")
-            return
         }
     }
     
@@ -201,18 +171,8 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
         connectServerSuccess = false
         if(clientSocket.isConnected){
             // 发送下线信息
-//            var logoutMessage:ChatMessage = ChatMessage<LoginBody>()
-//            logoutMessage.fromUserId = CacheManager.shared.getUserId()
-//            logoutMessage.toUserId = "server"
-//            logoutMessage.id = UUID.init().uuidString
-//            logoutMessage.type = ChatType.LOGIN.rawValue
-//            let loginBody:LoginBody = LoginBody()
-//            loginBody.userId = CacheManager.shared.getUserId()
-//            loginBody.userName = CacheManager.shared.getUserName()
-//            loginBody.login = false
-//            logoutMessage.body = loginBody
-//            send(logoutMessage)
-            
+            login(false)
+            // 断开连接
             clientSocket.disconnect()
             clientSocket.delegate = nil
             clientSocket.delegateQueue = nil
@@ -221,26 +181,23 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
     
     // 发送消息
     public func send(_ message:Message){
+        if message.messageType == MessageType.CHAT {
+            MessageManager.shared.cache(message as! ChatMessage)
+        }
+        
         if(clientSocket.isConnected){
             var jsonStr = message.toJSONString()
             var data:Data = Data()
             
             switch coderType {
             case .STRING:// 方式一：原字符串
-//                // 使用JSONEncoder
-//                let jsonEncoder = JSONEncoder()
-//                data = try!jsonEncoder.encode(message)
                 // 使用
                 data = jsonStr!.data(using: String.Encoding.utf8)!
                 break
             case .DELIMITER://方式二：添加分隔符
-//                let jsonEncoder = JSONEncoder()
-//                let jsonData:Data = try!jsonEncoder.encode(message)
-//                let json = try!JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
-//                var msgStr = String(data:jsonData,encoding:.utf8)!
                 jsonStr!.append(DELIMITER)
                 if(message.messageType != MessageType.HEARTBEAT){
-                    print("发送消息：" + message.toJSONString()!)
+                    print("发送消息：\(message.toJSONString()!)")
                 }
                 data = jsonStr!.data(using: String.Encoding.utf8)!
             case .CUSTOM:// 方式三：添加头部标志和长度
@@ -264,6 +221,17 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
     }
     
     /**以下是非公开方法**/
+    private func login(_ isLogin:Bool){
+        let loginMessage:LoginMessage = LoginMessage()
+        loginMessage.clientType = ClientType.IOS
+        loginMessage.userId = CacheManager.shared.getUserId()
+        loginMessage.userName = CacheManager.shared.getUserName()
+        loginMessage.device = UUID.init().uuidString
+        loginMessage.location = "暂无"
+        loginMessage.login = isLogin
+        send(loginMessage)
+    }
+    
     // 开启心跳检测
     private func startHeartbeat(){
         DispatchQueue.global().sync {

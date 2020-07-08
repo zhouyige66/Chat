@@ -8,10 +8,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--3-1-recentContact-->
+        <!--3-1-contactLisy-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" userLabel="3-1-recentContact" customClass="RecentChatViewController" customModule="ChatDemo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" userLabel="3-1-contactLisy" customClass="ContactListViewController" customModule="ChatDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -45,7 +45,7 @@
                         <barButtonItem key="rightBarButtonItem" title="连接" id="Fb2-9K-JxR"/>
                     </navigationItem>
                     <connections>
-                        <outlet property="tv_user_list" destination="h9Q-yv-Ezx" id="Ipm-Ri-pZR"/>
+                        <outlet property="tableView" destination="h9Q-yv-Ezx" id="yFb-kR-laI"/>
                         <segue destination="7a7-ZI-d3S" kind="show" identifier="jump" id="Ini-js-Pmr"/>
                     </connections>
                 </viewController>
@@ -412,6 +412,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="d1Z-Re-hbk" id="U1k-gd-yop"/>
+                        <segue destination="7a7-ZI-d3S" kind="show" identifier="jump" id="0am-Iu-fSf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9LL-zf-qZc" sceneMemberID="firstResponder"/>
@@ -466,4 +467,7 @@
         <image name="person" catalog="system" width="64" height="58"/>
         <image name="person.2" catalog="system" width="64" height="40"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="0am-Iu-fSf"/>
+    </inferredMetricsTieBreakers>
 </document>

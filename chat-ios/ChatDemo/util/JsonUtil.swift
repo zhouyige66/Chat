@@ -10,14 +10,14 @@ import Foundation
 
 class JsonUtil{
 
-    static func json2Model<D:Decodable>(_ jsonStr:String,_ type:D.Type)->D{
+    static func json2Model<D:Decodable>(_ jsonStr:String,_ type:D.Type)->D?{
         let data:Data = jsonStr.data(using: String.Encoding.utf8)!
         return jsonData2Model(data, type)
     }
     
-    static func jsonData2Model<D:Decodable>(_ jsonData:Data,_ type:D.Type)->D{
+    static func jsonData2Model<D:Decodable>(_ jsonData:Data,_ type:D.Type)->D?{
         let decoder:JSONDecoder = JSONDecoder()
-        let model = try! decoder.decode(type, from: jsonData)
+        let model = try? decoder.decode(type, from: jsonData)
         return model
     }
     

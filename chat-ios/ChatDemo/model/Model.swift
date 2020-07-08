@@ -13,7 +13,6 @@ struct Friend:Codable,CGYJSON {
     var name:String!
     var phone:String?
     var email:String?
-    var password:String?
     var head:String?
     var isDelete:Bool!
     var createDate:String?
@@ -31,5 +30,5 @@ struct Group: Codable,CGYJSON{
     var isDelete: Bool!
     var createDate: String!
     var modifyDate: String!
-    var memberList:String!
+    var memberList:Array<Friend>!
 }

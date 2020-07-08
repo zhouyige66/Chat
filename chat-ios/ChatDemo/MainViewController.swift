@@ -51,11 +51,5 @@ class MainViewController:UITabBarController {
             }
         }
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if(segue.identifier == "jump"){
-            let controller:ChatViewController = segue.destination as! ChatViewController
-            controller.chatUser = toUser
-        }
-    }
+
 }

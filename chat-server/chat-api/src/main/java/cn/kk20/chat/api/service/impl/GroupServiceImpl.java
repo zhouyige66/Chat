@@ -145,7 +145,7 @@ public class GroupServiceImpl implements GroupService {
         List<UserVo> userVoList = new ArrayList<>();
         for (UserModel userModel : userModelList) {
             UserVo userVo = new UserVo();
-            BeanUtils.copyProperties(userModel, userModel);
+            BeanUtils.copyProperties(userModel, userVo);
             userVoList.add(userVo);
         }
         return userVoList;

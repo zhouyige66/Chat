@@ -60,11 +60,11 @@ public class GroupVo {
         this.managerList = managerList;
     }
 
-    public Boolean getDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
-    public void setDelete(Boolean delete) {
+    public void setIsDelete(Boolean delete) {
         isDelete = delete;
     }
 
@@ -91,5 +91,4 @@ public class GroupVo {
     public void setMemberList(List<UserVo> memberList) {
         this.memberList = memberList;
     }
-
 }

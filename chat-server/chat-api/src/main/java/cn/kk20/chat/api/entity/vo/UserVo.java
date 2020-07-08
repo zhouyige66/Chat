@@ -1,5 +1,7 @@
 package cn.kk20.chat.api.entity.vo;
 
+import java.util.Date;
+
 /**
  * @Description: 用户信息vo
  * @Author: Roy Z
@@ -7,22 +9,22 @@ package cn.kk20.chat.api.entity.vo;
  * @Version: v1.0
  */
 public class UserVo {
-    private int id;
+    private Long id;
     private String name;
     private String phone;
     private String email;
     private String head;
-    private boolean isDelete;
-    private String createDate;
-    private String modifyDate;
+    private Boolean isDelete;
+    private Date createDate;
+    private Date modifyDate;
     private String friendList;
     private String groupList;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -58,27 +60,27 @@ public class UserVo {
         this.head = head;
     }
 
-    public boolean isDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
-    public void setDelete(boolean delete) {
+    public void setIsDelete(Boolean delete) {
         isDelete = delete;
     }
 
-    public String getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    public String getModifyDate() {
+    public Date getModifyDate() {
         return modifyDate;
     }
 
-    public void setModifyDate(String modifyDate) {
+    public void setModifyDate(Date modifyDate) {
         this.modifyDate = modifyDate;
     }
 

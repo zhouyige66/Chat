@@ -13,7 +13,7 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
 
     private var chatClient = ChatClient.shared
     private var chatUserManager = ChatUserManager.shared
-    private var toUser:User!
+    private var currentContact:Contact!
     private var groupList:Array<Group> = []
     private var friendList:Array<Friend> = []
     
@@ -55,25 +55,22 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         if(segue.identifier == "jump"){
             // 跳转传值
             let controller:ChatViewController = segue.destination as! ChatViewController
-            controller.chatUser = toUser
+            controller.contact = currentContact
         }
     }
     
     private func getFriendList(){
         showLoadingDialog(tipMessage: "正在加载数据...")
         let request:HttpBlockModel = HttpBlockModel(success: {data in
-            print("接口返回好友列表：\(data)")
             self.hideLoadingDialog()
-            let dic = data.dictionary
-            let list = dic!["list"]
-            let rawData = try! list?.rawData()
-            let friends:Array<Friend> = JsonUtil.jsonData2Model(rawData!, Array<Friend>.self)
-            if(friends.count <= 0){
+            let rawData = try! data.rawData()
+            let friends:Array<Friend> = JsonUtil.jsonData2Model(rawData, Array<Friend>.self) ?? []
+            if(friends.count == 0){
+                self.showToast("暂未添加好友")
                 return
             }
-            print("好友列表长度1：\(friends.count)")
             self.friendList.append(contentsOf: friends)
-            print("好友列表长度2：\(self.friendList.count)")
+            self.chatUserManager.friendList = self.friendList
             self.tableView.reloadData()
         }, fail: {(code,msg) in
             self.hideLoadingDialog()
@@ -87,18 +84,15 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
     private func getGroupList(){
         showLoadingDialog(tipMessage: "正在加载数据...")
         let request:HttpBlockModel = HttpBlockModel(success: {data in
-            print("好友列表：\(data)")
             self.hideLoadingDialog()
-            let dic = data.dictionary
-            let list = dic!["list"]
-            let rawData = try! list?.rawData()
-            let groups:Array<Group> = JsonUtil.jsonData2Model(rawData!, Array<Group>.self)
+            let rawData = try! data.rawData()
+            let groups:Array<Group> = JsonUtil.jsonData2Model(rawData, Array<Group>.self) ?? []
             if(groups.count <= 0){
+                self.showToast("暂未加入群组")
                 return
             }
-            print("群组列表长度1：\(groups.count)")
             self.groupList.append(contentsOf: groups)
-            print("群组列表长度2：\(self.groupList.count)")
+            self.chatUserManager.groupList = self.groupList
             self.tableView.reloadData()
         }, fail: {(code,msg) in
             self.hideLoadingDialog()
@@ -124,7 +118,6 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let count = section == 0 ? groupList.count: friendList.count
-        print("数目为：\(count)")
         return count
     }
     
@@ -143,9 +136,13 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         // 取消选中
         tableView.deselectRow(at: indexPath, animated: true)
         // 打开聊天页面
-//        toUser = chatUserManager.userList[indexPath.row]
-//        self.navigationItem.title = "返回"
-//        self.performSegue(withIdentifier: "jump", sender: self)
+        if indexPath.section == 0 {
+            currentContact = chatUserManager.addContact(contactType: 1, contactId: groupList[indexPath.row].id)
+        } else {
+            currentContact = chatUserManager.addContact(contactType: 0, contactId: friendList[indexPath.row].id)
+        }
+        self.navigationItem.title = "返回"
+        self.performSegue(withIdentifier: "jump", sender: self)
     }
         
 }
