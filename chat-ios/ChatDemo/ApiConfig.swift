@@ -7,7 +7,7 @@
 //
 
 struct ApiConfig {
-    private static let HOST = "http://127.0.0.1:9001";
+    public static let HOST = "http://127.0.0.1:9001";
     
     public static let login = HOST + "/login";// 登录验证
     public static let getFriendList = HOST + "/friend/list";// 好友列表

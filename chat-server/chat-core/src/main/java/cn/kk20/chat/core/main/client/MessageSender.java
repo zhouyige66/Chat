@@ -104,7 +104,8 @@ public class MessageSender {
      * @param channel
      * @param message
      */
-    public void send2Sender(Long userId, Channel channel, Message message) {
+    public void syncToOtherClient(Long userId, Channel channel, Message message) {
+        logger.info("同步消息给统一用户");
         JSONObject hostJson = channelManager.getCacheFromRedis(userId);
         UserWrapper userWrapper = channelManager.getClient(userId);
         Map<ClientType, Channel> channelMap = userWrapper.getChannelMap();

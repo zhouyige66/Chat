@@ -121,8 +121,8 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
                 case .LOGIN_NOTIFY:
                     let dict:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: notifyData, options: .mutableContainers) as! Dictionary
                     print("登录通知\(dict)")
-                    let userId:Int64 = dic["id"] as! Int64
-                    if(dic["login"] as! Bool == true){
+                    let userId:Int64 = dict["id"] as! Int64
+                    if(dict["login"] as! Bool == true){
                         ChatUserManager.shared.onlineUserIdSet.remove(userId)
                     }else{
                         ChatUserManager.shared.onlineUserIdSet.insert(userId)
@@ -140,7 +140,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
                 let chatMessage:ChatMessage = try! decoder.decode(ChatMessage.self, from: jsonData)
                 print("收到聊天消息\(chatMessage)")
                 // 更新最近联系人
-                ChatUserManager.shared.addContact(chatMessage: chatMessage)
+                ChatUserManager.shared.addContact(chatMessage: chatMessage,receive: true)
                 // 存储聊天消息
                 MessageManager.shared.cache(chatMessage)
                 break
@@ -182,7 +182,9 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
     // 发送消息
     public func send(_ message:Message){
         if message.messageType == MessageType.CHAT {
-            MessageManager.shared.cache(message as! ChatMessage)
+            let chatMessage = message as! ChatMessage
+            ChatUserManager.shared.addContact(chatMessage: chatMessage, receive: false)
+            MessageManager.shared.cache(chatMessage)
         }
         
         if(clientSocket.isConnected){

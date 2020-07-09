@@ -16,7 +16,7 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
     private var currentContact:Contact?
     
     deinit {
-        chatUserManager.removeObserver(self, forKeyPath: "userList")
+        chatUserManager.removeObserver(self, forKeyPath: ChatUserManager.observerable)
     }
     
     override func viewDidLoad() {
@@ -27,7 +27,7 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
         tableView.tableFooterView = UIView.init(frame: CGRect.zero)
         
         // kvo
-        chatUserManager.addObserver(self, forKeyPath: "contactList", options: .new, context: nil)
+        chatUserManager.addObserver(self, forKeyPath: ChatUserManager.observerable, options: .new, context: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -36,9 +36,8 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
-        print("收到更新通知")
         DispatchQueue.main.async {
+            print("收到更新最近联系人通知")
             self.tableView.reloadData()
         }
     }
@@ -61,8 +60,10 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let contact = chatUserManager.contactList[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
-        cell.textLabel?.text = chatUserManager.contactList[indexPath.row].getContactName()
+        cell.textLabel?.text = contact.getContactName()
+        cell.detailTextLabel?.text = contact.getLatestMsg()
         return cell;
     }
     

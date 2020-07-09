@@ -14,7 +14,6 @@ public class FriendEntity implements Serializable {
      * name : kk20
      * phone : 13982799214
      * email : 751664206@qq.com
-     * password :
      * head :
      * isDelete : false
      * createDate :
@@ -27,7 +26,6 @@ public class FriendEntity implements Serializable {
     private String name;
     private String phone;
     private String email;
-    private String password;
     private String head;
     private boolean isDelete;
     private String createDate;
@@ -66,14 +64,6 @@ public class FriendEntity implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getHead() {

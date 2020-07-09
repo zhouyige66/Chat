@@ -19,6 +19,15 @@ struct Friend:Codable,CGYJSON {
     var modifyDate:String?
     var friendList:String?
     var groupList:String?
+    var online:Bool?
+    
+    func getOnlineState() -> String {
+        if online != nil && online! {
+            return "在线"
+        }else {
+            return "离线"
+        }
+    }
 }
 
 struct Group: Codable,CGYJSON{

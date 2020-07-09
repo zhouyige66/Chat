@@ -41,7 +41,55 @@ class Contact:NSObject {
             return "f_\(String(describing: friend!.id!))"
         }
         
-        return "g_\(String(describing: group!.id!))"
+        return "g_\(String(describing: group!.id! ))"
     }
-
+    
+    public func getContactHead()->String{
+        if(type == 0){
+            return ""
+        }
+        
+        guard let head = friend?.head else {
+            return ""
+        }
+        
+        print("用户头像\(head)")
+        return ApiConfig.HOST + "/" + head
+    }
+    
+    public func getLatestMsg()->String{
+        guard latestChatMessage != nil else {
+            return ""
+        }
+        
+        var msg = ""
+        let bodyType = latestChatMessage?.bodyType
+        switch bodyType {
+        case .TEXT:
+            msg = (latestChatMessage?.body)!
+            break
+        case .IMG:
+            msg = "图片"
+            break
+        case .VIDEO:
+            msg = "视频"
+            break
+        case .AUDIO:
+            msg = "音频"
+            break
+        case .FILE:
+            msg = "文件"
+            break
+        case .LINK:
+            msg = "超链接"
+            break
+        case .HYBRID:
+            msg = "超链接"
+            break
+        case .none:
+            ""
+            break
+        }
+        return msg
+    }
 }

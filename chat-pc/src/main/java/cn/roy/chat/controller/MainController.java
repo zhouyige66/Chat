@@ -233,9 +233,7 @@ public class MainController extends BaseController {
 
             @Override
             public void success(String data) {
-                final JSONObject jsonObject = JSON.parseObject(data);
-                final List<FriendEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
-                        FriendEntity.class);
+                final List<FriendEntity> list = JSON.parseArray(data,FriendEntity.class);
                 if (!CollectionUtils.isEmpty(list)) {
                     ChatManager.getInstance().bindFriendList(list);
                     friendEntities.addAll(list);
@@ -257,9 +255,7 @@ public class MainController extends BaseController {
 
             @Override
             public void success(String data) {
-                final JSONObject jsonObject = JSON.parseObject(data);
-                final List<GroupEntity> list = JSON.parseArray(jsonObject.getJSONArray("list").toJSONString(),
-                        GroupEntity.class);
+                final List<GroupEntity> list = JSON.parseArray(data,GroupEntity.class);
                 if (!CollectionUtils.isEmpty(list)) {
                     for (GroupEntity entity : list) {
                         String memberList = entity.getMemberList();

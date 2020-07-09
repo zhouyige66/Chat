@@ -10,13 +10,13 @@ import Foundation
 
 final class MessageManager:NSObject {
     static let shared = MessageManager()
-
+    
     @objc dynamic var messageDic:Dictionary<String, Array<ChatMessage>> = [:]
     
     // 私有化构造方法
     private override init() {
     }
- 
+    
     public func cache(_ message: ChatMessage){
         print("缓存消息")
         let fromUserId:Int64 = message.fromUserId
@@ -31,7 +31,7 @@ final class MessageManager:NSObject {
                 key = "f_\(fromUserId)"
             }
         }
-    
+        
         var messageList:Array<ChatMessage>
         if(messageDic[key] != nil ){
             messageList = messageDic[key]!
@@ -40,6 +40,7 @@ final class MessageManager:NSObject {
         }
         messageList.append(message)
         messageDic[key] = messageList
+        
         print("消息容量：\(messageDic)")
     }
     

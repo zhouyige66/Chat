@@ -21,6 +21,14 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         chatUserManager.removeObserver(self, forKeyPath: "userList")
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        DispatchQueue.main.async {
+            print("更新好友列表")
+            self.tableView.reloadData()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -42,13 +50,6 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
     override func viewWillAppear(_ animated: Bool) {
         self.navigationItem.hidesBackButton = true
         self.navigationItem.title = chatClient.connectServerSuccess ? "已连接" : "未连接"
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -78,7 +79,7 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         })
         var requestData:Dictionary<String,Any> = [:]
         requestData["userId"] = CacheManager.shared.getUserId()
-        request.doGet(ApiConfig.getFriendList, requestData, "加载数据")
+        request.doGet(ApiConfig.getFriendList, requestData, "获取好友列表")
     }
     
     private func getGroupList(){
@@ -100,7 +101,7 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         })
         var requestData:Dictionary<String,Any> = [:]
         requestData["userId"] = CacheManager.shared.getUserId()
-        request.doGet(ApiConfig.getGroupList, requestData, "加载数据")
+        request.doGet(ApiConfig.getGroupList, requestData, "获取群组列表")
     }
     
     /**tableView相关**/
@@ -125,10 +126,18 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
         
         if(indexPath.section == 1){
-            cell.textLabel?.text = friendList[indexPath.row].name
+            let friend = friendList[indexPath.row]
+            cell.imageView?.image = UIImage(named: "ic_chat")
+            cell.textLabel?.text = friend.name
+            cell.detailTextLabel?.text = friend.getOnlineState()
         }else{
-            cell.textLabel?.text = groupList[indexPath.row].name
+            let groupImage = UIImage(named: "ic_chat")
+            cell.imageView?.image = groupImage
+            let group = groupList[indexPath.row]
+            cell.textLabel?.text = group.name
+            cell.detailTextLabel?.text = "\(group.memberList.count)人"
         }
+
         return cell;
     }
     

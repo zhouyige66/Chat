@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "ChatServer", url = "localhost:9001")
 public interface CallChatServer {
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     ResultData login(@RequestBody LoginEntity entity);
 
     @GetMapping("/netty/getHost")

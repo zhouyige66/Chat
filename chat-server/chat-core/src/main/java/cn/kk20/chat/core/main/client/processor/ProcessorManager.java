@@ -6,6 +6,7 @@ import cn.kk20.chat.base.message.chat.ChatMessageType;
 import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.main.ClientComponent;
 import cn.kk20.chat.core.main.client.MessageSender;
+import cn.kk20.chat.core.service.MessageService;
 import cn.kk20.chat.dao.model.GroupMessageModel;
 import cn.kk20.chat.dao.model.MessageModel;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,6 +35,8 @@ public class ProcessorManager {
     ApplicationContext applicationContext;
     @Autowired
     MessageSender messageSender;
+    @Autowired
+    MessageService messageService;
 
     @Bean
     public ProcessorManager init() {
@@ -63,7 +66,7 @@ public class ProcessorManager {
             groupMessageModel.setGroupId(chatMessage.getToUserId());
             groupMessageModel.setContentType(chatMessage.getBodyType().getCode());
             groupMessageModel.setContent(chatMessage.getBody());
-//            groupMessageService.insert(groupMessageModel);
+            messageService.saveGroupMessage(groupMessageModel);
             currentId = groupMessageModel.getId();
         } else {
             MessageModel messageModel = new MessageModel();
@@ -71,9 +74,10 @@ public class ProcessorManager {
             messageModel.setToUserId(chatMessage.getToUserId());
             messageModel.setContent(chatMessage.getBody());
             messageModel.setContentType(chatMessage.getBodyType().getCode());
-//            messageService.insert(messageModel);
+            messageService.saveSingleMessage(messageModel);
             currentId = messageModel.getId();
         }
+
         // 保存成功，回复客户端，数据库ID
         Map<String, Object> map = new HashMap<>();
         map.put("originId", originId);
@@ -89,6 +93,7 @@ public class ProcessorManager {
         int messageType = chatMessageType.getCode();
         MessageProcessor processor = messageProcessorMap.get(messageType);
         chatMessage.setId(currentId);
+        chatMessage.setSendTimestamp(System.currentTimeMillis());
         processor.processMessage(ctx, chatMessage, isFromWeb);
     }
 
