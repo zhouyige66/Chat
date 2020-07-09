@@ -47,18 +47,20 @@ final class ChatUserManager:NSObject {
         return type == 0 ? "f_\(id)" : "g_\(id)"
     }
     
-    public func addContact(contactType type:Int,contactId id:Int64) -> Contact{
+    public func addContact(contactType type:Int,contactId id:Int64) -> Contact?{
         let key = getContactKey(type, id)
         if(contactDic.keys.contains(key)){
             return contactDic[key]!
         }
         
-        let contact = Contact()
+        var contact = Contact()
         contact.type = type
+        var find = false
         if(type == 0){
             for friend in friendList{
                 if(friend.id == id){
                     contact.friend = friend
+                    find = true
                     break
                 }
             }
@@ -66,20 +68,26 @@ final class ChatUserManager:NSObject {
             for group in groupList{
                 if(group.id == id){
                     contact.group = group
+                    find = true
                     break
                 }
             }
         }
         
-        contactDic[key] = contact
-        contactList.append(contact)
-        return contact
+        // 有可能未找到，未找到值放过
+        if find {
+            contactDic[key] = contact
+            contactList.append(contact)
+             return contact
+        }
+        
+        return nil
     }
     
     public func addContact(chatMessage message:ChatMessage,receive isRecieve:Bool){
         let fromUserId = message.fromUserId!
         let toUserId = message.toUserId!
-        var contact:Contact
+        var contact:Contact?
         if(message.chatMessageType == ChatMessageType.GROUP){
             contact = ChatUserManager.shared.addContact(contactType: 1, contactId: toUserId)
         }else{
@@ -89,7 +97,9 @@ final class ChatUserManager:NSObject {
                 contact = ChatUserManager.shared.addContact(contactType: 0, contactId: toUserId)
             }
         }
-        contact.latestChatMessage = message
+        if(contact != nil){
+            contact!.latestChatMessage = message
+        }
     }
     
     /// 清空缓存数据

@@ -142,7 +142,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
                 // 更新最近联系人
                 ChatUserManager.shared.addContact(chatMessage: chatMessage,receive: true)
                 // 存储聊天消息
-                MessageManager.shared.cache(chatMessage)
+                MessageManager.shared.cache(chatMessage: chatMessage)
                 break
             default:
                 break
@@ -184,7 +184,7 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
         if message.messageType == MessageType.CHAT {
             let chatMessage = message as! ChatMessage
             ChatUserManager.shared.addContact(chatMessage: chatMessage, receive: false)
-            MessageManager.shared.cache(chatMessage)
+            MessageManager.shared.cache(chatMessage: chatMessage)
         }
         
         if(clientSocket.isConnected){

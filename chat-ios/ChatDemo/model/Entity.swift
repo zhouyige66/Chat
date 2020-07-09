@@ -87,8 +87,7 @@ class Contact:NSObject {
             msg = "超链接"
             break
         case .none:
-            ""
-            break
+            msg = ""
         }
         return msg
     }

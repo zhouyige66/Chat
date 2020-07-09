@@ -17,7 +17,7 @@ final class MessageManager:NSObject {
     private override init() {
     }
     
-    public func cache(_ message: ChatMessage){
+    public func cache(chatMessage message:ChatMessage) {
         print("缓存消息")
         let fromUserId:Int64 = message.fromUserId
         let toUserId:Int64 = message.toUserId
@@ -40,7 +40,6 @@ final class MessageManager:NSObject {
         }
         messageList.append(message)
         messageDic[key] = messageList
-        
         print("消息容量：\(messageDic)")
     }
     
