@@ -18,13 +18,14 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
     private var friendList:Array<Friend> = []
     
     deinit {
-        chatUserManager.removeObserver(self, forKeyPath: "userList")
+        chatUserManager.removeObserver(self, forKeyPath: ChatUserManager.updateOnlineNotify)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
         DispatchQueue.main.async {
-            print("更新好友列表")
+            print("收到更新好友列表通知")
+            print(self.friendList)
             self.tableView.reloadData()
         }
     }
@@ -41,7 +42,7 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
         friendList = Array()
         
         // kvo
-        chatUserManager.addObserver(self, forKeyPath: "userList", options: .new, context: nil)
+        chatUserManager.addObserver(self, forKeyPath: ChatUserManager.updateOnlineNotify, options: .new, context: nil)
         // 获取好友列表
         getFriendList()
         getGroupList()
@@ -124,18 +125,17 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
-        
-        if(indexPath.section == 1){
-            let friend = friendList[indexPath.row]
-            cell.imageView?.image = UIImage(named: "ic_chat")
-            cell.textLabel?.text = friend.name
-            cell.detailTextLabel?.text = friend.getOnlineState()
-        }else{
+        if(indexPath.section == 0){
             let groupImage = UIImage(named: "ic_chat")
             cell.imageView?.image = groupImage
             let group = groupList[indexPath.row]
             cell.textLabel?.text = group.name
             cell.detailTextLabel?.text = "\(group.memberList.count)人"
+        }else{
+            let friend = friendList[indexPath.row]
+            cell.imageView?.image = UIImage(named: "ic_chat")
+            cell.textLabel?.text = friend.name
+            cell.detailTextLabel?.text = friend.getOnlineState()
         }
 
         return cell;

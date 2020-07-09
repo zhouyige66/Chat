@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Friend:Codable,CGYJSON {
+class Friend:Codable,CGYJSON {
     var id:Int64!
     var name:String!
     var phone:String?
@@ -30,7 +30,7 @@ struct Friend:Codable,CGYJSON {
     }
 }
 
-struct Group: Codable,CGYJSON{
+class Group: Codable,CGYJSON{
     var id: Int64!
     var name: String!
     var description: String?

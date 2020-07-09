@@ -16,7 +16,14 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
     private var currentContact:Contact?
     
     deinit {
-        chatUserManager.removeObserver(self, forKeyPath: ChatUserManager.observerable)
+        chatUserManager.removeObserver(self, forKeyPath: ChatUserManager.updateContactNotify)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        DispatchQueue.main.async {
+            print("收到更新最近联系人通知")
+            self.tableView.reloadData()
+        }
     }
     
     override func viewDidLoad() {
@@ -27,21 +34,14 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
         tableView.tableFooterView = UIView.init(frame: CGRect.zero)
         
         // kvo
-        chatUserManager.addObserver(self, forKeyPath: ChatUserManager.observerable, options: .new, context: nil)
+        chatUserManager.addObserver(self, forKeyPath: ChatUserManager.updateContactNotify, options: .new, context: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationItem.hidesBackButton = true
         self.navigationItem.title = chatClient.connectServerSuccess ? "已连接" : "未连接"
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        DispatchQueue.main.async {
-            print("收到更新最近联系人通知")
-            self.tableView.reloadData()
-        }
-    }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "jump"){
             // 跳转传值

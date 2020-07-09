@@ -10,19 +10,12 @@ import Foundation
 
 final class ChatUserManager:NSObject {
     static let shared = ChatUserManager()
-    static let observerable:String = "contactList"
+    static let updateOnlineNotify:String = "onlineUserIdSet"
+    static let updateContactNotify:String = "contactList"
     
-    var friendList:Array<Friend>
-    var groupList:Array<Group>
-    var onlineUserIdSet:Set<Int64>{
+    var friendList:Array<Friend> {
         didSet{
-            print("有用户登录登出了")
-            // 更新在线列表
-            guard friendList.count > 0  else {
-                print("好友列表为空")
-                return
-            }
-            
+            print("绑定好友列表")
             for var friend in friendList{
                 if onlineUserIdSet.contains(friend.id){
                     friend.online = true
@@ -30,6 +23,35 @@ final class ChatUserManager:NSObject {
                     friend.online = false
                 }
             }
+        }
+    }
+    var groupList:Array<Group>{
+        didSet{
+            print("绑定群组列表")
+        }
+    }
+    @objc dynamic var onlineUserIdSet:Set<Int64>{
+        didSet{
+            print("有用户登录登出了")
+            print("在线名单：\(onlineUserIdSet)")
+            // 更新在线列表
+            guard friendList.count > 0  else {
+                print("好友列表为空")
+                return
+            }
+            
+            print("好友名单：\(friendList)")
+            for var friend in friendList{
+                let id = friend.id
+                if onlineUserIdSet.contains(id!){
+                    print("用户\(id)在线")
+                    friend.online = true
+                }else{
+                    print("用户\(id)不在线")
+                    friend.online = false
+                }
+            }
+            print("好友名单更新后：\(friendList)")
         }
     }
     var contactDic:Dictionary<String,Contact> = [:]
@@ -53,7 +75,7 @@ final class ChatUserManager:NSObject {
             return contactDic[key]!
         }
         
-        var contact = Contact()
+        let contact = Contact()
         contact.type = type
         var find = false
         if(type == 0){

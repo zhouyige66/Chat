@@ -122,11 +122,14 @@ final class ChatClient: NSObject,GCDAsyncSocketDelegate{
                     let dict:Dictionary<String,Any> = try! JSONSerialization.jsonObject(with: notifyData, options: .mutableContainers) as! Dictionary
                     print("登录通知\(dict)")
                     let userId:Int64 = dict["id"] as! Int64
-                    if(dict["login"] as! Bool == true){
-                        ChatUserManager.shared.onlineUserIdSet.remove(userId)
-                    }else{
+                    if(dict["login"] as! Int == 1){
+                        print("用户\(userId)上线了")
                         ChatUserManager.shared.onlineUserIdSet.insert(userId)
+                    }else{
+                        print("用户\(userId)下线了")
+                        ChatUserManager.shared.onlineUserIdSet.remove(userId)
                     }
+                    print(ChatUserManager.shared.onlineUserIdSet)
                     break
                 case .CHAT_MESSAGE_ID:
                     break
