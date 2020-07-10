@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
     @IBOutlet weak var tv_msg_list: UITableView!
@@ -54,7 +55,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             let info = notifcation.userInfo
             let keyboardRect:CGRect = info?[UITextField.keyboardFrameEndUserInfoKey] as! CGRect
             if(v_input.frame.minY > keyboardRect.origin.y){
-                 v_input_constraint!.constant = v_input.frame.minY + v_input.frame.height - keyboardRect.origin.y
+                v_input_constraint!.constant = v_input.frame.minY + v_input.frame.height - keyboardRect.origin.y
             }
         }else{
             v_input_constraint!.constant = 0
@@ -71,7 +72,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.navigationItem.title = contact?.getContactName()
         tv_msg_list.dataSource = self
         tv_msg_list.delegate = self
@@ -86,7 +87,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyBoardChanged(_:)), name: UITextField.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyBoardChanged(_:)), name: UITextField.keyboardWillHideNotification, object: nil)
     }
-
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
@@ -105,12 +106,44 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let chatMessage = array[indexPath.row]
         let fromUserId:Int64 = chatMessage.fromUserId
         let isMe = fromUserId == CacheManager.shared.getUserId()
-        let bodyJson = chatMessage.body
         // 根据发送者加载不同cell
         let identifier:String = isMe ? "cell2": "cell"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier,for: indexPath)
-        let label_msg:UILabel = cell.viewWithTag(1) as! UILabel
-        label_msg.text = bodyJson
+        let timeLabel:UILabel = cell.viewWithTag(1) as! UILabel
+        let userNameLabel:UILabel = cell.viewWithTag(2) as! UILabel
+        let msgLabel:UILabel = cell.viewWithTag(3) as! UILabel
+        let headImageView:UIImageView = cell.viewWithTag(4) as! UIImageView
+        
+        timeLabel.text = chatMessage.getMsgTime()
+        msgLabel.text = chatMessage.getMessageValue()
+        let defaultImage = UIImage(named: "ic_chat")
+        var headUrl = ""
+        if(isMe){
+            let userInfo = CacheManager.shared.userInfo
+            headUrl = userInfo!.head!
+            userNameLabel.text = userInfo?.name
+        }else{
+            // 获取发送者头像
+            if(chatMessage.chatMessageType == ChatMessageType.SINGLE){
+                let friend:Contact = ChatUserManager.shared.getContact(contactType: 0, contactId: fromUserId)!
+                headUrl = friend.friend!.head ?? ""
+                userNameLabel.text = friend.getContactName()
+            }else{
+                for friend in (contact?.group!.memberList)!{
+                    if friend.id == fromUserId {
+                        headUrl = friend.head!
+                        userNameLabel.text = friend.name
+                        break
+                    }
+                }
+            }
+        }
+        print("用户head\(headUrl)")
+        if(headUrl != ""){
+            headImageView.sd_setImage(with: URL(string: ApiConfig.HOST + "/" + headUrl), placeholderImage: defaultImage)
+        }else{
+            headImageView.image = defaultImage
+        }
         
         return cell;
     }

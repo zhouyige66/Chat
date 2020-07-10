@@ -321,6 +321,27 @@ class ChatMessage:Message{
         bodyType = bodyData.bodyType
         body = bodyData.toJSONString()
     }
+    
+    func getMsgTime() -> String {
+        guard sendTimestamp != nil else {
+            return "解析错误"
+        }
+        return sendTimestamp.toJSONModel()! as! String
+    }
+    
+    func getMessageValue()->String{
+        var msg = ""
+        switch bodyType {
+        case .TEXT:
+            let textBody = JsonUtil.json2Model(body, TextBody.self)
+            msg = textBody!.text
+            break
+        default:
+            msg = body
+            break
+        }
+        return msg
+    }
 }
 
 // 聊天消息体

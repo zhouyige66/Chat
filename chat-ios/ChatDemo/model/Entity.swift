@@ -13,6 +13,35 @@ class User:NSObject {
     var name:String!
 }
 
+class UserInfo:Codable,CGYJSON {
+    var id:Int64!
+    var name:String!
+    var phone:String?
+    var email:String?
+    var head:String?
+    var isDelete:Bool!
+    var createDate:String?
+    var modifyDate:String?
+    var friendList:String?
+    var groupList:String?
+    var online:Bool?
+    
+    func getOnlineState() -> String {
+        if online != nil && online! {
+            return "在线"
+        }else {
+            return "离线"
+        }
+    }
+    
+    func getHead()->String{
+        if head == nil {
+            return ""
+        }
+        return ApiConfig.HOST + "/" + head!
+    }
+}
+
 class Contact:NSObject {
     var type:Int!
     var friend:Friend?
@@ -66,25 +95,25 @@ class Contact:NSObject {
         let bodyType = latestChatMessage?.bodyType
         switch bodyType {
         case .TEXT:
-            msg = (latestChatMessage?.body)!
+            msg = (latestChatMessage?.getMessageValue())!
             break
         case .IMG:
-            msg = "图片"
+            msg = "[图片]"
             break
         case .VIDEO:
-            msg = "视频"
+            msg = "[视频]"
             break
         case .AUDIO:
-            msg = "音频"
+            msg = "[音频]"
             break
         case .FILE:
-            msg = "文件"
+            msg = "[文件]"
             break
         case .LINK:
-            msg = "超链接"
+            msg = "[超链接]"
             break
         case .HYBRID:
-            msg = "超链接"
+            msg = "[富文本]"
             break
         case .none:
             msg = ""

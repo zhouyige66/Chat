@@ -62,8 +62,16 @@ class ContactListViewController: BaseUIViewController,UITableViewDataSource,UITa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let contact = chatUserManager.contactList[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
+        let defaultImage = UIImage(named: "ic_chat")
+        let headUrl = contact.getContactHead()
+        if(headUrl != ""){
+            cell.imageView?.sd_setImage(with: URL(string: headUrl), placeholderImage: defaultImage)
+        }else{
+            cell.imageView?.image = defaultImage
+        }
         cell.textLabel?.text = contact.getContactName()
         cell.detailTextLabel?.text = contact.getLatestMsg()
+        
         return cell;
     }
     

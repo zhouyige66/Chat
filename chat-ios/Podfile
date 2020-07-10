@@ -9,6 +9,7 @@ target 'ChatDemo' do
   pod 'Alamofire', '~> 5.2'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'Toast-Swift', '~> 5.0.1'
+  pod 'SDWebImage', '~> 5.0'
 
 #  target 'ChatDemoTests' do
 #    inherit! :search_paths

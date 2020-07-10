@@ -28,6 +28,13 @@ class Friend:Codable,CGYJSON {
             return "离线"
         }
     }
+    
+    func getHead()->String{
+        if head == nil {
+            return ""
+        }
+        return ApiConfig.HOST + "/" + head!
+    }
 }
 
 class Group: Codable,CGYJSON{

@@ -16,7 +16,7 @@ final class ChatUserManager:NSObject {
     var friendList:Array<Friend> {
         didSet{
             print("绑定好友列表")
-            for var friend in friendList{
+            for friend in friendList{
                 if onlineUserIdSet.contains(friend.id){
                     friend.online = true
                 }else{
@@ -41,13 +41,13 @@ final class ChatUserManager:NSObject {
             }
             
             print("好友名单：\(friendList)")
-            for var friend in friendList{
+            for friend in friendList{
                 let id = friend.id
                 if onlineUserIdSet.contains(id!){
-                    print("用户\(id)在线")
+                    print("用户\(String(describing: id))在线")
                     friend.online = true
                 }else{
-                    print("用户\(id)不在线")
+                    print("用户\(String(describing: id))不在线")
                     friend.online = false
                 }
             }
@@ -122,6 +122,15 @@ final class ChatUserManager:NSObject {
         if(contact != nil){
             contact!.latestChatMessage = message
         }
+    }
+    
+    public func getContact(contactType type:Int,contactId id:Int64) ->Contact?{
+        let key = getContactKey(type, id)
+        if(contactDic.keys.contains(key)){
+            return contactDic[key]!
+        }
+        
+        return nil
     }
     
     /// 清空缓存数据

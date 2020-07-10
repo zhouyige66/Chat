@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITableViewDelegate{
     @IBOutlet weak var tableView: UITableView!
@@ -125,15 +126,21 @@ class FriendListViewController: BaseUIViewController,UITableViewDataSource,UITab
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
+        
+        let defaultImage = UIImage(named: "ic_chat")
         if(indexPath.section == 0){
-            let groupImage = UIImage(named: "ic_chat")
-            cell.imageView?.image = groupImage
+            cell.imageView?.image = defaultImage
             let group = groupList[indexPath.row]
             cell.textLabel?.text = group.name
             cell.detailTextLabel?.text = "\(group.memberList.count)人"
         }else{
             let friend = friendList[indexPath.row]
-            cell.imageView?.image = UIImage(named: "ic_chat")
+            let headUrl = friend.getHead()
+            if(headUrl != ""){
+                cell.imageView?.sd_setImage(with: URL(string: headUrl), placeholderImage: defaultImage)
+            }else{
+                cell.imageView?.image = defaultImage
+            }
             cell.textLabel?.text = friend.name
             cell.detailTextLabel?.text = friend.getOnlineState()
         }

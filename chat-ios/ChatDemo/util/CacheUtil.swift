@@ -13,11 +13,14 @@ final class CacheManager: NSObject {
     static let shared = CacheManager()
     
     var user:JSON?
+    var userInfo:UserInfo?
     
     public func cacheUser(_ user:JSON){
         self.user = user
         UserDefaults.standard.set(user.string, forKey: "userInfo")
         UserDefaults.standard.synchronize()
+        
+        try! userInfo = JsonUtil.jsonData2Model(user.rawData(), UserInfo.self)
     }
    
     public func getUser()->JSON{
