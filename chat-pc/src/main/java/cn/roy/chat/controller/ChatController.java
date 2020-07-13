@@ -199,6 +199,9 @@ public class ChatController extends BaseController {
         if (!CollectionUtils.isEmpty(chatMessageList)) {
             chatMessages.addAll(chatMessageList);
         }
+
+        // 显示到前台
+        mStage.requestFocus();
     }
 
     private int findRecentContactIndex(ContactEntity entity) {

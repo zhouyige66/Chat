@@ -46,6 +46,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <!--按需加载-->
     <ViewStub
         android:id="@+id/vs_retry"
         android:layout_width="match_parent"
