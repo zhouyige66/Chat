@@ -21,6 +21,8 @@
         <module>chat-dao</module>
         <module>chat-core</module>
         <module>chat-api</module>
+        <module>chat-gateway</module>
+        <module>chat-auth</module>
     </modules>
 
     <properties>
