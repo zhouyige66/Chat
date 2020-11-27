@@ -1,7 +1,8 @@
 # Chat
 简单实现的即时聊天系统。
 
-**重要提示：当前项目正在重构，需要运行查看效果，请使用提交记录为"目录结构调整"以前的代码**
+**~~重要提示：当前项目正在重构，需要运行查看效果，请使用提交记录为"目录结构调整"以前的代码~~**
+**更新：最新版本已经可以查看重构效果**
 ## 项目简介
 - [X] 服务端基于SpringBoot-2.1.2.RELEASE搭建，使用MySQL存储用户信息和即时聊天信息。
 - [x] 基于Netty、Websocket、GCDAyncSocket实现四端通信。
@@ -20,12 +21,6 @@
  * 部署到服务器或直接IDE内运行。
 ### 客户端
  * 修改相应的host为当前部署的服务器地址，然后分别运行。
-### 效果展示
-  ![部署](https://gitee.com/zhouyige66/container/blob/master/chat/1.png)
-  ![PC_1](https://gitee.com/zhouyige66/container/blob/master/chat/2.png)
-  ![PC_2](https://gitee.com/zhouyige66/container/blob/master/chat/3.png)
-  ![Android_1](https://gitee.com/zhouyige66/container/blob/master/chat/4.png)
-  ![Android_2](https://gitee.com/zhouyige66/container/blob/master/chat/5.png)
 ## 关于作者
  * Email： 751664206@qq.com
  * 有任何建议或者使用中遇到问题都可以给我发邮件。
