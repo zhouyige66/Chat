@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>chat-auth</artifactId>
-
+    <version>0.0.1-SNAPSHOT</version>
+    <description>认证中心(规划中...)</description>
 
 </project>

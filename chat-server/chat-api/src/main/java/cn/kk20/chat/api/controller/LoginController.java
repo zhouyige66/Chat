@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping
 @Api(tags = "用户Controller")
-@CrossOrigin // 跨越支持
+@CrossOrigin // 跨域支持
 public class LoginController {
     @Autowired
     UserService userService;

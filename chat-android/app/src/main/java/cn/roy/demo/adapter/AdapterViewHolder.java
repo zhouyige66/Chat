@@ -1,4 +1,4 @@
- package cn.roy.demo.adapter;
+package cn.roy.demo.adapter;
 
 import android.content.Context;
 import android.util.SparseArray;

@@ -8,6 +8,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>chat-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <description>API服务</description>
     <packaging>war</packaging>
 
     <dependencies>

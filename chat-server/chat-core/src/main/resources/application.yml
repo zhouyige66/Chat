@@ -1,4 +1,24 @@
+# ****************************************************
+# 单机上启动多实例请注意修改一下参数
+#  server:
+#    port: 10002
+#  chat:
+#    registerAsServer: false
+#    coderType: DELIMITER
+#    server:
+#      port: 20000
+#    client:
+#      center:
+#        host: localhost
+#        port: 20000
+#      commonServer:
+#        port: 20001
+#      webServer:
+#        port: 20002
+# ****************************************************
+
 server:
+  # Server Http端口，拟用于服务间进行HTTP调用
   port: 10002
 
 spring:
@@ -21,19 +41,28 @@ logging:
     root: info
 
 chat:
+  # 是否注册为中央服务器，中央服务器负责转发client服务器间数据
   registerAsServer: false
+  # 消息编码类型（STRING-字符串、DELIMITER-分隔符、CUSTOM-自定义）
   coderType: DELIMITER
+  # 中央服务器
   server:
     port: 20000
+    # 自动重连参数，单位秒，当通讯断开后经过指定时间自动重连
     autoRestartTimeInterval: 5
+  # 如registerAsServer配置为true,可不配置client，相反，需要配置client
   client:
+    # 配置中央服务器地址和端口
     center:
       host: localhost
+      # 中央服务器socket端口
       port: 20000
       autoRestartTimeInterval: 5
+    # 通用client服务器配置（用于Android、ios、PC）
     commonServer:
       port: 20001
       autoRestartTimeInterval: 5
+    # web client服务器配置（用于web）
     webServer:
       port: 20002
       autoRestartTimeInterval: 5
