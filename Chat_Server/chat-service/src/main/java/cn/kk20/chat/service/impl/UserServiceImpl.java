@@ -54,7 +54,10 @@ public class UserServiceImpl implements UserService {
         if (userModel == null) {
             userModel = userModelMapper.selectByName(name);
         }
-
+        // 临时调试测试，实际部署会读取数据库数据
+//        UserModel userModel = new UserModel();
+//        userModel.setName(name);
+//        userModel.setPassword(password);
         return userModel;
     }
 

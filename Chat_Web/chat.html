@@ -96,7 +96,7 @@
 
 		<script>
 			var websocket = null;
-			var host = "ws://localhost:9997";
+			var host = "ws://localhost:9998";
 			// var host = "ws://192.168.230.133:9997";
 			var currentUser = null;
 			var loginUserId = "";
@@ -142,7 +142,7 @@
 						}
 						// 登录认证
 						this.$http.post(
-							'http://localhost:8081/user/login',
+							'http://localhost:9997/user/login',
 							// 请求体重发送数据给服务端
 							{
 								name: name,

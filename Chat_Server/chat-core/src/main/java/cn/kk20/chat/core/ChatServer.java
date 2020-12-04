@@ -31,7 +31,7 @@ public final class ChatServer {
         return instance;
     }
 
-    public void launch(ApplicationContext context) {
+    public void launch(ApplicationContext context, int commonSocketPort, int webSocketPort) {
         this.context = context;
 
         // 启动服务器（接收Android、IOS端信息）
@@ -41,13 +41,12 @@ public final class ChatServer {
                 ServerBootstrap serverBootstrap = new ServerBootstrap();
                 parentGroup1 = new NioEventLoopGroup(1);
                 childGroup1 = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
-                int port = 9999;
                 try {
                     serverBootstrap.group(parentGroup1, childGroup1)
                             .channel(NioServerSocketChannel.class)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(new ServerChannelInitializer());
-                    Channel channel = serverBootstrap.bind(port).sync().channel();
+                    Channel channel = serverBootstrap.bind(commonSocketPort).sync().channel();
                     channel.closeFuture().sync();
                 } catch (Exception e) {
                     throw new MessageException(e);
@@ -65,13 +64,12 @@ public final class ChatServer {
                 ServerBootstrap serverBootstrap = new ServerBootstrap();
                 parentGroup2 = new NioEventLoopGroup(1);
                 childGroup2 = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
-                int port2 = 9997;
                 try {
                     serverBootstrap.group(parentGroup2, childGroup2)
                             .channel(NioServerSocketChannel.class)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(new WebServerChannelInitializer());
-                    Channel channel = serverBootstrap.bind(port2).sync().channel();
+                    Channel channel = serverBootstrap.bind(webSocketPort).sync().channel();
                     channel.closeFuture().sync();
                 } catch (Exception e) {
                     throw new MessageException(e);
