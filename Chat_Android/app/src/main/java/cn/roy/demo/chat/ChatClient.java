@@ -35,7 +35,7 @@ import io.reactivex.ObservableOnSubscribe;
 public class ChatClient {
     private static ChatClient instance;
 //    private static final String host = "10.0.2.2";// 模拟器使用此地址
-    private static final String host = "192.168.230.132";// 该地址需修改为服务器ip地址
+    private static final String host = "10.185.42.79";// 该地址需修改为服务器ip地址
     private static final int port = 9999;// 端口需修改为服务器common socket port
 
     private Bootstrap bootstrap;

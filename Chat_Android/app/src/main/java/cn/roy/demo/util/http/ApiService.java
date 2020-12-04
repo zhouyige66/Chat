@@ -20,7 +20,8 @@ import retrofit2.http.QueryMap;
  */
 public interface ApiService {
 //    String BASE_URL = "http://10.0.2.2:8081";
-    String BASE_URL = "http://192.168.230.132:8010/chat-web-0.0.1-SNAPSHOT/";
+//    String BASE_URL = "http://192.168.230.132:8010/chat-web-0.0.1-SNAPSHOT/";
+    String BASE_URL = "http://10.185.42.79:9997/";
 
     @GET("{url}")
     Observable<JSONObject> get(@Path(value = "url", encoded = true) String url);
