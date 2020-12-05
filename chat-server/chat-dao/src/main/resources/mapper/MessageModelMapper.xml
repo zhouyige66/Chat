@@ -75,7 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, from_user_id, to_user_id, content_type, received, from_user_delete, to_user_delete, 
+    id, from_user_id, to_user_id, content_type, received, from_user_delete, to_user_delete,
     is_delete, create_date, modify_date
   </sql>
   <sql id="Blob_Column_List">
@@ -112,7 +112,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -133,13 +133,13 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_message (from_user_id, to_user_id, content_type, 
-      received, from_user_delete, to_user_delete, 
-      is_delete, create_date, modify_date, 
+    insert into c_message (from_user_id, to_user_id, content_type,
+      received, from_user_delete, to_user_delete,
+      is_delete, create_date, modify_date,
       content)
-    values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{contentType,jdbcType=TINYINT}, 
-      #{received,jdbcType=BIT}, #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT}, 
-      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
+    values (#{fromUserId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT}, #{contentType,jdbcType=TINYINT},
+      #{received,jdbcType=BIT}, #{fromUserDelete,jdbcType=BIT}, #{toUserDelete,jdbcType=BIT},
+      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP},
       #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.MessageModel">

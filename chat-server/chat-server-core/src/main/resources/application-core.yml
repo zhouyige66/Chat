@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    include: service
+  redis:
+    host: localhost
+    port: 6379
+
+logging:
+  level:
+    root: info
+
+chat:
+  # 消息编码类型（STRING-字符串、DELIMITER-分隔符、CUSTOM-自定义）
+  coderType: DELIMITER

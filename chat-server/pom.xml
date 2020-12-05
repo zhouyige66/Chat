@@ -11,18 +11,20 @@
     <groupId>cn.kk20</groupId>
     <artifactId>chat-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
     <name>chat</name>
     <description>Simple Chat project</description>
+    <packaging>pom</packaging>
 
     <!--声明子模块-->
     <modules>
+        <module>chat-api</module>
+        <module>chat-auth</module>
         <module>chat-base</module>
         <module>chat-dao</module>
-        <module>chat-core</module>
-        <module>chat-api</module>
         <module>chat-gateway</module>
-        <module>chat-auth</module>
+        <module>chat-server-center</module>
+        <module>chat-server-client</module>
+        <module>chat-server-core</module>
     </modules>
 
     <properties>

@@ -1,0 +1,48 @@
+# ****************************************************
+# 单机上启动多实例请注意修改一下参数
+#  server:
+#    port: 10002
+#  chat:
+#    registerAsServer: false
+#    coderType: DELIMITER
+#    server:
+#      port: 20000
+#    client:
+#      center:
+#        host: localhost
+#        port: 20000
+#      commonServer:
+#        port: 20001
+#      webServer:
+#        port: 20002
+# ****************************************************
+
+server:
+  # Server Http端口，拟用于服务间进行HTTP调用
+  port: 10000
+
+spring:
+  profiles:
+    include: service,core
+  redis:
+    host: localhost
+    port: 6379
+
+# 监控监控
+management:
+  endpoints:
+    web:
+      base-path: /monitor
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root: info
+
+chat:
+  # 中央服务器
+  server:
+    port: 20000
+    # 自动重连参数，单位秒，当通讯断开后经过指定时间自动重连
+    autoRestartTimeInterval: 5

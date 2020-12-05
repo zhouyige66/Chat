@@ -1,0 +1,39 @@
+server:
+  # Server Http端口，拟用于服务间进行HTTP调用
+  port: 10002
+
+spring:
+  profiles:
+    include: service,core
+  redis:
+    host: localhost
+    port: 6379
+
+# 监控监控
+management:
+  endpoints:
+    web:
+      base-path: /monitor
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root: info
+
+chat:
+  # 配置中央服务器地址和端口
+  centerServer:
+    # 中央服务器IP地址
+    host: localhost
+    # 中央服务器socket端口
+    port: 20000
+    autoRestartTimeInterval: 5
+  # 通用client服务器配置（用于Android、ios、PC）
+  commonServer:
+    port: 20003
+    autoRestartTimeInterval: 5
+  # web client服务器配置（用于web）
+  webServer:
+    port: 20004
+    autoRestartTimeInterval: 5

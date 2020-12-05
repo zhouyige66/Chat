@@ -86,7 +86,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from c_group_message_log
     where id = #{id,jdbcType=BIGINT}
@@ -105,10 +105,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_group_message_log (group_msg_id, user_id, received, 
+    insert into c_group_message_log (group_msg_id, user_id, received,
       is_delete, create_date, modify_date
       )
-    values (#{groupMsgId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{received,jdbcType=BIT}, 
+    values (#{groupMsgId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{received,jdbcType=BIT},
       #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}
       )
   </insert>

@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `type`, apply_user_id, target_user_id, verify_user_id, is_agree, apply_remark, 
+    id, `type`, apply_user_id, target_user_id, verify_user_id, is_agree, apply_remark,
     verify_remark, is_delete, create_date, modify_date
   </sql>
   <select id="selectByCondition" parameterType="cn.kk20.chat.dao.model.ApplyLogModelQuery" resultMap="BaseResultMap">
@@ -91,7 +91,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from c_apply_log
     where id = #{id,jdbcType=BIGINT}
@@ -110,13 +110,13 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_apply_log (`type`, apply_user_id, target_user_id, 
-      verify_user_id, is_agree, apply_remark, 
-      verify_remark, is_delete, create_date, 
+    insert into c_apply_log (`type`, apply_user_id, target_user_id,
+      verify_user_id, is_agree, apply_remark,
+      verify_remark, is_delete, create_date,
       modify_date)
-    values (#{type,jdbcType=TINYINT}, #{applyUserId,jdbcType=BIGINT}, #{targetUserId,jdbcType=BIGINT}, 
-      #{verifyUserId,jdbcType=BIGINT}, #{isAgree,jdbcType=BIT}, #{applyRemark,jdbcType=VARCHAR}, 
-      #{verifyRemark,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+    values (#{type,jdbcType=TINYINT}, #{applyUserId,jdbcType=BIGINT}, #{targetUserId,jdbcType=BIGINT},
+      #{verifyUserId,jdbcType=BIGINT}, #{isAgree,jdbcType=BIT}, #{applyRemark,jdbcType=VARCHAR},
+      #{verifyRemark,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP},
       #{modifyDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.ApplyLogModel">

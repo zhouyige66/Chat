@@ -108,7 +108,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -129,11 +129,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_group_message (user_id, group_id, content_type, 
-      is_delete, create_date, modify_date, 
+    insert into c_group_message (user_id, group_id, content_type,
+      is_delete, create_date, modify_date,
       content)
-    values (#{userId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{contentType,jdbcType=TINYINT}, 
-      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
+    values (#{userId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{contentType,jdbcType=TINYINT},
+      #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP},
       #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.GroupMessageModel">

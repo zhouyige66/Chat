@@ -111,7 +111,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -132,13 +132,13 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_user (`name`, phone, email, 
-      `password`, head, is_delete, 
-      create_date, modify_date, friend_list, 
+    insert into c_user (`name`, phone, email,
+      `password`, head, is_delete,
+      create_date, modify_date, friend_list,
       group_list)
-    values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{head,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{friendList,jdbcType=LONGVARCHAR}, 
+    values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{head,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT},
+      #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, #{friendList,jdbcType=LONGVARCHAR},
       #{groupList,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.UserModel">

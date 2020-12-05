@@ -46,7 +46,7 @@ Alamofire is an HTTP networking library written in Swift.
 - [x] Dynamically Adapt and Retry Requests
 - [x] TLS Certificate and Public Key Pinning
 - [x] Network Reachability
-- [x] Comprehensive Unit and Integration Test Coverage
+- [x] Comprehensive Unit and Integration ConditionDemo Coverage
 - [x] [Complete Documentation](https://alamofire.github.io/Alamofire)
 
 ## Component Libraries

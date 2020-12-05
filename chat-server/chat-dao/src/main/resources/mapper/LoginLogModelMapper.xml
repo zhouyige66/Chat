@@ -87,7 +87,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from c_login_log
     where id = #{id,jdbcType=BIGINT}
@@ -106,11 +106,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into c_login_log (user_id, ip, `location`, 
-      device, is_delete, create_date, 
+    insert into c_login_log (user_id, ip, `location`,
+      device, is_delete, create_date,
       modify_date)
-    values (#{userId,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, 
-      #{device,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+    values (#{userId,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR},
+      #{device,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP},
       #{modifyDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.kk20.chat.dao.model.LoginLogModel">
