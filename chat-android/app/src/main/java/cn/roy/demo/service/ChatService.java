@@ -76,7 +76,7 @@ public class ChatService extends Service {
 
             @Override
             public void onNext(JSONObject jsonObject) {
-                JSONArray list = jsonObject.getJSONArray("list");
+                JSONArray list = jsonObject.getJSONArray("data");
                 if (list != null && list.size() > 0) {
                     List<Group> groups = JSON.parseObject(list.toJSONString(), new TypeReference<List<Group>>() {
                     });
@@ -108,7 +108,7 @@ public class ChatService extends Service {
 
             @Override
             public void onNext(JSONObject jsonObject) {
-                JSONArray list = jsonObject.getJSONArray("list");
+                JSONArray list = jsonObject.getJSONArray("data");
                 if (list != null && list.size() > 0) {
                     List<User> users = JSON.parseObject(list.toJSONString(), new TypeReference<List<User>>() {
                     });

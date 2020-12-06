@@ -162,13 +162,12 @@ public class ChatClient {
             @Override
             public void onNext(JSONObject jsonObject) {
                 failCount = 0;
-                JSONObject map = jsonObject.getJSONObject("map");
-                String host = map.getString("host");
-                if (host.equals("127.0.0.1")) {
+                String host = jsonObject.getString("host");
+                if (jsonObject.equals("127.0.0.1")) {
                     host = "10.0.2.2";
                 }
                 config.setHost(host);
-                config.setPort(map.getIntValue("port"));
+                config.setPort(jsonObject.getIntValue("port"));
             }
 
             @Override

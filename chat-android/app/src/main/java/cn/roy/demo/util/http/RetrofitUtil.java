@@ -76,7 +76,7 @@ public class RetrofitUtil {
                 });
         OkHttpClient okHttpClient = builder.build();
         retrofit = new Retrofit.Builder()
-                .baseUrl(ApplicationConfig.HttpConfig.API_BASE_URL)
+                .baseUrl(ApplicationConfig.HttpConfig.getApiBaseUrl())
                 .addConverterFactory(new Retrofit2ConverterFactory())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
