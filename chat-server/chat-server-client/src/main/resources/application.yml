@@ -1,6 +1,6 @@
 server:
   # Server Http端口，拟用于服务间进行HTTP调用
-  port: 10002
+  port: 10001
 
 spring:
   profiles:
@@ -31,9 +31,9 @@ chat:
     autoRestartTimeInterval: 5
   # 通用client服务器配置（用于Android、ios、PC）
   commonServer:
-    port: 20003
+    port: 20001
     autoRestartTimeInterval: 5
   # web client服务器配置（用于web）
   webServer:
-    port: 20004
+    port: 20002
     autoRestartTimeInterval: 5
