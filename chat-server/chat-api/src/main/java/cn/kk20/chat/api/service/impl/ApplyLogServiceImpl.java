@@ -154,7 +154,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     @Override
     @Transactional
     public void verifyApply(ApplyLogModel model) throws Exception {
-        transactionEventPublishService.publish("主事务发送");
+//        transactionEventPublishService.publish("主事务发送");
 
         ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
         if (existModel == null) {
@@ -183,9 +183,9 @@ public class ApplyLogServiceImpl implements ApplyLogService {
 
         // 同意添加好友或加入群
         if (isAgree) {
-            transactionEventPublishService.publish("主事务发送2");
-            int i = 0;
-            System.out.println("跑出异常：" + 100 / i);
+//            transactionEventPublishService.publish("主事务发送2");
+//            int i = 0;
+//            System.out.println("跑出异常：" + 100 / i);
 
             UserModel applyUserModel = userModelMapper.selectByPrimaryKey(applyUserId);
             if (model.getType() == 0) {
