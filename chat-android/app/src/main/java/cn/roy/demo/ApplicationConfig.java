@@ -13,8 +13,6 @@ public final class ApplicationConfig {
     public static final class HttpConfig {
         public static String API_HOST = "192.168.1.0";
         public static int API_PORT = 9001;
-        public static String API_BASE_URL = "http://" + API_HOST + ":" + API_PORT;
-
         public static final int TIMEOUT = 10;
         public static final String API_REGISTER = "/auth/register";
         public static final String API_LOGIN = "/auth/login";
@@ -24,11 +22,20 @@ public final class ApplicationConfig {
         public static final String API_GET_NETTY_HOST = "/netty/getHost";
         public static final String API_SEND_MESSAGE = "/netty/sendMessage";
 
+        private static String API_BASE_URL = null;
+
         public static void resetApiBaseUrl(String host, int port) {
             API_HOST = host;
             API_PORT = port;
             API_BASE_URL = API_HOST.startsWith("http") ? (API_HOST + ":" + API_PORT)
                     : ("http://" + API_HOST + ":" + API_PORT);
+        }
+
+        public static String getApiBaseUrl() {
+            if (API_BASE_URL == null) {
+                API_BASE_URL = "http://" + API_HOST + ":" + API_PORT;
+            }
+            return API_BASE_URL;
         }
 
     }
