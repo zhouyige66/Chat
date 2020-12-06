@@ -51,6 +51,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         tv_register.setOnClickListener(this);
         tv_forget_password.setOnClickListener(this);
         findViewById(R.id.tv_config).setOnClickListener(this);
+
+        String host = SPUtil.getString(ApplicationConfig.ServerConfig.HOST_OF_API, "");
+        if (!TextUtils.isEmpty(host)) {
+            ApplicationConfig.HttpConfig.resetApiBaseUrl(host,
+                    SPUtil.getInt(ApplicationConfig.ServerConfig.PORT_OF_API, 8080));
+        }
     }
 
     @Override

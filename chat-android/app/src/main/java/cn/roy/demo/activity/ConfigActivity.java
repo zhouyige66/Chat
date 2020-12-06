@@ -126,10 +126,9 @@ public class ConfigActivity extends BaseActivity {
                 "");
         portOfSocket = SPUtil.getInt(ApplicationConfig.ServerConfig.PORT_OF_SOCKET,
                 2000);
-        String[] split = ApplicationConfig.HttpConfig.API_BASE_URL.split(":");
         if (TextUtils.isEmpty(hostOfApi)) {
-            hostOfApi = split[0];
-            portOfApi = Integer.parseInt(split[1]);
+            hostOfApi = ApplicationConfig.HttpConfig.API_HOST;
+            portOfApi = ApplicationConfig.HttpConfig.API_PORT;
         }
 
         et_api_host.setText(hostOfApi);
@@ -146,7 +145,7 @@ public class ConfigActivity extends BaseActivity {
         SPUtil.saveParam(ApplicationConfig.ServerConfig.IS_CUSTOM_SOCKET, config.isSocketCustom());
         SPUtil.saveParam(ApplicationConfig.ServerConfig.HOST_OF_SOCKET, config.getSocketHost());
         SPUtil.saveParam(ApplicationConfig.ServerConfig.PORT_OF_SOCKET, config.getSocketPort());
-        ApplicationConfig.HttpConfig.API_BASE_URL = config.getApiHost() + ":" + config.getApiPort();
+        ApplicationConfig.HttpConfig.resetApiBaseUrl(config.getApiHost(), config.getApiPort());
         finish();
     }
 
