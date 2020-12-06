@@ -27,6 +27,7 @@ import cn.roy.demo.chat.handler.MessageHandler;
 import cn.roy.demo.model.ChatServerStatus;
 import cn.roy.demo.util.CacheManager;
 import cn.roy.demo.util.LogUtil;
+import cn.roy.demo.util.SPUtil;
 import cn.roy.demo.util.http.HttpUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -132,12 +133,20 @@ public class ChatClient {
                  * 5.重登录
                  */
                 LogUtil.d(ChatClient.this, "核心线程，重试一次");
-                if (TextUtils.isEmpty(config.getHost()) || failCount >= 5) {
-                    // 调用接口获取服务器地址
-                    getHostFromServer();
-                    return;
+                boolean isCustomSocket = SPUtil.getBoolean(
+                        ApplicationConfig.ServerConfig.IS_CUSTOM_SOCKET, false);
+                if (isCustomSocket) {
+                    config.setHost(SPUtil.getString(ApplicationConfig.ServerConfig.HOST_OF_SOCKET,
+                            config.getHost()));
+                    config.setPort(SPUtil.getInt(ApplicationConfig.ServerConfig.PORT_OF_SOCKET,
+                            config.getPort()));
+                } else {
+                    if (TextUtils.isEmpty(config.getHost()) || failCount >= 5) {
+                        // 调用接口获取服务器地址
+                        getHostFromServer();
+                        return;
+                    }
                 }
-
                 reconnect();
             }
         }, 0, config.getAutoReconnectTime(), TimeUnit.SECONDS);

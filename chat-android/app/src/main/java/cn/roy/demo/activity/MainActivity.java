@@ -55,7 +55,6 @@ public class MainActivity extends BaseActivity {
         vp_content = findViewById(R.id.vp_content);
         v_menu = findViewById(R.id.v_menu);
 
-        // 赋值或添加监听器
         tv_user_name.setText(CacheManager.getInstance().getCurrentUserName());
         tv_chat_status.setText("未连接");
         iv_add.setOnClickListener(new View.OnClickListener() {

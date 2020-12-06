@@ -120,4 +120,14 @@
         </RelativeLayout>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_config"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:textColor="#666"
+        android:text="配置"/>
 </RelativeLayout>

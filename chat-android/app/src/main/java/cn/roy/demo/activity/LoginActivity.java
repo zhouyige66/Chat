@@ -50,6 +50,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         tv_login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
         tv_forget_password.setOnClickListener(this);
+        findViewById(R.id.tv_config).setOnClickListener(this);
     }
 
     @Override
@@ -63,6 +64,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.tv_forget_password:
                 jump(ForgetPasswordActivity.class, false, null);
+                break;
+            case R.id.tv_config:
+                jump(ConfigActivity.class, false, null);
                 break;
             default:
                 break;

@@ -69,7 +69,7 @@
             android:button="@null"
             android:gravity="center"
             android:checked="true"
-            android:text="Chat"
+            android:text="聊天"
             android:textSize="18sp"
             android:textColor="@color/selector_color_menu" />
 

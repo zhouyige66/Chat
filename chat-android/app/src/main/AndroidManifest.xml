@@ -27,6 +27,7 @@
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.ForgetPasswordActivity" />
         <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.ConfigActivity" />
         <activity
             android:name=".activity.ChatActivity"
             android:launchMode="singleInstance" />
