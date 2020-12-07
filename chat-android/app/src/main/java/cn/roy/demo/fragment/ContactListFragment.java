@@ -169,7 +169,7 @@ public class ContactListFragment extends BaseFragment {
             public void onNext(JSONObject jsonObject) {
                 v_loading.setVisibility(View.GONE);
                 dataMap.get("apply").clear();
-                JSONArray list = jsonObject.getJSONArray("list");
+                JSONArray list = jsonObject.getJSONArray("data");
                 if (list != null && list.size() > 0) {
                     List<Apply> applies = JSON.parseObject(list.toJSONString(), new TypeReference<List<Apply>>() {
                     });
