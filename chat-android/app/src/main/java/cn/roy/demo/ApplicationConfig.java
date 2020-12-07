@@ -16,6 +16,7 @@ public final class ApplicationConfig {
         public static final int TIMEOUT = 10;
         public static final String API_REGISTER = "/auth/register";
         public static final String API_LOGIN = "/auth/login";
+        public static final String API_SEARCH_USER_GROUP = "/user/search";
         public static final String API_GET_VERIFY_LIST = "/verify/list";
         public static final String API_GET_GROUP_LIST = "/group/list";
         public static final String API_GET_FRIEND_LIST = "/friend/list";
