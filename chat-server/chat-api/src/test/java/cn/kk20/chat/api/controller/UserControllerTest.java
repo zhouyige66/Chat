@@ -42,7 +42,7 @@ public class UserControllerTest {
         userModel.setPhone("15881016542");
         userModel.setEmail("545344387@qq.com");
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        MvcResult result = mockMvc.perform(post("/user/register")
+        MvcResult result = mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON).content(JSON.toJSONString(userModel)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -52,7 +52,7 @@ public class UserControllerTest {
     @Test
     public void testLogin() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        MvcResult result = mockMvc.perform(get("/user/login/yige/123456"))
+        MvcResult result = mockMvc.perform(get("/auth/login/yige/123456"))
                 .andExpect(status().isOk())
                 .andReturn();
         System.out.println(result.getResponse().getContentAsString());
@@ -64,7 +64,7 @@ public class UserControllerTest {
         jsonObject.put("name","kk20");
         jsonObject.put("password","123456");
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        MvcResult result = mockMvc.perform(post("/user/login").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = mockMvc.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toJSONString()))
                 .andExpect(status().isOk())
                 .andReturn();

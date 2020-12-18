@@ -20,4 +20,15 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--spring-boot打包-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.12.RELEASE</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>

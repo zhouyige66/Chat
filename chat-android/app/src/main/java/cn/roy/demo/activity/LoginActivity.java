@@ -1,6 +1,7 @@
 package cn.roy.demo.activity;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -10,6 +11,11 @@ import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
@@ -63,7 +69,31 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_login:
-                login();
+                boolean equals = Environment.getExternalStorageState()
+                        .equals(Environment.MEDIA_MOUNTED);
+                toast("外部存储是否可读："+equals);
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath()
+                        + File.separator + "test" + File.separator + "hh";
+                File file = new File(path);
+                if (file.exists()) {
+                    return;
+                }
+                boolean mkdirs = file.mkdirs();
+                toast("创建文件夹：" + mkdirs);
+                try {
+                    boolean newFile = file.createNewFile();
+                    toast("创建文件：" + newFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    fos.write(path.getBytes());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                login();
                 break;
             case R.id.tv_register:
                 jump(RegisterActivity.class, false, null);

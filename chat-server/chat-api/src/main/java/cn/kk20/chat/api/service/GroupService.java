@@ -24,4 +24,5 @@ public interface GroupService {
 
     List<UserVo> getGroupMemberList(Long groupId) throws Exception;
 
+    List<GroupVo> search(String key);
 }

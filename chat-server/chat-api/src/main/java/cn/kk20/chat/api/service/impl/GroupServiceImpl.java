@@ -151,4 +151,28 @@ public class GroupServiceImpl implements GroupService {
         return userVoList;
     }
 
+    @Override
+    public List<GroupVo> search(String key) {
+        GroupModelQuery query = new GroupModelQuery();
+        query.createCriteria().andNameLike("%" + key + "%");
+        try {
+            long id = Long.parseLong(key);
+            query.or().andIdEqualTo(id);
+        } catch (Exception e) {
+            throw e;
+        }
+        List<GroupModel> groupModelList = groupModelMapper.selectByCondition(query);
+        if(CollectionUtils.isEmpty(groupModelList)){
+            return ListUtil.emptyList();
+        }
+
+        List<GroupVo> groupVoList = new ArrayList<>();
+        groupModelList.forEach(e->{
+            GroupVo groupVo = new GroupVo();
+            BeanUtils.copyProperties(e,groupVo);
+            groupVoList.add(groupVo);
+        });
+        return groupVoList;
+    }
+
 }

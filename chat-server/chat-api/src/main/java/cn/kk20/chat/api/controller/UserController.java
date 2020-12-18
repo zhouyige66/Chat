@@ -1,18 +1,20 @@
 package cn.kk20.chat.api.controller;
 
+import cn.kk20.chat.api.entity.vo.GroupVo;
 import cn.kk20.chat.api.entity.vo.UserVo;
+import cn.kk20.chat.api.service.GroupService;
 import cn.kk20.chat.api.service.UserService;
 import cn.kk20.chat.base.http.ResultData;
-import cn.kk20.chat.dao.model.UserModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:
@@ -27,6 +29,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    GroupService groupService;
 
     @GetMapping("search")
     @ApiOperation(value = "模糊查询用户接口", notes = "功能：根据用户（ID、用户名、电话）模糊搜索用户")
@@ -37,11 +41,11 @@ public class UserController {
         }
 
         List<UserVo> searchResult = userService.search(key);
-        if (CollectionUtils.isEmpty(searchResult)) {
-            return ResultData.success("暂无相关用户");
-        }
-
-        return ResultData.success(searchResult);
+        List<GroupVo> searchResult2 = groupService.search(key);
+        Map<String, Object> data = new HashMap<>();
+        data.put("friendList",searchResult);
+        data.put("groupList",searchResult2);
+        return ResultData.success(data);
     }
 
 }
