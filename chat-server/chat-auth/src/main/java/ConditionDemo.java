@@ -17,33 +17,31 @@ public class ConditionDemo {
 
     public void a() {
         lock.lock();
-        System.out.println("a获取锁");
+        System.out.println(Thread.currentThread()+"a获取锁");
         while (signal != 0) {
             try {
-                a.await();
+                a.await();// 当前线程进入等待，同时释放锁
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        System.out.println("a" + signal);
+        System.out.println(Thread.currentThread()+"a" + signal);
         signal++;
-        b.signal();
+        b.signal();// 唤醒一个等待的线程
         lock.unlock();
     }
 
     public void b() {
         lock.lock();
-        System.out.println("b获取锁");
+        System.out.println(Thread.currentThread()+"b"+"获取锁");
         while (signal != 1) {
             try {
                 b.await();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        System.out.println("b" + signal);
+        System.out.println(Thread.currentThread()+"b" + signal);
         signal++;
         c.signal();
         lock.unlock();
@@ -51,16 +49,15 @@ public class ConditionDemo {
 
     public void c() {
         lock.lock();
-        System.out.println("c获取锁");
+        System.out.println(Thread.currentThread()+"c"+"获取锁");
         while (signal != 2) {
             try {
                 c.await();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        System.out.println("c" + signal);
+        System.out.println(Thread.currentThread()+"c" + signal);
         signal = 0;
         a.signal();
         lock.unlock();
@@ -68,9 +65,9 @@ public class ConditionDemo {
 
     public static void main(String[] args) {
         ConditionDemo condition = new ConditionDemo();
-        ACondition a = new ACondition(condition);
-        BCondition b = new BCondition(condition);
-        CCondition c = new CCondition(condition);
+        A a = new A(condition);
+        B b = new B(condition);
+        C c = new C(condition);
         new Thread(c).start();
         new Thread(b).start();
         new Thread(a).start();
@@ -82,11 +79,11 @@ public class ConditionDemo {
         new Thread(c).start();
     }
 
-    public static class ACondition implements Runnable {
+    public static class A implements Runnable {
 
         private ConditionDemo condition;
 
-        public ACondition(ConditionDemo condition) {
+        public A(ConditionDemo condition) {
             this.condition = condition;
         }
 
@@ -96,17 +93,16 @@ public class ConditionDemo {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
 
-    public static class BCondition implements Runnable {
+    public static class B implements Runnable {
 
         private ConditionDemo condition;
 
-        public BCondition(ConditionDemo condition) {
+        public B(ConditionDemo condition) {
             this.condition = condition;
         }
 
@@ -116,17 +112,16 @@ public class ConditionDemo {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
 
-    public static class CCondition implements Runnable {
+    public static class C implements Runnable {
 
         private ConditionDemo condition;
 
-        public CCondition(ConditionDemo condition) {
+        public C(ConditionDemo condition) {
             this.condition = condition;
         }
 
@@ -136,7 +131,6 @@ public class ConditionDemo {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

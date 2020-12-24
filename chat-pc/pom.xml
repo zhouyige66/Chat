@@ -69,8 +69,21 @@
         <dependency>
             <artifactId>chat-base</artifactId>
             <groupId>cn.kk20</groupId>
-            <version>0.0.1-SNAPSHOT</version>
-            <systemPath>./libs/chat-base-0.0.2-SNAPSHOT.jar</systemPath>
+            <scope>system</scope>
+            <version>0.0.2-SNAPSHOT</version>
+            <systemPath>${pom.basedir}/libs/chat-base-0.0.2-SNAPSHOT.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>15.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>15.0.1</version>
         </dependency>
     </dependencies>
 
@@ -82,6 +95,15 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.5</version>
+                <configuration>
+                    <mainClass>HelloFX</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -16,7 +16,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-@ConditionalOnProperty(name = "chat.registerAsServer",havingValue = "false")
+//@ConditionalOnProperty(name = "chat.registerAsServer",havingValue = "false")
 public @interface ChatMsgProcessor {
 
     /**

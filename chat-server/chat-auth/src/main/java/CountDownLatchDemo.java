@@ -7,7 +7,7 @@ import java.util.concurrent.CountDownLatch;
  * @Version: v1.0
  */
 public class CountDownLatchDemo {
-    // Thread join方法前置条件是调用join()的线程需要先调用start()
+
     public static void main(String[] args) {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         CountDownLatch countDownLatch2 = new CountDownLatch(1);

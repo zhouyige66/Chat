@@ -13,11 +13,10 @@ public class ObjectLockDemo {
             try {
                 wait();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        System.out.println("a" + signal);
+        System.out.println(Thread.currentThread() + "a" + signal);
         signal++;
         notifyAll();
     }
@@ -28,11 +27,10 @@ public class ObjectLockDemo {
             try {
                 wait();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        System.out.println("b" + signal);
+        System.out.println(Thread.currentThread() + "b" + signal);
         signal++;
         notifyAll();
     }
@@ -43,11 +41,10 @@ public class ObjectLockDemo {
             try {
                 wait();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        System.out.println("c" + signal);
+        System.out.println(Thread.currentThread() + "c" + signal);
         signal = 0;
         notifyAll();
     }
@@ -87,7 +84,6 @@ public class ObjectLockDemo {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 break;
@@ -109,7 +105,6 @@ public class ObjectLockDemo {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 break;
@@ -131,7 +126,6 @@ public class ObjectLockDemo {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 break;

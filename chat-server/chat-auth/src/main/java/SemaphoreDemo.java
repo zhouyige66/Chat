@@ -14,7 +14,7 @@ public class SemaphoreDemo {
     public void a() {
         try {
             a.acquire();
-            System.out.println("a执行");
+            System.out.println(Thread.currentThread() + "a执行");
             b.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -24,7 +24,7 @@ public class SemaphoreDemo {
     public void b() {
         try {
             b.acquire();
-            System.out.println("b执行");
+            System.out.println(Thread.currentThread() + "b执行");
             c.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -34,7 +34,7 @@ public class SemaphoreDemo {
     public void c() {
         try {
             c.acquire();
-            System.out.println("c执行");
+            System.out.println(Thread.currentThread() + "c执行");
             a.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -42,10 +42,10 @@ public class SemaphoreDemo {
     }
 
     public static void main(String[] args) {
-        SemaphoreDemo condition = new SemaphoreDemo();
-        A a = new A(condition);
-        B b = new B(condition);
-        C c = new C(condition);
+        SemaphoreDemo demo = new SemaphoreDemo();
+        A a = new A(demo);
+        B b = new B(demo);
+        C c = new C(demo);
         new Thread(c).start();
         new Thread(b).start();
         new Thread(a).start();
@@ -70,7 +70,6 @@ public class SemaphoreDemo {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -89,7 +88,6 @@ public class SemaphoreDemo {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -108,7 +106,6 @@ public class SemaphoreDemo {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
