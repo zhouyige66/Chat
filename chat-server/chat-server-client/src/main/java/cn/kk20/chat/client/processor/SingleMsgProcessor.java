@@ -21,7 +21,7 @@ public class SingleMsgProcessor implements MessageProcessor {
     public void processMessage(ChannelHandlerContext channelHandlerContext, ChatMessage chatMessage,
                                boolean isFromWeb) {
         Long fromUserId = chatMessage.getFromUserId();
-        messageSender.syncToOtherClient(fromUserId, channelHandlerContext.channel(), chatMessage);
+        messageSender.sync2OtherClient(fromUserId, channelHandlerContext.channel(), chatMessage);
         Long toUserId = chatMessage.getToUserId();
         messageSender.send2Receiver(toUserId, chatMessage);
     }

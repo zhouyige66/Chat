@@ -43,9 +43,9 @@ public class ChannelManager {
             // 已经存在且不是当前通道，则关闭
             Channel clientChannel = userWrapper.getChannel(clientType);
             if (clientChannel != null && clientChannel != channel) {
-                clientChannel.closeFuture();
                 String channelId = clientChannel.id().asShortText();
-                channelIdMap.remove(channelId);
+                channelIdMap.remove(channelId);// 移除
+                clientChannel.closeFuture();
             }
             userWrapper.addChannel(clientType, channel);
         } else {
@@ -54,6 +54,7 @@ public class ChannelManager {
             userWrapper.addChannel(clientType, channel);
             userWrapperMap.put(userId, userWrapper);
         }
+
         String channelId = channel.id().asShortText();
         channelIdMap.put(channelId, userId);
         // 存储到redis，更新当前主机的连接数据量

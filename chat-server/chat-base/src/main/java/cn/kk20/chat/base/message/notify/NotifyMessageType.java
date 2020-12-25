@@ -10,5 +10,5 @@ public enum NotifyMessageType {
     LOGIN_REPLY, // 登录回复
     LOGIN_NOTIFY,// 登录通知
     CHAT_MESSAGE_ID,// 消息ID通知
-    IMPORTANT;// 重要通知
+    IMPORTANT// 重要通知
 }

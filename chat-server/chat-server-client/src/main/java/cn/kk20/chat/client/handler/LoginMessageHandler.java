@@ -2,6 +2,7 @@ package cn.kk20.chat.client.handler;
 
 import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.NotifyMessage;
+import cn.kk20.chat.base.message.login.ClientType;
 import cn.kk20.chat.base.message.notify.NotifyMessageType;
 import cn.kk20.chat.core.common.ConstantValue;
 import cn.kk20.chat.client.ChannelManager;
@@ -15,6 +16,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,30 +52,39 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
             throws Exception {
         Channel channel = channelHandlerContext.channel();
         Long userId = loginMessage.getUserId();
+        ClientType clientType = loginMessage.getClientType();
+        boolean login = loginMessage.isLogin();
 
+        // 包装用户信息
         UserModel userModel = new UserModel();
         userModel.setId(userId);
         userModel.setName(loginMessage.getUserName());
-        boolean login = loginMessage.isLogin();
         if (login) {
-            channelManager.add(userModel, loginMessage.getClientType(), channel);
-            // TODO 保存登录日志
-            LoginLogModel loginLogModel = new LoginLogModel();
-            loginLogModel.withUserId(userId)
-                    .withIp(channel.remoteAddress().toString())
-                    .withDevice("暂无")
-                    .withLocation("暂无");
-            loginLogModelMapper.insertSelective(loginLogModel);
+            try {
+                // 保存登录日志
+                LoginLogModel loginLogModel = new LoginLogModel();
+                loginLogModel.withUserId(userId)
+                        .withIp(channel.remoteAddress().toString())
+                        .withDevice("暂无")
+                        .withLocation("暂无");
+                loginLogModelMapper.insertSelective(loginLogModel);
+            } catch (Exception e) {
+                logger.error("保存登录日志错误：{}", e.getMessage());
+            }
+            // TODO 踢出其他登录
+
+            channelManager.add(userModel, clientType, channel);
         } else {
             channelManager.remove(channel);
         }
 
-        // 查询好友列表，走数据库或redis
+        // TODO 查询好友列表，走数据库或redis
         Set<Long> friendIdSet = redisUtil.getLongSetValue(ConstantValue.FRIEND_OF_USER + userId);
         if (friendIdSet.isEmpty()) {
             return;
         }
-        logger.info("好友列表：{}", JSON.toJSONString(friendIdSet));
+        logger.info("用户{}-{}的好友名单：{}", loginMessage.getUserId(), loginMessage.getUserName(),
+                JSON.toJSONString(friendIdSet));
         // 查询在线好友
         Set<Long> onlineFriendIdSet = new HashSet<>();
         for (Long friendId : friendIdSet) {
@@ -82,13 +93,18 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
                 onlineFriendIdSet.add(friendId);
             }
         }
-        logger.info("在线好友列表：{}", JSON.toJSONString(onlineFriendIdSet));
-        // 回复当前登录用户，好友在线名单
+        logger.info("用户{}-{}的好友在线名单：{}", loginMessage.getUserId(), loginMessage.getUserName(),
+                JSON.toJSONString(onlineFriendIdSet));
+        // 回复当前登录用户，在线好友名单
         if (login) {
             NotifyMessage notifyMessage = new NotifyMessage();
             notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_REPLY);
             notifyMessage.setData(onlineFriendIdSet);
-            messageSender.send2BindUser(userId, notifyMessage);
+            if (clientType == ClientType.WEB) {
+                messageSender.sendMessage(channel,new TextWebSocketFrame(JSON.toJSONString(notifyMessage)));
+            } else {
+                messageSender.sendMessage(channel, notifyMessage);
+            }
         }
         // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线的好友没必要通知
         Map<String, Object> map = new HashMap<>();

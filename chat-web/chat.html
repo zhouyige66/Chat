@@ -8,7 +8,7 @@
     <script src='js/vue.js' type='text/javascript'></script>
     <script src='js/vue-resource-v1.5.1.js' type='text/javascript'></script>
 </head>
-<body background='img/bg_chat.jpg'>
+<body style='background-image: url("img/bg_chat.jpg") ;background-size:100% 100%;background-repeat: no-repeat;background-attachment:fixed;'>
     <div id='app'>
         <h1 id='logo' v-if='!loginSuccess'>Chat</h1>
         <div id='login' v-if='!loginSuccess'>
@@ -21,16 +21,18 @@
             <!-- 登录 -->
             <div v-if='loginBtnIsActive'>
                 <div class='input-box'>
-                    <input id='loginName' type='text' placeholder='用户名\电话\邮箱'/>
+                    <input id='loginName' type='text' placeholder='用户名/电话/邮箱'/>
                     <div class='divider'></div>
                     <input id='loginPassword' type='password' placeholder='密码长度为6位'/>
                 </div>
-                <div style='align-items: center;margin-top: 8px'>
+                <div style='align-items: center;margin-top: 20px'>
                     <input type='checkbox' style='width: 30px;height: 30px;float: left;'/>
-                    <span style='float: left;margin-top:2px;text-align: center;line-height: 30px;color:#2E3238;'>记住我</span>
-                    <a href='' style='float: right;margin-top: 2px;line-height: 30px;color: #2E3238;'>忘记密码</a>
+                    <span style='float: left;margin-left: 5px;text-align: center;line-height: 30px;color:#2E3238;'>记住我</span>
+                    <a href='' style='float: right;line-height: 30px;color: #2E3238;'>忘记密码</a>
                 </div>
-                <button class='login-btn' type='button' v-on:click='onLoginBtnClick'>{{loginBtnText}}</button>
+                <div>
+                    <a class='login-btn' type='button' v-on:click='onLoginBtnClick'>{{loginBtnText}}</a>
+                </div>
             </div>
             <!-- 注册 -->
             <div v-if='!loginBtnIsActive'>
@@ -77,11 +79,11 @@
                     <!--消息列表-->
                     <ul class='msg_list'>
                         <li v-for='item in msgList1'>
-                            <div v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item msg_item_other':'msg_item msg_item_me' ">
-                                <img v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item_head msg_item_other':'msg_item_head msg_item_me' "
+                            <div v-bind:class="item['fromUserId']!==chatUserId?'msg_item msg_item_me':'msg_item msg_item_other' ">
+                                <img v-bind:class="item['fromUserId']!==chatUserId?'msg_item_head msg_item_me':'msg_item_head msg_item_other' "
                                      src='img/ic_head_default.jpg'/>
-                                <p v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item_text msg_item_other':'msg_item_text msg_item_me' ">
-                                    {{item['body']['text']}}</p>
+                                <p v-bind:class="item['fromUserId']!==chatUserId?'msg_item_text msg_item_me':'msg_item_text msg_item_other' ">
+                                    {{item['body']}}</p>
                             </div>
                         <li>
                     </ul>
@@ -94,14 +96,13 @@
             </div>
         </transition>
     </div>
-
     <script>
       // var host = "ws://192.168.230.133:9997";
       let host = 'ws://localhost:20002'
       let websocket = null
-      let currentUser = null
       let loginUserId = ''
       let loginUserName = ''
+      let currentContactUser = null
       // 监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
       window.onbeforeunload = function () {
         websocket.close()
@@ -182,6 +183,11 @@
                 console.log('接口返回数据：' + JSON.stringify(data))
                 if (data.code === 200) {
                   app.$data.userList = data.data
+                  if (data.data.length > 0) {
+                    currentContactUser = data.data[0]
+                    app.$data.chatUserId = currentContactUser.id
+                    app.$data.chatUserName = currentContactUser.name
+                  }
                 } else {
                   console.log('登录出错：' + data.msg)
                 }
@@ -204,7 +210,7 @@
             }
             // 连接成功建立的回调方法
             websocket.onopen = function (event) {
-              console.log('连接成功')
+              console.log('websocket连接成功')
               app.$data.socketStatus = '已连接'
               // 发送socket认证消息
               // private ClientType clientType;
@@ -223,13 +229,13 @@
               loginMsg.location = '暂无'
               loginMsg.login = true
               let str = JSON.stringify(loginMsg)
-              console.log('发送登录认证信息：' + str)
+              console.log('websocket发送登录信息：' + str)
               websocket.send(str)
             }
             // 接收到消息的回调方法
             websocket.onmessage = function (event) {
               let data = event.data
-              console.log('收到消息：' + data)
+              console.log('websocket收到消息：' + data)
               // 针对消息类型进行解析
               let json = JSON.parse(data)
               let type = json['messageType']
@@ -242,10 +248,10 @@
                * FORWARD(5, "转发");
                */
               switch (type) {
-                case 0: // 心跳
-                  console.log('收到心跳信息')
+                case 'HEARTBEAT': // 心跳
+                  console.log('websocket收到心跳信息')
                   break
-                case 1: // 登录
+                case 'LOGIN': // 登录
                   // let loginBody = json['body']
                   // if (loginBody['login']) {
                   //   console.log('用户登录：' + JSON.stringify(loginBody))
@@ -282,28 +288,29 @@
                   // let fromUserId = json['fromUserId']
                   // app.handleMsg(fromUserId, json)
                   break
-                case 2: // 通知
+                case 'NOTIFY': // 通知
+                  // let array = json['data']
+                  // let index = 0
+                  // for (let item of array) {
+                  //   console.log('用户：' + JSON.stringify(item))
+                  //   if (item['id'] === loginUserId) {
+                  //     console.log('执行删除')
+                  //     array.splice(index, 1)
+                  //     break
+                  //   }
+                  //   index++
+                  // }
+                  // console.log('websocket处理后用户列表：' + JSON.stringify(array))
+                  // app.$data.userList = array
+                  // currentContactUser = array[0]
+                  // //更改对话用户名字
+                  // app.$data.chatUserName = currentContactUser['name']
+                  // app.$data.chatUserId = currentContactUser['id']
                   break
-                case 3: // 申请
-                  let array = json['body']
-                  let index = 0
-                  for (let item of array) {
-                    console.log('用户：' + JSON.stringify(item))
-                    if (item['id'] == loginUserId) {
-                      console.log('执行删除')
-                      array.splice(index, 1)
-                      break
-                    }
-                    index++
-                  }
-                  console.log('处理后用户列表：' + JSON.stringify(array))
-                  app.$data.userList = array
-                  currentUser = array[0]
-                  //更改对话用户名字
-                  app.$data.chatUserName = currentUser['name']
-                  app.$data.chatUserId = currentUser['id']
+                case 'APPLY': // 申请
+
                   break
-                case 4:// 聊天
+                case 'CHAT':// 聊天
 
                   break
                 default:
@@ -322,12 +329,12 @@
           },
           // 切换聊天对象
           changeChatUser: function (item) {
-            console.log('点击的用户id:' + JSON.stringify(item))
-            if (item['id'] == currentUser['id']) {
+            console.log('点击的用户信息:' + JSON.stringify(item))
+            if (currentContactUser !== null && item['id'] === currentContactUser['id']) {
               console.log('对话为同一用户')
             } else {
               console.log('变更了对话用户')
-              currentUser = item
+              currentContactUser = item
               this.chatUserId = item['id']
               this.chatUserName = item['name']
               this.msgList1 = this.msgList[this.chatUserId]
@@ -336,24 +343,22 @@
           // 发送消息
           sendChatMsg: function () {
             let chatMessage = {}
+            chatMessage.messageType = 'CHAT'
+            chatMessage.chatMessageType = 'SINGLE'
             chatMessage.fromUserId = loginUserId
             chatMessage.toUserId = this.chatUserId
-            chatMessage.id = 'uuid' + new Date().getMilliseconds()
-            chatMessage.type = 1
-            let textBody = {}
-            textBody.messageBodyTypeEnum = 1
-            textBody.text = document.getElementById('text').value
-            chatMessage.body = textBody
+            chatMessage.bodyType = 'TEXT'
+            chatMessage.body = document.getElementById('text').value
             websocket.send(JSON.stringify(chatMessage))
-            console.log('发送消息：' + JSON.stringify(chatMessage))
+            console.log('websocket发送消息：' + JSON.stringify(chatMessage))
             this.handleMsg(this.chatUserId, JSON.parse(JSON.stringify(chatMessage)))
             document.getElementById('text').value = ''
           },
           // 处理消息
           handleMsg: function (fromUserId, msg) {
-            var msgArray = this.msgList[fromUserId]
+            let msgArray = this.msgList[fromUserId]
             if (msgArray == null || msgArray.length === 0) {
-              var array = new Array()
+              let array = []
               array.push(msg)
               this.msgList[fromUserId] = array
             } else {
