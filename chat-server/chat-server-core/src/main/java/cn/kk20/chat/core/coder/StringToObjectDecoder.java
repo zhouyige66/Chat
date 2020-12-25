@@ -54,7 +54,7 @@ public class StringToObjectDecoder extends MessageToMessageDecoder<String> {
         }
     }
 
-    private Message convertToMessage(String jsonStr) {
+    public static Message convertToMessage(String jsonStr) {
         JSONObject jsonObject = JSON.parseObject(jsonStr);
         if (!jsonObject.containsKey("messageType")) {
             return null;

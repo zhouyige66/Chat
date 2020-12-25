@@ -88,7 +88,7 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
             NotifyMessage notifyMessage = new NotifyMessage();
             notifyMessage.setNotifyMessageType(NotifyMessageType.LOGIN_REPLY);
             notifyMessage.setData(onlineFriendIdSet);
-            messageSender.sendMessage(channel, notifyMessage);
+            messageSender.send2BindUser(userId, notifyMessage);
         }
         // 通知好友，用户登录或登出了，这里仅通知在线好友，因为不在线的好友没必要通知
         Map<String, Object> map = new HashMap<>();

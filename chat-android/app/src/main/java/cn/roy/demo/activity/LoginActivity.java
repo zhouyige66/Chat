@@ -69,31 +69,31 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_login:
-                boolean equals = Environment.getExternalStorageState()
-                        .equals(Environment.MEDIA_MOUNTED);
-                toast("外部存储是否可读："+equals);
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath()
-                        + File.separator + "test" + File.separator + "hh";
-                File file = new File(path);
-                if (file.exists()) {
-                    return;
-                }
-                boolean mkdirs = file.mkdirs();
-                toast("创建文件夹：" + mkdirs);
-                try {
-                    boolean newFile = file.createNewFile();
-                    toast("创建文件：" + newFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try (FileOutputStream fos = new FileOutputStream(file)) {
-                    fos.write(path.getBytes());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-//                login();
+//                boolean equals = Environment.getExternalStorageState()
+//                        .equals(Environment.MEDIA_MOUNTED);
+//                toast("外部存储是否可读："+equals);
+//                String path = Environment.getExternalStorageDirectory().getAbsolutePath()
+//                        + File.separator + "test" + File.separator + "hh";
+//                File file = new File(path);
+//                if (file.exists()) {
+//                    return;
+//                }
+//                boolean mkdirs = file.mkdirs();
+//                toast("创建文件夹：" + mkdirs);
+//                try {
+//                    boolean newFile = file.createNewFile();
+//                    toast("创建文件：" + newFile);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                try (FileOutputStream fos = new FileOutputStream(file)) {
+//                    fos.write(path.getBytes());
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+                login();
                 break;
             case R.id.tv_register:
                 jump(RegisterActivity.class, false, null);

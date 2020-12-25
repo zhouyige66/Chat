@@ -39,7 +39,7 @@ public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> 
         // 获取所有消息处理器
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(MsgHandler.class);
         for (Object object : beansWithAnnotation.values()) {
-            MsgHandler msgHandler = object.getClass().getAnnotation(MsgHandler.class);
+//            MsgHandler msgHandler = object.getClass().getAnnotation(MsgHandler.class);
             if (object instanceof SimpleChannelInboundHandler) {
                 pipeline.addLast((SimpleChannelInboundHandler) object);
             }

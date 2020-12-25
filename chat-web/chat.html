@@ -1,351 +1,377 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Chat Demo</title>
-		<link href="css/common.css" rel="stylesheet" type="text/css">
-		<link href="css/chat.css" rel="stylesheet" type="text/css">
-		<script src="js/vue.js" type="text/javascript"></script>
-		<script src="js/vue-resource-v1.5.1.js" type="text/javascript"></script>
-	</head>
-	<body background="img/bg_chat.jpg">
-		<div id='app'>
-			<h1 id="logo" v-if='!loginSuccess'>Chat</h1>
-			<div id="login" v-if='!loginSuccess'>
-				<!-- 登录与注册 -->
-				<div class="title">
-					<a v-bind:class="loginBtnIsActive?'active':''" v-on:click="onLoginTabClick">{{loginBtnText}}</a>
-					<b>·</b>
-					<a v-bind:class="loginBtnIsActive?'':'active'" v-on:click="onRegisterTabClick">{{registerBtnText}}</a>
-				</div>
-				<!-- 登录 -->
-				<div v-if='loginBtnIsActive'>
-					<div class="input-box">
-						<input id='loginName' type="text" placeholder="用户名\电话\邮箱" />
-						<div class="divider"></div>
-						<input id='loginPassword' type="password" placeholder="密码长度为6位" />
-					</div>
-					<div style="align-items: center;margin-top: 8px">
-						<input type="checkbox" style="width: 30px;height: 30px;float: left;" />
-						<span style="float: left;margin-top:2px;text-align: center;line-height: 30px;color:#2E3238;">记住我</span>
-						<a href="" style="float: right;margin-top: 2px;line-height: 30px;color: #2E3238;">忘记密码</a>
-					</div>
-					<button class="login-btn" type="button" v-on:click="onLoginBtnClick">{{loginBtnText}}</button>
-				</div>
-				<!-- 注册 -->
-				<div v-if='!loginBtnIsActive'>
-					<div class="input-box">
-						<input type="text" placeholder="用户名" />
-						<div class="divider"></div>
-						<input type="phone" placeholder="手机号" />
-						<div class="divider"></div>
-						<input type="email" placeholder="邮箱" />
-						<div class="divider"></div>
-						<input type="password" placeholder="设置密码，密码长度为6位" />
-					</div>
-					<button class="register-btn" type="button">{{registerBtnText}}</button>
-				</div>
-			</div>
-			<!-- 对话区 -->
-			<transition name='mainTransition'>
-				<div class='main' v-if="loginSuccess">
-					<!-- 左侧列表区 -->
-					<div class='left'>
-						<!--用户信息-->
-						<div class="user_info">
-							<img class="user_head" src="img/ic_head_default.jpg" />
-							<div class="user_name">{{loginUserName}}
-								<div>
-									<a class="user_status">已连接</a>
-								</div>
-							</div>
-						</div>
-						<div class="divider"></div>
-						<!-- 用户列表 -->
-						<ul class="user_list">
-							<li class="user_item" v-for="(item,index) in userList">
-								<a @click="changeChatUser(item)">{{item.name}}</a>
-							<li>
-						</ul>
-					</div>
-					<!-- 右侧对话区 -->
-					<div class='right'>
-						<!--联系人-->
-						<div class="chat_user_name">{{chatUserName}}</div>
-						<!-- 分割线 -->
-						<hr color="#D6D6D6" size="1" align="center" style="margin:0px 10px;" />
-						<!--消息列表-->
-						<ul class="msg_list">
-							<li v-for="item in msgList1">
-								<div v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item msg_item_other':'msg_item msg_item_me' ">
-									<img v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item_head msg_item_other':'msg_item_head msg_item_me' "
-									 src="img/ic_head_default.jpg" />
-									<p v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item_text msg_item_other':'msg_item_text msg_item_me' ">{{item['body']['text']}}</p>
-								</div>
-							<li>
-						</ul>
-						<!--输入框-->
-						<div class="chat_input">
-							<textarea id="text" class="edit_text" type="text" placeholder="输入聊天内容"></textarea>
-							<button class="btn_send" @click="sendMsg">发送</button>
-						</div>
-					</div>
-				</div>
-			</transition>
-		</div>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Chat Demo</title>
+    <link href='css/common.css' rel='stylesheet' type='text/css'>
+    <link href='css/chat.css' rel='stylesheet' type='text/css'>
+    <script src='js/vue.js' type='text/javascript'></script>
+    <script src='js/vue-resource-v1.5.1.js' type='text/javascript'></script>
+</head>
+<body background='img/bg_chat.jpg'>
+    <div id='app'>
+        <h1 id='logo' v-if='!loginSuccess'>Chat</h1>
+        <div id='login' v-if='!loginSuccess'>
+            <!-- 登录与注册 -->
+            <div class='title'>
+                <a v-bind:class="loginBtnIsActive?'active':''" v-on:click='onLoginTabClick'>{{loginBtnText}}</a>
+                <b>·</b>
+                <a v-bind:class="loginBtnIsActive?'':'active'" v-on:click='onRegisterTabClick'>{{registerBtnText}}</a>
+            </div>
+            <!-- 登录 -->
+            <div v-if='loginBtnIsActive'>
+                <div class='input-box'>
+                    <input id='loginName' type='text' placeholder='用户名\电话\邮箱'/>
+                    <div class='divider'></div>
+                    <input id='loginPassword' type='password' placeholder='密码长度为6位'/>
+                </div>
+                <div style='align-items: center;margin-top: 8px'>
+                    <input type='checkbox' style='width: 30px;height: 30px;float: left;'/>
+                    <span style='float: left;margin-top:2px;text-align: center;line-height: 30px;color:#2E3238;'>记住我</span>
+                    <a href='' style='float: right;margin-top: 2px;line-height: 30px;color: #2E3238;'>忘记密码</a>
+                </div>
+                <button class='login-btn' type='button' v-on:click='onLoginBtnClick'>{{loginBtnText}}</button>
+            </div>
+            <!-- 注册 -->
+            <div v-if='!loginBtnIsActive'>
+                <div class='input-box'>
+                    <input type='text' placeholder='用户名'/>
+                    <div class='divider'></div>
+                    <input type='phone' placeholder='手机号'/>
+                    <div class='divider'></div>
+                    <input type='email' placeholder='邮箱'/>
+                    <div class='divider'></div>
+                    <input type='password' placeholder='设置密码，密码长度为6位'/>
+                </div>
+                <button class='register-btn' type='button'>{{registerBtnText}}</button>
+            </div>
+        </div>
+        <!-- 对话区 -->
+        <transition name='mainTransition'>
+            <div class='main' v-if='loginSuccess'>
+                <!-- 左侧列表区 -->
+                <div class='left'>
+                    <!--用户信息-->
+                    <div class='user_info'>
+                        <img class='user_head' src='img/ic_head_default.jpg'/>
+                        <div class='user_name'>{{loginUserName}}
+                            <div>
+                                <a class='user_status'>{{socketStatus}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='divider'></div>
+                    <!-- 用户列表 -->
+                    <ul class='user_list'>
+                        <li class='user_item' v-for='(item,index) in userList'>
+                            <a @click='changeChatUser(item)'>{{item.name}}</a>
+                        <li>
+                    </ul>
+                </div>
+                <!-- 右侧对话区 -->
+                <div class='right'>
+                    <!--联系人-->
+                    <div class='chat_user_name'>{{chatUserName}}</div>
+                    <!-- 分割线 -->
+                    <hr color='#D6D6D6' size='1' align='center' style='margin:0px 10px;'/>
+                    <!--消息列表-->
+                    <ul class='msg_list'>
+                        <li v-for='item in msgList1'>
+                            <div v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item msg_item_other':'msg_item msg_item_me' ">
+                                <img v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item_head msg_item_other':'msg_item_head msg_item_me' "
+                                     src='img/ic_head_default.jpg'/>
+                                <p v-bind:class="item['fromUserId'] == chatUserId ? 'msg_item_text msg_item_other':'msg_item_text msg_item_me' ">
+                                    {{item['body']['text']}}</p>
+                            </div>
+                        <li>
+                    </ul>
+                    <!--输入框-->
+                    <div class='chat_input'>
+                        <textarea id='text' class='edit_text' type='text' placeholder='输入聊天内容'></textarea>
+                        <button class='btn_send' @click='sendChatMsg'>发送</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </div>
 
-		<script>
-			var websocket = null;
-			var host = "ws://localhost:20002";
-			// var host = "ws://192.168.230.133:9997";
-			var currentUser = null;
-			var loginUserId = "";
-			var loginUserName = "";
+    <script>
+      // var host = "ws://192.168.230.133:9997";
+      let host = 'ws://localhost:20002'
+      let websocket = null
+      let currentUser = null
+      let loginUserId = ''
+      let loginUserName = ''
+      // 监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+      window.onbeforeunload = function () {
+        websocket.close()
+      }
+      let app = new Vue({
+        el: '#app',
+        data: {
+          loginBtnText: '登录',
+          registerBtnText: '注册',
+          loginBtnIsActive: true,
+          loginSuccess: false,
+          loginUserName: '',
+          socketStatus: '未连接',
+          userList: [],
+          chatUserName: '',
+          chatUserId: '',
+          msgList: {},
+          msgList1: [],
+        },
+        methods: {
+          onLoginTabClick: function (event) {
+            this.loginBtnIsActive = true
+          },
+          onRegisterTabClick: function (event) {
+            this.loginBtnIsActive = false
+          },
+          onLoginBtnClick: function (event) {
+            let name = document.getElementById('loginName').value
+            if (name.trim().length === 0) {
+              console.log('用户名不能为空')
+              return
+            }
+            let password = document.getElementById('loginPassword').value
+            if (password.trim().length === 0) {
+              console.log('密码不能为空')
+              return
+            }
+            // 登录认证
+            this.$http.post(
+              'http://localhost:9001/auth/login',
+              {
+                userName: name,
+                password: password,
+              }, {
+                'headers': {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+              }).then(function (response) {
+                let data = response.data
+                console.log('接口返回数据：' + JSON.stringify(data))
+                if (data.code === 200) {
+                  loginUserId = data.data.id
+                  loginUserName = data.data.name
+                  app.$data.loginSuccess = true
+                  app.$data.loginUserName = loginUserName
+                  app.getFriendList()
+                } else {
+                  console.log('登录出错：' + data.msg)
+                }
+              },
+              function () {
+                console.info('调用接口失败！')
+              })
+          },
+          // 获取好友列表
+          getFriendList: function () {
+            // 登录认证
+            this.$http.get(
+              'http://localhost:9001/friend/list',
+              {
+                params: {
+                  userId: loginUserId,
+                },
+              },
+            ).then(function (response) {
+                let data = response.data
+                console.log('接口返回数据：' + JSON.stringify(data))
+                if (data.code === 200) {
+                  app.$data.userList = data.data
+                } else {
+                  console.log('登录出错：' + data.msg)
+                }
+                app.connectChatServer()
+              },
+              function () {
+                console.info('调用接口失败！')
+                app.connectChatServer()
+              })
+          },
+          // 连接聊天服务器
+          connectChatServer: function () {
+            // 判断当前浏览器是否支持WebSocket
+            if ('WebSocket' in window) {
+              websocket = new WebSocket(host)
+            } else if ('MozWebSocket' in window) {
+              websocket = new MozWebSocket(host)
+            } else {
+              app.$data.socketStatus = '该浏览器不支持WebSocket！'
+            }
+            // 连接成功建立的回调方法
+            websocket.onopen = function (event) {
+              console.log('连接成功')
+              app.$data.socketStatus = '已连接'
+              // 发送socket认证消息
+              // private ClientType clientType;
+              // private Long userId;
+              // private String userName;
+              // private String device;
+              // private String location;
+              // private boolean login;
+              let loginMsg = {}
+              loginMsg.messageType = 'LOGIN'
+              loginMsg.clientType = 'web'
+              loginMsg.fromUserId = loginUserId
+              loginMsg.toUserId = 0
+              loginMsg.userId = loginUserId
+              loginMsg.userName = loginUserName
+              loginMsg.location = '暂无'
+              loginMsg.login = true
+              let str = JSON.stringify(loginMsg)
+              console.log('发送登录认证信息：' + str)
+              websocket.send(str)
+            }
+            // 接收到消息的回调方法
+            websocket.onmessage = function (event) {
+              let data = event.data
+              console.log('收到消息：' + data)
+              // 针对消息类型进行解析
+              let json = JSON.parse(data)
+              let type = json['messageType']
+              /**
+               * HEARTBEAT(0, "心跳"),
+               * LOGIN(1, "登录"),
+               * NOTIFY(2, "通知"),
+               * APPLY(3, "申请"),
+               * CHAT(4, "聊天"),
+               * FORWARD(5, "转发");
+               */
+              switch (type) {
+                case 0: // 心跳
+                  console.log('收到心跳信息')
+                  break
+                case 1: // 登录
+                  // let loginBody = json['body']
+                  // if (loginBody['login']) {
+                  //   console.log('用户登录：' + JSON.stringify(loginBody))
+                  //   let contain = false
+                  //   for (let item of app.$data.userList) {
+                  //     if (item['id'] == loginBody['userId']) {
+                  //       contain = true
+                  //       break
+                  //     }
+                  //   }
+                  //   if (!contain) {
+                  //     let user = {}
+                  //     user['id'] = loginBody['userId']
+                  //     user['name'] = loginBody['userName']
+                  //     app.$data.userList.push(user)
+                  //
+                  //     if (currentUser == null) {
+                  //       currentUser = user
+                  //       app.$data.chatUserName = currentUser['name']
+                  //       app.$data.chatUserId = currentUser['id']
+                  //     }
+                  //   }
+                  // } else {
+                  //   console.log('用户登出：' + JSON.stringify(loginBody))
+                  //   let index = 0
+                  //   for (let item of app.$data.userList) {
+                  //     if (item['id'] == loginBody['userId']) {
+                  //       app.$data.userList.splice(index, 1)
+                  //       break
+                  //     }
+                  //     index++
+                  //   }
+                  // }
+                  // let fromUserId = json['fromUserId']
+                  // app.handleMsg(fromUserId, json)
+                  break
+                case 2: // 通知
+                  break
+                case 3: // 申请
+                  let array = json['body']
+                  let index = 0
+                  for (let item of array) {
+                    console.log('用户：' + JSON.stringify(item))
+                    if (item['id'] == loginUserId) {
+                      console.log('执行删除')
+                      array.splice(index, 1)
+                      break
+                    }
+                    index++
+                  }
+                  console.log('处理后用户列表：' + JSON.stringify(array))
+                  app.$data.userList = array
+                  currentUser = array[0]
+                  //更改对话用户名字
+                  app.$data.chatUserName = currentUser['name']
+                  app.$data.chatUserId = currentUser['id']
+                  break
+                case 4:// 聊天
 
-			//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
-			window.onbeforeunload = function() {
-				websocket.close();
-			}
-
-			let app = new Vue({
-				el: '#app',
-				data: {
-					loginBtnText: '登录',
-					registerBtnText: '注册',
-					loginBtnIsActive: true,
-					loginSuccess: false,
-					loginUserName:'',
-					socketStatus: '未连接',
-					userList: [],
-					chatUserName: '',
-					chatUserId: '',
-					msgList: {},
-					msgList1: []
-				},
-				methods: {
-					onLoginTabClick: function(event) {
-						this.loginBtnIsActive = true
-					},
-					onRegisterTabClick: function(event) {
-						this.loginBtnIsActive = false
-					},
-					onLoginBtnClick: function(event) {
-						var name = document.getElementById('loginName').value
-						if (name.trim().length == 0) {
-							console.log('用户名不能为空')
-							return
-						}
-						var password = document.getElementById('loginPassword').value
-						if (password.trim().length == 0) {
-							console.log('密码不能为空')
-							return
-						}
-						// 登录认证
-						this.$http.post(
-							'http://localhost:9001/auth/login',
-							// 请求体重发送数据给服务端
-							{
-								userName: name,
-								password: password,
-							}, {
-								'headers': {
-									'Content-Type': 'application/json',
-									'Access-Control-Allow-Origin': '*'
-								}
-							}).then(function(response) {
-								// 成功回调
-								var data = response.data
-								console.log("接口返回数据：" + JSON.stringify(data))
-								if (data.code == 200) {
-									loginUserId = data.data.id
-									loginUserName = data.data.name
-									app.$data.loginUserName = loginUserName
-									app.loginAuthSuccess()
-								} else {
-									console.log("登录出错：" + data.msg)
-								}
-							},
-							function() {
-								// 失败回调
-								console.info("调用接口失败！")
-							})
-					},
-					changeChatUser: function(item) {
-						console.log("点击的用户id:" + JSON.stringify(item))
-						if (item["id"] == currentUser["id"]) {
-							console.log("对话为同一用户")
-						} else {
-							console.log("变更了对话用户")
-
-							currentUser = item
-							this.chatUserId = item["id"]
-							this.chatUserName = item["name"]
-							this.msgList1 = this.msgList[this.chatUserId]
-						}
-					},
-					//发送消息
-					sendMsg: function send() {
-						var chatMessage = {}
-						chatMessage.fromUserId = loginUserId
-						chatMessage.toUserId = this.chatUserId
-						chatMessage.id = "uuid" + new Date().getMilliseconds()
-						chatMessage.type = 1
-						var textBody = {}
-						textBody.messageBodyTypeEnum = 1
-						textBody.text = document.getElementById('text').value
-						chatMessage.body = textBody
-						websocket.send(JSON.stringify(chatMessage))
-
-						console.log("发送消息：" + JSON.stringify(chatMessage))
-						this.handleMsg(this.chatUserId, JSON.parse(JSON.stringify(chatMessage)))
-
-						document.getElementById('text').value = ""
-					},
-					handleMsg: function(fromUserId, msg) {
-						var msgArray = this.msgList[fromUserId]
-						if (msgArray == null || msgArray.length == 0) {
-							var array = new Array()
-							array.push(msg)
-							this.msgList[fromUserId] = array
-						} else {
-							msgArray.push(msg)
-						}
-
-						if (fromUserId == this.chatUserId) {
-							this.msgList1 = this.msgList[fromUserId]
-						}
-
-						console.log("消息列表：" + JSON.stringify(app.$data.msgList))
-					},
-					//关闭连接
-					closeWebSocket: function() {
-						websocket.close();
-					},
-					loginAuthSuccess: function() {
-						//判断当前浏览器是否支持WebSocket
-						if ('WebSocket' in window) {
-							websocket = new WebSocket(host);
-						} else if ('MozWebSocket' in window) {
-							websocket = new MozWebSocket(host);
-						} else {
-							app.$data.socketStatus = '该浏览器不支持WebSocket！'
-						}
-
-						//连接发生错误的回调方法
-						websocket.onerror = function() {
-							console.log("连接出错");
-							app.$data.socketStatus = '连接出错'
-						}
-
-						//连接成功建立的回调方法
-						websocket.onopen = function(event) {
-							console.log("连接成功");
-							app.$data.loginSuccess = true
-							app.$data.socketStatus = '已连接'
-
-							// 发送socket认证消息
-							var loginChatMessage = {}
-							loginChatMessage.fromUserId = loginUserId
-							loginChatMessage.toUserId = "server"
-							loginChatMessage.id = "uuid" + new Date().getMilliseconds()
-							loginChatMessage.type = 0
-							var loginBody = {}
-							loginBody.userId = loginUserId
-							loginBody.userName = loginUserName
-							loginBody.login = true
-							loginChatMessage.body = loginBody
-							var str = JSON.stringify(loginChatMessage)
-
-							console.log(str)
-							websocket.send(str);
-						}
-
-						//接收到消息的回调方法
-						websocket.onmessage = function(event) {
-							var data = event.data
-							console.log("收到消息：" + data)
-
-							// 针对消息类型进行解析
-							var json = JSON.parse(data)
-							var type = json["type"]
-							switch (type) {
-								case 0: // 用户上下线
-									var loginBody = json["body"]
-									if (loginBody["login"]) {
-										console.log("用户登录：" + JSON.stringify(loginBody))
-										var contain = false
-										for (let item of app.$data.userList) {
-											if (item["id"] == loginBody["userId"]) {
-												contain = true
-												break
-											}
-										}
-										if (!contain) {
-											var user = {}
-											user["id"] = loginBody["userId"]
-											user["name"] = loginBody["userName"]
-											app.$data.userList.push(user)
-
-											if (currentUser == null) {
-												currentUser = user
-												app.$data.chatUserName = currentUser["name"]
-												app.$data.chatUserId = currentUser["id"]
-											}
-										}
-									} else {
-										console.log("用户登出：" + JSON.stringify(loginBody))
-										var index = 0
-										for (let item of app.$data.userList) {
-											if (item["id"] == loginBody["userId"]) {
-												app.$data.userList.splice(index, 1)
-												break
-											}
-											index++
-										}
-									}
-									break
-								case 1: // 点对点消息
-									var fromUserId = json["fromUserId"]
-
-									app.handleMsg(fromUserId, json)
-									break;
-								case 2: // 群消息
-									break
-								case 3: // 登录回复消息
-									var array = json["body"]
-									var index = 0
-									for (let item of array) {
-										console.log("用户：" + JSON.stringify(item))
-										if (item["id"] == loginUserId) {
-											console.log("执行删除")
-											array.splice(index, 1)
-											break
-										}
-										index++
-									}
-
-									console.log("处理后用户列表：" + JSON.stringify(array))
-									app.$data.userList = array
-									currentUser = array[0]
-
-									//更改对话用户名字
-									app.$data.chatUserName = currentUser["name"]
-									app.$data.chatUserId = currentUser["id"]
-									break
-								default:
-									break;
-							}
-						}
-
-						//连接关闭的回调方法
-						websocket.onclose = function() {
-							app.$data.socketStatus = '连接关闭'
-						}
-					}
-				}
-			});
-		</script>
-	</body>
+                  break
+                default:
+                  break
+              }
+            }
+            // 连接发生错误的回调方法
+            websocket.onerror = function () {
+              console.log('连接出错')
+              app.$data.socketStatus = '连接出错'
+            }
+            // 连接关闭的回调方法
+            websocket.onclose = function () {
+              app.$data.socketStatus = '连接关闭'
+            }
+          },
+          // 切换聊天对象
+          changeChatUser: function (item) {
+            console.log('点击的用户id:' + JSON.stringify(item))
+            if (item['id'] == currentUser['id']) {
+              console.log('对话为同一用户')
+            } else {
+              console.log('变更了对话用户')
+              currentUser = item
+              this.chatUserId = item['id']
+              this.chatUserName = item['name']
+              this.msgList1 = this.msgList[this.chatUserId]
+            }
+          },
+          // 发送消息
+          sendChatMsg: function () {
+            let chatMessage = {}
+            chatMessage.fromUserId = loginUserId
+            chatMessage.toUserId = this.chatUserId
+            chatMessage.id = 'uuid' + new Date().getMilliseconds()
+            chatMessage.type = 1
+            let textBody = {}
+            textBody.messageBodyTypeEnum = 1
+            textBody.text = document.getElementById('text').value
+            chatMessage.body = textBody
+            websocket.send(JSON.stringify(chatMessage))
+            console.log('发送消息：' + JSON.stringify(chatMessage))
+            this.handleMsg(this.chatUserId, JSON.parse(JSON.stringify(chatMessage)))
+            document.getElementById('text').value = ''
+          },
+          // 处理消息
+          handleMsg: function (fromUserId, msg) {
+            var msgArray = this.msgList[fromUserId]
+            if (msgArray == null || msgArray.length === 0) {
+              var array = new Array()
+              array.push(msg)
+              this.msgList[fromUserId] = array
+            } else {
+              msgArray.push(msg)
+            }
+            if (fromUserId === this.chatUserId) {
+              this.msgList1 = this.msgList[fromUserId]
+            }
+            console.log('消息列表：' + JSON.stringify(app.$data.msgList))
+          },
+          // 关闭连接
+          closeWebSocket: function () {
+            websocket.close()
+          },
+        },
+      })
+    </script>
+</body>
 </html>
 
 <!-- 总结：
