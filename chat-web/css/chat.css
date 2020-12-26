@@ -68,9 +68,6 @@
 input {
     width: 250px;
     height: 50px;
-    background: transparent url("../img/ic_head_default.jpg") no-repeat left;
-    background-size: 20px 20px;
-    background-position-x: 15px;
     border: none;
     margin: 0px;
     padding-left: 50px;
@@ -155,6 +152,9 @@ input::-ms-input-placeholder {
     font-size: 18px;
     color: #FFFFFF;
     background-color: #54a853;
+    display: block;
+    line-height: 45px;
+    text-align: center;
 }
 
 .register-btn:hover {
@@ -165,7 +165,10 @@ input::-ms-input-placeholder {
     border: 0px;
     font-size: 18px;
     color: #FFFFFF;
-    background-color: #54cc53;
+    background-color: #79D148;
+    display: block;
+    line-height: 45px;
+    text-align: center;
 }
 
 .register-btn:active {
@@ -176,7 +179,10 @@ input::-ms-input-placeholder {
     border: 0px;
     font-size: 18px;
     color: #FFFFFF;
-    background-color: #54cc53;
+    background-color: #79D148;
+    display: block;
+    line-height: 45px;
+    text-align: center;
 }
 
 .mainTransition-enter-active,

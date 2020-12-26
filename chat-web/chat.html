@@ -21,9 +21,13 @@
             <!-- 登录 -->
             <div v-if='loginBtnIsActive'>
                 <div class='input-box'>
-                    <input id='loginName' type='text' placeholder='用户名/电话/邮箱'/>
+                    <input id='loginName' type='text' style='background: transparent url("./img/ic_user.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='用户名/电话/邮箱'/>
                     <div class='divider'></div>
-                    <input id='loginPassword' type='password' placeholder='密码长度为6位'/>
+                    <input id='loginPassword' type='password' style='background: transparent url("./img/ic_password.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='密码长度为6位'/>
                 </div>
                 <div style='align-items: center;margin-top: 20px'>
                     <input type='checkbox' style='width: 30px;height: 30px;float: left;'/>
@@ -37,15 +41,29 @@
             <!-- 注册 -->
             <div v-if='!loginBtnIsActive'>
                 <div class='input-box'>
-                    <input type='text' placeholder='用户名'/>
+                    <input type='text' style='background: transparent url("./img/ic_user.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='用户名'/>
                     <div class='divider'></div>
-                    <input type='phone' placeholder='手机号'/>
+                    <input type='phone' style='background: transparent url("./img/ic_phone.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='手机号'/>
                     <div class='divider'></div>
-                    <input type='email' placeholder='邮箱'/>
+                    <input type='email' style='background: transparent url("./img/ic_mail.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='邮箱'/>
                     <div class='divider'></div>
-                    <input type='password' placeholder='设置密码，密码长度为6位'/>
+                    <input type='password' style='background: transparent url("./img/ic_password.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='设置密码，密码长度为6位'/>
+                    <div class='divider'></div>
+                    <input type='password' style='background: transparent url("./img/ic_password.png") no-repeat left;
+                    background-size: 20px 20px;background-position-x: 15px;'
+                           placeholder='再次输入密码'/>
                 </div>
-                <button class='register-btn' type='button'>{{registerBtnText}}</button>
+                <div>
+                    <a class='register-btn' type='button' v-on:click='onRegisterBtnClick'>{{registerBtnText}}</a>
+                </div>
             </div>
         </div>
         <!-- 对话区 -->
@@ -129,15 +147,18 @@
           onRegisterTabClick: function (event) {
             this.loginBtnIsActive = false
           },
+          onRegisterBtnClick: function (event) {
+            alert('点击了注册')
+          },
           onLoginBtnClick: function (event) {
             let name = document.getElementById('loginName').value
             if (name.trim().length === 0) {
-              console.log('用户名不能为空')
+              alert('用户名不能为空')
               return
             }
             let password = document.getElementById('loginPassword').value
             if (password.trim().length === 0) {
-              console.log('密码不能为空')
+              alert('密码不能为空')
               return
             }
             // 登录认证
@@ -161,11 +182,11 @@
                   app.$data.loginUserName = loginUserName
                   app.getFriendList()
                 } else {
-                  console.log('登录出错：' + data.msg)
+                  alert('登录出错：' + data.msg)
                 }
               },
               function () {
-                console.info('调用接口失败！')
+                alert('调用接口失败！')
               })
           },
           // 获取好友列表
