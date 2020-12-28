@@ -81,11 +81,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class='divider'></div>
+                    <div style='background-color: #2E3238;height: 2px'></div>
                     <!-- 用户列表 -->
                     <ul class='user_list'>
-                        <li class='user_item' v-for='(item,index) in userList'>
-                            <a @click='changeChatUser(item)'>{{item.name}}</a>
+                        <li class='user_item' v-for='(item,index) in userList' @click='changeChatUser(item)'>
+                            <img class='user_head' src='img/ic_head_default.jpg'/>
+                            <div style='width:150px;padding-left: 10px;'>
+                                <div style='float: left;width:100%;height: 20px;font-size: 16px;color: #ffffff;font-weight:bold'>
+                                    {{item.name}}
+                                </div>
+                                <div style='float: left;width:100%;height: 20px;margin-top: 5px;font-size: 10px;color: #abcabc;'>
+                                    [{{item.isOnline ? '在线' : '离线'}}]
+                                </div>
+                            </div>
+                            <span style='width: 40px;height: 40px;padding-left: 10px;font-size: 10px;'>12-11</span>
                         <li>
                     </ul>
                 </div>
@@ -204,7 +213,11 @@
                 let data = response.data
                 console.log('接口返回数据：' + JSON.stringify(data))
                 if (data.code === 200) {
-                  app.$data.userList = data.data
+                  let userList = data.data
+                  userList.forEach((item) => {
+                    item.isOnline = false
+                  })
+                  app.$data.userList = userList
                   if (data.data.length > 0) {
                     currentContactUser = data.data[0]
                     app.$data.chatUserId = currentContactUser.id
@@ -313,8 +326,17 @@
                 case 'NOTIFY': // 通知
                   let notifyMessageType = json['notifyMessageType']
                   if (notifyMessageType === 'LOGIN_REPLY') {// 登录回复
-                    let onlineIds = json['data']
+                    let onlineIds = JSON.parse(json['data'])
                     console.log('当前在线好友列表为：' + JSON.stringify(onlineIds))
+                    if (onlineIds.length > 0 && app.$data.userList.length > 0) {
+                      app.$data.userList.forEach((item) => {
+                        if (onlineIds.includes(item.id)) {
+                          item.isOnline = true
+                        } else {
+                          item.isOnline = false
+                        }
+                      })
+                    }
                   } else if (notifyMessageType === 'LOGIN_NOTIFY') {// 登录通知
 
                   } else if (notifyMessageType === 'CHAT_MESSAGE_ID') {// 消息ID通知，等价于通知消息发送成功
@@ -411,7 +433,6 @@
     </script>
 </body>
 </html>
-
 <!-- 总结：
 1.控制组件的显示与隐藏：
  1.1 使用v-if='标志位'
