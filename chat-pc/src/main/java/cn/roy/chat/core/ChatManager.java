@@ -2,7 +2,7 @@ package cn.roy.chat.core;
 
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.chat.ChatMessageType;
-import cn.roy.chat.Main;
+import cn.roy.chat.PCApplication;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.controller.ChatController;
@@ -188,7 +188,7 @@ public class ChatManager {
 
     /**********功能：消息相关**********/
     public void sendMessage(ChatMessage message) {
-        message.setFromUserId((long) Main.currentUser.getId());
+        message.setFromUserId((long) PCApplication.currentUser.getId());
         message.setSendTimestamp(System.currentTimeMillis());
         // 调用发送器发送消息
         if (chatClient.isConnected()) {

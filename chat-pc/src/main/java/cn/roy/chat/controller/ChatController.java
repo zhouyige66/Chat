@@ -3,7 +3,7 @@ package cn.roy.chat.controller;
 import cn.kk20.chat.base.message.ChatMessage;
 import cn.kk20.chat.base.message.chat.ChatMessageType;
 import cn.kk20.chat.base.message.chat.body.TextData;
-import cn.roy.chat.Main;
+import cn.roy.chat.PCApplication;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
@@ -242,7 +242,7 @@ public class ChatController extends BaseController {
             final Label msgLabel = (Label) vBox.getChildren().get(1);
             final Label onlineLabel = (Label) vBox2.getChildren().get(0);
             String head = item.getContactHead();
-            if (head != null) {
+            if (!StringUtils.isEmpty(head)) {
                 headImageView.setImage(new Image("http://localhost:9001" + head));
             }
             nameLabel.setText(item.getContactName());
@@ -273,7 +273,7 @@ public class ChatController extends BaseController {
             }
 
             final Long fromUserId = item.getFromUserId();
-            final boolean isSend = Main.currentUser.getId() == fromUserId;
+            final boolean isSend = PCApplication.currentUser.getId() == fromUserId;
             VBox parent = FXMLUtil.loadFXML(isSend ? "item_msg_send" : "item_msg_receive");
             final Label timeLabel = (Label) parent.getChildren().get(0);
             final HBox hBox = (HBox) parent.getChildren().get(1);
@@ -289,8 +289,8 @@ public class ChatController extends BaseController {
                 userLabel = (Label) vBox.getChildren().get(0);
                 msgLabel = (Label) vBox.getChildren().get(1);
 
-                headUrl = Main.currentUser.getHead();
-                sender = Main.currentUser.getName();
+                headUrl = PCApplication.currentUser.getHead();
+                sender = PCApplication.currentUser.getName();
             } else {
                 headImageView = (ImageView) hBox.getChildren().get(0);
                 VBox vBox = (VBox) hBox.getChildren().get(1);
@@ -304,7 +304,7 @@ public class ChatController extends BaseController {
                 }
             }
             timeLabel.setText(CommonUtil.getTimeStr(item.getSendTimestamp()));
-            if (headUrl != null) {
+            if (!StringUtils.isEmpty(headUrl)) {
                 headImageView.setImage(new Image("http://localhost:9001" + headUrl));
             }
             if (sender != null) {

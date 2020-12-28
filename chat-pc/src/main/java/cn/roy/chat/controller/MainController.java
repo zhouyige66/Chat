@@ -1,6 +1,6 @@
 package cn.roy.chat.controller;
 
-import cn.roy.chat.Main;
+import cn.roy.chat.PCApplication;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
@@ -14,7 +14,6 @@ import cn.roy.chat.util.HttpUtil;
 import cn.roy.chat.util.http.HttpRequestTask;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -226,14 +225,14 @@ public class MainController extends BaseController {
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
-                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
+                final CallChatServer callChatServer = PCApplication.context.getBean(CallChatServer.class);
                 final ResultData resultData = callChatServer.getFriendList(Long.valueOf(user.getId()));
                 return resultData;
             }
 
             @Override
             public void success(String data) {
-                final List<FriendEntity> list = JSON.parseArray(data,FriendEntity.class);
+                final List<FriendEntity> list = JSON.parseArray(data, FriendEntity.class);
                 if (!CollectionUtils.isEmpty(list)) {
                     ChatManager.getInstance().bindFriendList(list);
                     friendEntities.addAll(list);
@@ -248,14 +247,14 @@ public class MainController extends BaseController {
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
-                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
+                final CallChatServer callChatServer = PCApplication.context.getBean(CallChatServer.class);
                 final ResultData resultData = callChatServer.getGroupList(Long.valueOf(user.getId()));
                 return resultData;
             }
 
             @Override
             public void success(String data) {
-                final List<GroupEntity> list = JSON.parseArray(data,GroupEntity.class);
+                final List<GroupEntity> list = JSON.parseArray(data, GroupEntity.class);
                 if (!CollectionUtils.isEmpty(list)) {
                     for (GroupEntity entity : list) {
                         String memberList = entity.getMemberList();
@@ -307,7 +306,10 @@ public class MainController extends BaseController {
             HBox parent = FXMLUtil.loadFXML("item_friend");
             if (item.getType() == 0) {
                 ImageView headImageView = (ImageView) parent.getChildren().get(0);
-                headImageView.setImage(new Image("http://localhost:9001" + item.getFriendEntity().getHead()));
+                String head = item.getFriendEntity().getHead();
+                if (!StringUtils.isEmpty(head)) {
+                    headImageView.setImage(new Image("http://localhost:9001" + head));
+                }
             }
             VBox vBox = (VBox) parent.getChildren().get(1);
             final Label label = (Label) vBox.getChildren().get(0);
@@ -337,7 +339,10 @@ public class MainController extends BaseController {
 
             HBox parent = FXMLUtil.loadFXML("item_friend");
             ImageView headImageView = (ImageView) parent.getChildren().get(0);
-            headImageView.setImage(new Image("http://localhost:9001" + item.getHead()));
+            String head = item.getHead();
+            if (!StringUtils.isEmpty(head)) {
+                headImageView.setImage(new Image("http://localhost:9001" + head));
+            }
             VBox vBox = (VBox) parent.getChildren().get(1);
             final Label label = (Label) vBox.getChildren().get(0);
             final Label label2 = (Label) vBox.getChildren().get(1);

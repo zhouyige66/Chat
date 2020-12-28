@@ -3,7 +3,7 @@ package cn.roy.chat.core;
 import cn.kk20.chat.base.message.LoginMessage;
 import cn.kk20.chat.base.message.Message;
 import cn.kk20.chat.base.message.login.ClientType;
-import cn.roy.chat.Main;
+import cn.roy.chat.PCApplication;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.call.CallChatServer;
@@ -84,8 +84,8 @@ public class ChatClient {
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
-                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
-                final ResultData resultData = callChatServer.getHost(Long.valueOf(Main.currentUser.getId()));
+                final CallChatServer callChatServer = PCApplication.context.getBean(CallChatServer.class);
+                final ResultData resultData = callChatServer.getHost(Long.valueOf(PCApplication.currentUser.getId()));
                 return resultData;
             }
 
@@ -199,8 +199,8 @@ public class ChatClient {
         LogUtil.d(this, "执行登录：" + isLogin);
         LoginMessage loginMessage = new LoginMessage();
         loginMessage.setClientType(ClientType.PC);
-        loginMessage.setUserId(Long.valueOf(Main.currentUser.getId()));
-        loginMessage.setUserName(Main.currentUser.getName());
+        loginMessage.setUserId(Long.valueOf(PCApplication.currentUser.getId()));
+        loginMessage.setUserName(PCApplication.currentUser.getName());
         loginMessage.setDevice("android");
         loginMessage.setLocation("暂无");
         loginMessage.setLogin(isLogin);

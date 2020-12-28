@@ -12,37 +12,17 @@ import javafx.event.EventType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.springframework.beans.BeansException;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.io.File;
 
-@SpringBootApplication(scanBasePackages = "cn.roy.chat")
-@EnableFeignClients
-public class Main extends Application implements ApplicationContextAware, ApplicationRunner {
+public class ChatApp extends Application {
     public static volatile ApplicationContext context;
     public static volatile UserEntity currentUser;
     public static volatile Stage primaryStage;
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        context = applicationContext;
-    }
-
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        System.out.println("ApplicationRunner");
-        launch(args.getSourceArgs());
+        launch(args);
     }
 
     @Override

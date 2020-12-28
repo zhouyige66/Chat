@@ -11,6 +11,7 @@
 <body style='background-image: url("img/bg_chat.jpg") ;background-size:100% 100%;background-repeat: no-repeat;background-attachment:fixed;'>
     <div id='app'>
         <h1 id='logo' v-if='!loginSuccess'>Chat</h1>
+        <!-- 登录与注册 -->
         <div id='login' v-if='!loginSuccess'>
             <!-- 登录与注册 -->
             <div class='title'>
@@ -97,11 +98,11 @@
                     <!--消息列表-->
                     <ul class='msg_list'>
                         <li v-for='item in msgList1'>
-                            <div v-bind:class="item['fromUserId']!==chatUserId?'msg_item msg_item_me':'msg_item msg_item_other' ">
-                                <img v-bind:class="item['fromUserId']!==chatUserId?'msg_item_head msg_item_me':'msg_item_head msg_item_other' "
+                            <div v-bind:class='item["isSend"] ? "msg_item msg_item_me":"msg_item msg_item_other" '>
+                                <img v-bind:class='item["isSend"] ?"msg_item_head msg_item_me":"msg_item_head msg_item_other" '
                                      src='img/ic_head_default.jpg'/>
-                                <p v-bind:class="item['fromUserId']!==chatUserId?'msg_item_text msg_item_me':'msg_item_text msg_item_other' ">
-                                    {{item['body']}}</p>
+                                <p v-bind:class='item["isSend"] ?"msg_item_text msg_item_me":"msg_item_text msg_item_other" '>
+                                    {{item['msg']}}</p>
                             </div>
                         <li>
                     </ul>
@@ -310,29 +311,25 @@
                   // app.handleMsg(fromUserId, json)
                   break
                 case 'NOTIFY': // 通知
-                  // let array = json['data']
-                  // let index = 0
-                  // for (let item of array) {
-                  //   console.log('用户：' + JSON.stringify(item))
-                  //   if (item['id'] === loginUserId) {
-                  //     console.log('执行删除')
-                  //     array.splice(index, 1)
-                  //     break
-                  //   }
-                  //   index++
-                  // }
-                  // console.log('websocket处理后用户列表：' + JSON.stringify(array))
-                  // app.$data.userList = array
-                  // currentContactUser = array[0]
-                  // //更改对话用户名字
-                  // app.$data.chatUserName = currentContactUser['name']
-                  // app.$data.chatUserId = currentContactUser['id']
+                  let notifyMessageType = json['notifyMessageType']
+                  if (notifyMessageType === 'LOGIN_REPLY') {// 登录回复
+                    let onlineIds = json['data']
+                    console.log('当前在线好友列表为：' + JSON.stringify(onlineIds))
+                  } else if (notifyMessageType === 'LOGIN_NOTIFY') {// 登录通知
+
+                  } else if (notifyMessageType === 'CHAT_MESSAGE_ID') {// 消息ID通知，等价于通知消息发送成功
+
+                  } else {// 重要通知
+
+                  }
                   break
                 case 'APPLY': // 申请
 
                   break
                 case 'CHAT':// 聊天
-
+                  let fromUserId = json['fromUserId']
+                  console.log('消息来源：', fromUserId)
+                  app.handleMsg(fromUserId, json)
                   break
                 default:
                   break
@@ -340,7 +337,6 @@
             }
             // 连接发生错误的回调方法
             websocket.onerror = function () {
-              console.log('连接出错')
               app.$data.socketStatus = '连接出错'
             }
             // 连接关闭的回调方法
@@ -369,24 +365,40 @@
             chatMessage.fromUserId = loginUserId
             chatMessage.toUserId = this.chatUserId
             chatMessage.bodyType = 'TEXT'
-            chatMessage.body = document.getElementById('text').value
-            websocket.send(JSON.stringify(chatMessage))
-            console.log('websocket发送消息：' + JSON.stringify(chatMessage))
-            this.handleMsg(this.chatUserId, JSON.parse(JSON.stringify(chatMessage)))
+            let textBody = {'text': document.getElementById('text').value}
+            chatMessage.body = textBody
+            let msg = JSON.stringify(chatMessage)
+            console.log('websocket发送消息：', msg)
+            websocket.send(msg)
+            this.handleMsg(this.chatUserId, chatMessage, true)
             document.getElementById('text').value = ''
           },
           // 处理消息
-          handleMsg: function (fromUserId, msg) {
-            let msgArray = this.msgList[fromUserId]
-            if (msgArray == null || msgArray.length === 0) {
-              let array = []
-              array.push(msg)
-              this.msgList[fromUserId] = array
+          handleMsg: function (contactUserId, chatMessage, isSend) {
+            console.log('联系人', contactUserId)
+            let bodyType = chatMessage.bodyType
+            let msg = ''
+            if (bodyType === 'TEXT') {
+              if (typeof chatMessage.body === 'string') {
+                msg = JSON.parse(chatMessage.body).text
+              } else {
+                msg = chatMessage.body.text
+              }
             } else {
-              msgArray.push(msg)
+              msg = JSON.stringify(chatMessage.body)
             }
-            if (fromUserId === this.chatUserId) {
-              this.msgList1 = this.msgList[fromUserId]
+            let msgArray = this.msgList[contactUserId]
+            if (msgArray == null || msgArray.length === 0) {
+              msgArray = []
+              this.msgList[contactUserId] = msgArray
+            }
+            let saveMsg = {
+              isSend,
+              msg,
+            }
+            msgArray.push(saveMsg)
+            if (contactUserId === this.chatUserId) {
+              this.msgList1 = this.msgList[contactUserId]
             }
             console.log('消息列表：' + JSON.stringify(app.$data.msgList))
           },

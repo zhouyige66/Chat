@@ -1,6 +1,6 @@
 package cn.roy.chat.controller;
 
-import cn.roy.chat.Main;
+import cn.roy.chat.PCApplication;
 import cn.roy.chat.call.CallChatServer;
 import cn.roy.chat.core.ChatConfig;
 import cn.roy.chat.core.ChatClient;
@@ -72,7 +72,7 @@ public class LoginController extends BaseController {
         HttpUtil.execute(new HttpRequestTask() {
             @Override
             public ResultData doInBackground() {
-                final CallChatServer callChatServer = Main.context.getBean(CallChatServer.class);
+                final CallChatServer callChatServer = PCApplication.context.getBean(CallChatServer.class);
                 final ResultData resultData = callChatServer.login(entity);
                 return resultData;
             }
@@ -81,7 +81,7 @@ public class LoginController extends BaseController {
             public void success(String data) {
                 final UserEntity userEntity = JSON.parseObject(data, UserEntity.class);
                 userEntity.setPassword(password);
-                Main.currentUser = userEntity;
+                PCApplication.currentUser = userEntity;
                 CacheUtil.cacheData("user", userEntity);
                 CacheUtil.cacheToProp("user", userEntity);
 

@@ -1,6 +1,6 @@
 package cn.roy.chat.controller;
 
-import cn.roy.chat.Main;
+import cn.roy.chat.PCApplication;
 import cn.roy.chat.broadcast.NotifyEvent;
 import cn.roy.chat.broadcast.NotifyManager;
 import cn.roy.chat.broadcast.NotifyReceiver;
@@ -34,7 +34,7 @@ public abstract class BaseController implements Initializable, ChangeListener<Sc
     public void setStage(Stage stage) {
         this.mStage = stage;
         this.mStage.sceneProperty().addListener(this);
-        if (this.mStage != Main.primaryStage) {
+        if (this.mStage != PCApplication.primaryStage) {
             this.mStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
@@ -57,7 +57,7 @@ public abstract class BaseController implements Initializable, ChangeListener<Sc
 
             @Override
             public void onReceiveEvent(NotifyEvent event) {
-                if (mStage != Main.primaryStage) {
+                if (mStage != PCApplication.primaryStage) {
                     mStage.close();
                 }
                 NotifyManager.getInstance().unRegister(this);
