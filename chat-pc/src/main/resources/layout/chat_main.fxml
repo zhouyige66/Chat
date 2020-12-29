@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+    <stylesheets>
+        <URL value="@/css/chat_main.css" />
+    </stylesheets>
+    <children>
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="70.0">
+            <children>
+                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <VBox.margin>
+                        <Insets top="30.0" />
+                    </VBox.margin>
+                </ImageView>
+                <RadioButton mnemonicParsing="false" text="msg">
+                    <VBox.margin>
+                        <Insets top="50.0" />
+                    </VBox.margin>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="contact">
+                    <VBox.margin>
+                        <Insets top="30.0" />
+                    </VBox.margin>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="user">
+                    <VBox.margin>
+                        <Insets top="30.0" />
+                    </VBox.margin>
+                </RadioButton>
+                <Button mnemonicParsing="false" text="关于" />
+            </children>
+        </VBox>
+        <SplitPane dividerPositions="0.3" prefHeight="400.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
+            <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                    <children>
+                        <Accordion layoutX="21.0" layoutY="115.0" />
+                        <Group layoutX="98.0" layoutY="141.0" />
+                    </children>
+                </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="298.0">
+                    <children>
+                        <StackPane layoutX="58.0" layoutY="107.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="480.0">
+                                    <header>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
+                                    </header>
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
+                                    </content>
+                                    <expandableContent>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
+                                    </expandableContent>
+                                </DialogPane>
+                            </children>
+                        </StackPane>
+                    </children>
+                </AnchorPane>
+            </items>
+            <HBox.margin>
+                <Insets />
+            </HBox.margin>
+        </SplitPane>
+    </children>
+</HBox>
