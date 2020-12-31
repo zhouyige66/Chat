@@ -19,7 +19,7 @@
    2. 群聊天实现；
    3. 头像显示。</font>
 ## 系统架构简图
-![Image text](https://github.com/zhouyige66/Chat/blob/master/系统架构图.jpg)
+![架构图](https://github.com/zhouyige66/Chat/blob/master/系统架构图.jpg)
 
 ## 部署运行
 ### Server端
