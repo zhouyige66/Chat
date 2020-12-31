@@ -14,12 +14,19 @@
 - [x] 实现Android、IOS心跳检测机制。
 - [x] Web前端使用了Vue、Vue-Resource框架，直接src引入，由于公司网络环境限制，未使用vue-cli相关。
 - [x] 客户端均实现登录验证功能。
+- [x] <font color="#4590a3">新增PC端代码。
+   1. 心跳实现；
+   2. 群聊天实现；
+   3. 头像显示。</font>
+## 系统架构简图
+![Image text](https://github.com/zhouyige66/Chat/blob/master/系统架构图.jpg)
 
 ## 部署运行
 ### Server端
  * 安装与配置MySQL数据库，执行chat-server目录下init.sql语句。
  * 修改chat-server中chat-mapper模块下src/main⁩/⁨resources/application-mapper.⁩properties文件中spring.datasource相关的信息。
  * 部署到服务器或直接IDE内运行。
+ * <font color="#4590a3">安装与配置redis（用于缓存）</font>
 ### 客户端
  * 修改相应的host为当前部署的服务器地址，然后分别运行。
 ## 关于作者
