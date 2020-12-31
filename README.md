@@ -12,7 +12,7 @@
    2. 分隔符方式发送字符串数据；
    3. 自定义协议（自定义编解码器实现）
 - [x] 实现Android、IOS心跳检测机制。
-- [x] Web前端使用了Vue、Vue-Resource框架，直接src引入，由于公司网络环境限制，未使用vue-cli相关。
+- [x] Web端使用了Vue、Vue-Resource框架，直接src引入。
 - [x] 客户端均实现登录验证功能。
 - [x] <font color="#4590a3">新增PC端代码。
    1. 心跳实现；
