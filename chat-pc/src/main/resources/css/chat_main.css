@@ -1,46 +1,57 @@
 .root {
-    -fx-background-image: url("../img/bg_main.png");
+    -fx-background-color: #FFFFFF;
 }
 
-#connectStatusLabel,#userNameLabel,#userPhoneLabel,#registerTimeLabel,#logoutLabel {
-    -fx-color-label-visible: #FFF;
-    -fx-text-fill: #FFF;
+#stackPaneMain {
+    -fx-background-color: #f5f6f9;
 }
 
-#tabHBox {
-    -fx-fill-height: true;
-    -fx-background-color: #cbcaca;
+#stackPaneContent {
+    -fx-background-color: #ebedf4;
 }
 
 .split-pane *.split-pane-divider {
-    -fx-padding: 0 0 0 0; /* 0 3 0 3 */
+    -fx-padding: 0 1 0 0; /* 0 3 0 3 */
 }
 
-.radio-button > .radio,
-.radio-button:focused > .radio {
-    -fx-background-radius: 0em; /* large value to make sure this remains circular */
-    -fx-padding: 0.333333em; /* 4 -- padding from outside edge to the inner black dot */
+.toggle-button {
+    -fx-border-color: #FFF;
+    -fx-border-width: 0;
+    -fx-pref-width: 32;
+    -fx-pref-height: 32;
+    -fx-background-insets: 0;
+    -fx-background-color: #FFF;
+}
+.list-view{
+    -fx-background-insets: 0;
 }
 
-.radio-button > .radio > .dot {
-    -fx-background-color: transparent;
-    -fx-background-radius: 0em; /* large value to make sure this remains circular */
-    -fx-padding: 0.333333em; /* 4 -- radius of the inner black dot when selected */
+#tab1 {
+    -fx-background-size: 32 32;
+    -fx-background-image: url('../img/tab1_nor.png');
 }
 
-.radio-button {
-    -fx-pref-height: 40;
-    -fx-background-color: #67a567;
-    -fx-image: url("../img/logo.png");
-    -fx-content-display: TEXT_ONLY;
-    -fx-border-color: transparent transparent #ababab transparent;
-    -fx-border-width: 0 0 5 0;
+#tab1:selected {
+    -fx-background-size: 32 32;
+    -fx-background-image: url('../img/tab1_press.png');
 }
 
-.radio-button:selected {
-    -fx-pref-height: 40;
-    -fx-background-color: #67a567;
-    -fx-image: url("../img/logo.png");
-    -fx-border-color: transparent transparent #ff3333 transparent;
-    -fx-border-width: 0 0 5 0;
+#tab2 {
+    -fx-background-size: 32 32;
+    -fx-background-image: url('../img/tab2_nor.png');
+}
+
+#tab2:selected {
+    -fx-background-size: 32 32;
+    -fx-background-image: url('../img/tab2_press.png');
+}
+
+#tab3 {
+    -fx-background-size: 32 32;
+    -fx-background-image: url('../img/tab3_nor.png');
+}
+
+#tab3:selected {
+    -fx-background-size: 32 32;
+    -fx-background-image: url('../img/tab3_press.png');
 }

@@ -1,76 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Group?>
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DialogPane?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
     <stylesheets>
         <URL value="@/css/chat_main.css" />
     </stylesheets>
     <children>
-        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="70.0">
+        <AnchorPane prefHeight="200.0" prefWidth="72.0">
             <children>
-                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                    <VBox.margin>
-                        <Insets top="30.0" />
-                    </VBox.margin>
+                <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="18.0" layoutY="36.0" preserveRatio="true" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                    <image>
+                        <Image url="@/img/ic_head_default.png" />
+                    </image>
                 </ImageView>
-                <RadioButton mnemonicParsing="false" text="msg">
-                    <VBox.margin>
-                        <Insets top="50.0" />
-                    </VBox.margin>
-                </RadioButton>
-                <RadioButton mnemonicParsing="false" text="contact">
-                    <VBox.margin>
-                        <Insets top="30.0" />
-                    </VBox.margin>
-                </RadioButton>
-                <RadioButton mnemonicParsing="false" text="user">
-                    <VBox.margin>
-                        <Insets top="30.0" />
-                    </VBox.margin>
-                </RadioButton>
-                <Button mnemonicParsing="false" text="关于" />
+                <VBox alignment="TOP_CENTER" layoutX="-1.0" layoutY="100.0" prefHeight="200.0" prefWidth="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
+                    <children>
+                        <ToggleButton fx:id="tab1" mnemonicParsing="false" selected="true">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="toggleGroup" />
+                            </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="tab2" layoutX="37.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$toggleGroup">
+                            <VBox.margin>
+                                <Insets top="30.0" />
+                            </VBox.margin>
+                        </ToggleButton>
+                        <ToggleButton fx:id="tab3" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$toggleGroup">
+                            <VBox.margin>
+                                <Insets top="30.0" />
+                            </VBox.margin>
+                        </ToggleButton>
+                    </children>
+                </VBox>
+                <ImageView fitHeight="32.0" fitWidth="32.0" layoutX="20.0" layoutY="588.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                    <image>
+                        <Image url="@/img/ic_setting.png" />
+                    </image>
+                </ImageView>
             </children>
-        </VBox>
+        </AnchorPane>
         <SplitPane dividerPositions="0.3" prefHeight="400.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
             <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <StackPane fx:id="stackPaneMain" maxWidth="300.0" minWidth="230.0" prefWidth="250.0">
                     <children>
-                        <Accordion layoutX="21.0" layoutY="115.0" />
-                        <Group layoutX="98.0" layoutY="141.0" />
-                    </children>
-                </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="298.0">
-                    <children>
-                        <StackPane layoutX="58.0" layoutY="107.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox>
                             <children>
-                                <DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="480.0">
-                                    <header>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
-                                    </header>
-                                    <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
-                                    </content>
-                                    <expandableContent>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
-                                    </expandableContent>
-                                </DialogPane>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <children>
+                                        <TextField HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin></TextField>
+                                        <Button mnemonicParsing="false" text="搜索" />
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </HBox>
+                                <ListView VBox.vgrow="ALWAYS">
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                </ListView>
                             </children>
-                        </StackPane>
+                        </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <children>
+                              <TextField HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                              <Button mnemonicParsing="false" text="搜索" />
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </HBox>
+                        <ListView VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </ListView>
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <children>
+                              <TextField HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                              <Button mnemonicParsing="false" text="搜索" />
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </HBox>
+                        <ListView VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </ListView>
+                     </children>
+                  </VBox>
                     </children>
-                </AnchorPane>
+                </StackPane>
+                <StackPane fx:id="stackPaneContent" prefWidth="200.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <children>
+                              <TextField HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                              <Button mnemonicParsing="false" text="搜索" />
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </HBox>
+                        <ListView VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </ListView>
+                     </children>
+                  </VBox>
+               </children></StackPane>
             </items>
             <HBox.margin>
                 <Insets />

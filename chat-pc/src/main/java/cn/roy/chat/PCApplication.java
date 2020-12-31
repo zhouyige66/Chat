@@ -30,7 +30,8 @@ public class PCApplication implements ApplicationContextAware, ApplicationRunner
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println("ApplicationRunner");
-        ChatApp.main(args.getSourceArgs());
+//        ChatApp.main(args.getSourceArgs());
+        ChatTestApp.main(args.getSourceArgs());
     }
 
 }

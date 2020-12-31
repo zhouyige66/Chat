@@ -310,12 +310,6 @@
               console.log('websocket连接成功')
               app.$data.socketStatus = '已连接'
               // 发送socket认证消息
-              // private ClientType clientType;
-              // private Long userId;
-              // private String userName;
-              // private String device;
-              // private String location;
-              // private boolean login;
               let loginMsg = {}
               loginMsg.messageType = 'LOGIN'
               loginMsg.clientType = 'web'
