@@ -2,7 +2,7 @@ package cn.roy.chat.core;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/3/12 13:25
  * @Version: v1.0
  */

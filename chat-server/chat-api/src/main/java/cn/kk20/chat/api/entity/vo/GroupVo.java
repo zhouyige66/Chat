@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @Description: 群组vo
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 7/7/2020 4:25 PM
  * @Version: v1.0
  */

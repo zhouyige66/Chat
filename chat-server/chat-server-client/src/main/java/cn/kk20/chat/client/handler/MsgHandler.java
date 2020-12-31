@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * @Description: 标记一个类为消息处理器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/2/17 16:35
  * @Version: v1.0
  */

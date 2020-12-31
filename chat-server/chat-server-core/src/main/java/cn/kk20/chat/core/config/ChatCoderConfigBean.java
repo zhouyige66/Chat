@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @Description: 配置类
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/2/20 20:00
  * @Version: v1.0
  */

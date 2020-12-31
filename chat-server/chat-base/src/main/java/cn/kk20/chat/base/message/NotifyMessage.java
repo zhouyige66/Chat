@@ -6,7 +6,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * @Description: 通知消息
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/3/13 08:59
  * @Version: v1.0
  */

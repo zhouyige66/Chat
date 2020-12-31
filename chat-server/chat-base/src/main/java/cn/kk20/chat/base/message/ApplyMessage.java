@@ -2,7 +2,7 @@ package cn.kk20.chat.base.message;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/3/13 08:59
  * @Version: v1.0
  */

@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * @Description: 用户信息vo
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 7/7/2020 4:44 PM
  * @Version: v1.0
  */

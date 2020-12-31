@@ -2,7 +2,7 @@ package cn.roy.chat.enity;
 
 /**
  * @Description: 登录实体
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 5/25/2020 10:39 AM
  * @Version: v1.0
  */

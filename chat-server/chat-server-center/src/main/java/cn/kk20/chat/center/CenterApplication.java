@@ -18,7 +18,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 /**
  * @Description: 程序入口
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/2/20 18:46
  * @Version: v1.0
  */

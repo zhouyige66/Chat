@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @Description: http请求返回实体
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2019-10-25 09:47
  * @Version: v1.0
  */

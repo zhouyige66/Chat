@@ -4,7 +4,7 @@ import cn.kk20.chat.base.message.login.ClientType;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/3/13 09:06
  * @Version: v1.0
  */

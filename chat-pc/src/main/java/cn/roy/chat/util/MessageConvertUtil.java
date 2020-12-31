@@ -5,7 +5,7 @@ import cn.kk20.chat.base.message.MessageType;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/6/17 11:22
  * @Version: v1.0
  */

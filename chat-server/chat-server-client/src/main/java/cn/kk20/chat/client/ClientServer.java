@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @Description: 聊天Server
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/2/17 16:00
  * @Version: v1.0
  */

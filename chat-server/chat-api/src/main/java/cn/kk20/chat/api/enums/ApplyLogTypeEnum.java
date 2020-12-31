@@ -2,7 +2,7 @@ package cn.kk20.chat.api.enums;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/3/16 21:13
  * @Version: v1.0
  */

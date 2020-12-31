@@ -2,7 +2,7 @@ package cn.kk20.chat.base.message;
 
 /**
  * @Description: 服务器中转消息
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/3/13 09:09
  * @Version: v1.0
  */

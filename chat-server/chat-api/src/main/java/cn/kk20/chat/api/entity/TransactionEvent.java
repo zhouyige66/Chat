@@ -2,7 +2,7 @@ package cn.kk20.chat.api.entity;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/6/23 15:40
  * @Version: v1.0
  */

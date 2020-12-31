@@ -2,7 +2,7 @@ package cn.roy.chat.enity;
 
 /**
  * @Description:
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/5/25 15:33
  * @Version: v1.0
  */

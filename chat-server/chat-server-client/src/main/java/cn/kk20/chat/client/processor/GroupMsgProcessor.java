@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * @Description: 群消息处理器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/2/17 16:34
  * @Version: v1.0
  */

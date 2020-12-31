@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Description: 点对点消息处理器
- * @Author: Roy Z
+ * @Author: Roy
  * @Date: 2020/2/17 16:34
  * @Version: v1.0
  */
