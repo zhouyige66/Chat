@@ -1,8 +1,5 @@
 package cn.roy.chat;
 
-import cn.roy.chat.broadcast.NotifyEvent;
-import cn.roy.chat.broadcast.NotifyManager;
-import cn.roy.chat.broadcast.NotifyReceiver;
 import cn.roy.chat.util.FXMLUtil;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -21,7 +18,7 @@ import java.net.MalformedURLException;
 
 /**
  * @Description:
- * @Author: zhouzongyi@cpic.com.cn
+ * @Author: Roy Z
  * @Date: 2020/12/30
  * @Version: v1.0
  */
