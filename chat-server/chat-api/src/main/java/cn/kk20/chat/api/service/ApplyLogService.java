@@ -1,6 +1,7 @@
 package cn.kk20.chat.api.service;
 
 import cn.kk20.chat.dao.model.ApplyLogModel;
+import cn.kk20.chat.dao.model.plus.ApplyLogPlusModel;
 
 import java.util.List;
 
@@ -35,5 +36,14 @@ public interface ApplyLogService {
      * @throws Exception
      */
     void verifyApply(ApplyLogModel model) throws Exception;
+
+    /**
+     * 获取需要审批的记录
+     *
+     * @param verifyUserId
+     * @return
+     * @throws Exception
+     */
+    ApplyLogPlusModel getApplyLogList2(Long verifyUserId) throws Exception;
 
 }

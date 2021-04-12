@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kk20.chat.dao.mapper.plus.ApplyLogPlusModelMapper">
+    <resultMap id="BaseResultMap" type="cn.kk20.chat.dao.model.ApplyLogModel">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="apply_user_id" jdbcType="BIGINT" property="applyUserId"/>
+        <result column="target_user_id" jdbcType="BIGINT" property="targetUserId"/>
+        <result column="verify_user_id" jdbcType="BIGINT" property="verifyUserId"/>
+        <result column="is_agree" jdbcType="BIT" property="isAgree"/>
+        <result column="apply_remark" jdbcType="VARCHAR" property="applyRemark"/>
+        <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+    <resultMap id="ResultMap" type="cn.kk20.chat.dao.model.plus.ApplyLogPlusModel" extends="BaseResultMap">
+        <result column="applyUserName" jdbcType="VARCHAR" property="applyUserName"/>
+        <result column="targetUserName" jdbcType="VARCHAR" property="targetUserName"/>
+        <result column="verifyUserName" jdbcType="VARCHAR" property="verifyUserName"/>
+    </resultMap>
+
+    <sql id="Condition_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Condition_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        c_apply_log.*, b.NAME applyUserName, c.NAME targetUserName, d.NAME verifyUserName
+    </sql>
+    <select id="selectByPrimaryKey2" parameterType="java.lang.Long" resultMap="ResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from c_apply_log
+        LEFT JOIN c_user b ON c_apply_log.apply_user_id = b.id
+        LEFT JOIN c_user c ON c_apply_log.target_user_id = c.id
+        LEFT JOIN c_user d ON c_apply_log.verify_user_id = d.id
+        where c_apply_log.id = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

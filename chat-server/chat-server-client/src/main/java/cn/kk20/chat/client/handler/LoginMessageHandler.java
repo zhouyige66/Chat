@@ -72,7 +72,6 @@ public class LoginMessageHandler extends SimpleChannelInboundHandler<LoginMessag
                 logger.error("保存登录日志错误：{}", e.getMessage());
             }
             // TODO 踢出其他登录
-
             channelManager.add(userModel, clientType, channel);
         } else {
             channelManager.remove(channel);

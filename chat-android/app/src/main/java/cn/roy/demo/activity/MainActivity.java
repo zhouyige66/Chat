@@ -15,6 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.roy.demo.AddContactPopupWindow;
 import cn.roy.demo.R;
 import cn.roy.demo.adapter.HomePagePagerAdapter;
 import cn.roy.demo.chat.ChatClient;
@@ -60,7 +61,8 @@ public class MainActivity extends BaseActivity {
         iv_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast("添加联系人");
+                AddContactPopupWindow addContactPopupWindow = new AddContactPopupWindow();
+                addContactPopupWindow.init(MainActivity.this,v);
             }
         });
 

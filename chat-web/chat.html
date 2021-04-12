@@ -343,41 +343,6 @@
                   console.log('websocket收到心跳信息')
                   break
                 case 'LOGIN': // 登录
-                  // let loginBody = json['body']
-                  // if (loginBody['login']) {
-                  //   console.log('用户登录：' + JSON.stringify(loginBody))
-                  //   let contain = false
-                  //   for (let item of app.$data.userList) {
-                  //     if (item['id'] == loginBody['userId']) {
-                  //       contain = true
-                  //       break
-                  //     }
-                  //   }
-                  //   if (!contain) {
-                  //     let user = {}
-                  //     user['id'] = loginBody['userId']
-                  //     user['name'] = loginBody['userName']
-                  //     app.$data.userList.push(user)
-                  //
-                  //     if (currentUser == null) {
-                  //       currentUser = user
-                  //       app.$data.chatUserName = currentUser['name']
-                  //       app.$data.chatUserId = currentUser['id']
-                  //     }
-                  //   }
-                  // } else {
-                  //   console.log('用户登出：' + JSON.stringify(loginBody))
-                  //   let index = 0
-                  //   for (let item of app.$data.userList) {
-                  //     if (item['id'] == loginBody['userId']) {
-                  //       app.$data.userList.splice(index, 1)
-                  //       break
-                  //     }
-                  //     index++
-                  //   }
-                  // }
-                  // let fromUserId = json['fromUserId']
-                  // app.handleMsg(fromUserId, json)
                   break
                 case 'NOTIFY': // 通知
                   let notifyMessageType = json['notifyMessageType']
@@ -394,7 +359,13 @@
                       })
                     }
                   } else if (notifyMessageType === 'LOGIN_NOTIFY') {// 登录通知
-
+                    let loginBody = JSON.parse(json['data'])
+                    for (let item of app.$data.userList) {
+                      if (item['id'] === loginBody['id']) {
+                        item.isOnline = loginBody['login']
+                        break
+                      }
+                    }
                   } else if (notifyMessageType === 'CHAT_MESSAGE_ID') {// 消息ID通知，等价于通知消息发送成功
 
                   } else {// 重要通知

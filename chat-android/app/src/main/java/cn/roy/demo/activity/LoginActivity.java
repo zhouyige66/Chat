@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import cn.roy.demo.AddContactPopupWindow;
 import cn.roy.demo.ApplicationConfig;
 import cn.roy.demo.R;
 import cn.roy.demo.model.LoginBean;
@@ -53,6 +54,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         et_user_name.setText(SPUtil.getString(SPUtil.LOGIN_NAME, ""));
         et_user_password.setText(SPUtil.getString(SPUtil.LOGIN_PASSWORD, ""));
+        findViewById(R.id.iv_head).setOnClickListener(this);
         tv_login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
         tv_forget_password.setOnClickListener(this);
@@ -68,6 +70,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_head:
+                AddContactPopupWindow addContactPopupWindow = new AddContactPopupWindow();
+                addContactPopupWindow.init(this,v);
+                break;
             case R.id.tv_login:
 //                boolean equals = Environment.getExternalStorageState()
 //                        .equals(Environment.MEDIA_MOUNTED);

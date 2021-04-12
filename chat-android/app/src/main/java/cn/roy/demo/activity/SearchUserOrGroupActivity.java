@@ -15,7 +15,7 @@ import cn.roy.demo.R;
 
 /**
  * @Description: 搜索联系人或群
- * @Author: zhouzongyi@cpic.com.cn
+ * @Author: Roy
  * @Date: 12/7/20 9:16 AM
  * @Version: v1.0
  */

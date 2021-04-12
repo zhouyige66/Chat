@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ic_pop"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <include
+        android:id="@+id/vg_scan"
+        layout="@layout/layout_add_item"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999" />
+
+    <include
+        android:id="@+id/vg_add_friend"
+        layout="@layout/layout_add_item" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999" />
+
+    <include
+        android:id="@+id/vg_add_group"
+        layout="@layout/layout_add_item" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999" />
+
+    <include
+        android:id="@+id/vg_create_group"
+        layout="@layout/layout_add_item" />
+
+</LinearLayout>

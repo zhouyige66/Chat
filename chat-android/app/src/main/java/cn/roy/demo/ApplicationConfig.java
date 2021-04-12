@@ -1,7 +1,5 @@
 package cn.roy.demo;
 
-import cn.roy.demo.util.SPUtil;
-
 /**
  * @Description:
  * @Author: Roy Z

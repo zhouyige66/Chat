@@ -4,6 +4,7 @@ import cn.kk20.chat.base.exception.RequestParamException;
 import cn.kk20.chat.dao.mapper.ApplyLogModelMapper;
 import cn.kk20.chat.dao.mapper.GroupModelMapper;
 import cn.kk20.chat.dao.mapper.UserModelMapper;
+import cn.kk20.chat.dao.mapper.plus.ApplyLogPlusModelMapper;
 import cn.kk20.chat.dao.model.ApplyLogModel;
 import cn.kk20.chat.dao.model.ApplyLogModelQuery;
 import cn.kk20.chat.dao.model.GroupModel;
@@ -11,6 +12,7 @@ import cn.kk20.chat.dao.model.UserModel;
 import cn.kk20.chat.api.service.ApplyLogService;
 import cn.kk20.chat.api.service.MessageService;
 import cn.kk20.chat.api.service.TransactionEventPublishService;
+import cn.kk20.chat.dao.model.plus.ApplyLogPlusModel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import org.slf4j.Logger;
@@ -41,7 +43,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     @Autowired
     GroupModelMapper groupModelMapper;
     @Autowired
-    ApplyLogModelMapper applyLogModelMapper;
+    ApplyLogPlusModelMapper applyLogPlusModelMapper;
 
     @Override
     public List<ApplyLogModel> getApplyLogList(Long verifyUserId) throws Exception {
@@ -52,7 +54,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
 
         ApplyLogModelQuery query = new ApplyLogModelQuery();
         query.createCriteria().andVerifyUserIdEqualTo(verifyUserId).andIsDeleteEqualTo(false);
-        List<ApplyLogModel> applyLogModelList = applyLogModelMapper.selectByCondition(query);
+        List<ApplyLogModel> applyLogModelList = applyLogPlusModelMapper.selectByCondition(query);
         return applyLogModelList;
     }
 
@@ -135,15 +137,15 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         criteria.andIsDeleteEqualTo(false);
         criteria.andApplyUserIdEqualTo(applyUserId);
         criteria.andTargetUserIdEqualTo(targetUserId);
-        List<ApplyLogModel> applyLogModelList = applyLogModelMapper.selectByCondition(query);
+        List<ApplyLogModel> applyLogModelList = applyLogPlusModelMapper.selectByCondition(query);
         if (!CollectionUtils.isEmpty(applyLogModelList)) {
             // 去除冗余的记录
             for (ApplyLogModel existModel : applyLogModelList) {
                 existModel.setIsDelete(true);
-                applyLogModelMapper.updateByPrimaryKeySelective(existModel);
+                applyLogPlusModelMapper.updateByPrimaryKeySelective(existModel);
             }
         }
-        applyLogModelMapper.insertSelective(model);
+        applyLogPlusModelMapper.insertSelective(model);
     }
 
     @Autowired
@@ -155,8 +157,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
     @Transactional
     public void verifyApply(ApplyLogModel model) throws Exception {
 //        transactionEventPublishService.publish("主事务发送");
-
-        ApplyLogModel existModel = applyLogModelMapper.selectByPrimaryKey(model.getId());
+        ApplyLogModel existModel = applyLogPlusModelMapper.selectByPrimaryKey(model.getId());
         if (existModel == null) {
             String msg = String.format("审批申请：id=%d的申请申请记录不存在", model.getId());
             throw new RequestParamException(msg);
@@ -179,7 +180,7 @@ public class ApplyLogServiceImpl implements ApplyLogService {
         existModel.setVerifyRemark(model.getVerifyRemark());
         existModel.setIsDelete(true);// 审批后，直接置删除标志为1
         existModel.setModifyDate(null);// mysql自动更新时间
-        applyLogModelMapper.updateByPrimaryKeySelective(existModel);
+        applyLogPlusModelMapper.updateByPrimaryKeySelective(existModel);
 
         // 同意添加好友或加入群
         if (isAgree) {
@@ -223,6 +224,12 @@ public class ApplyLogServiceImpl implements ApplyLogService {
                 userModelMapper.updateByPrimaryKeySelective(applyUserModel);
             }
         }
+    }
+
+    @Override
+    public ApplyLogPlusModel getApplyLogList2(Long verifyUserId) throws Exception {
+        ApplyLogPlusModel applyLogPlusModel = applyLogPlusModelMapper.selectByPrimaryKey2(verifyUserId);
+        return applyLogPlusModel;
     }
 
     private void updateUserFriends(UserModel userModel, Long friendId, boolean add) {

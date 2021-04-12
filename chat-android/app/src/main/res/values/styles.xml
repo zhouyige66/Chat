@@ -23,4 +23,8 @@
         <item name="android:activityCloseExitAnimation">@anim/anim_right_exit</item>
     </style>
 
+    <style name="StylePopupWindowAnim">
+        <item name="android:windowEnterAnimation">@anim/anim_pop_enter</item>
+        <item name="android:windowExitAnimation">@anim/anim_pop_exit</item>
+    </style>
 </resources>
